@@ -34,22 +34,19 @@ Page {
                 text: datum.toLocaleDateString(Qt.locale("de_DE"))
 
                 onClicked: {
-                    calendar.selectedDate = datum
-                    popup_date.open()
+                    datePicker.open()
                 }
-            }
-            Popup {
-                id: popup_date
-                contentItem: Column {
-                    anchors.centerIn: page
-                    Quick.Calendar {
-                        id: calendar
-                    }
-                }
+
             }
         }
+    }
 
-
+    DatePicker{
+        id: datePicker
+        selectedDate: page.datum
+        onClosed: page.datum = selectedDate
+        x: (page.width - width) / 2
+        y: (page.height - height) / 2
     }
 
 }
