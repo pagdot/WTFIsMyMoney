@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import Qt.labs.calendar 1.0
 
 ApplicationWindow {
     visible: true
@@ -32,8 +33,6 @@ ApplicationWindow {
                     item.reset()
                 }
             }
-
-            DatePicker{}
         }
     }
 
