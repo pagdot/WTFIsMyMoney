@@ -7,5 +7,6 @@
         <file>Page_new_sub.qml</file>
         <file>Page_new_content.qml</file>
         <file>DatePicker.qml</file>
+        <file>database.js</file>
     </qresource>
 </RCC>

@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.LocalStorage 2.0
+import "database.js" as Db
 
 Page {
     title: view_new_swipe.currentItem ? view_new_swipe.currentItem.title : ""
@@ -24,65 +24,20 @@ Page {
         sub_category = ""
         view_new_swipe.removeItem(2)
         view_new_swipe.removeItem(1)
-        dbInit()
     }
 
     function cancel() {
-        view_stack.pop()
+        dialog.open()
     }
 
-    function getDB() {
-        try {
-            var db = LocalStorage.openDatabaseSync("financeData", "", "", 4096);
-        } catch (err) {
-            console.log("Error opening database: " + err)
-        };
-        return db;
-    }
-
-    function dbInit() {
-        var db = getDB();
-        try {
-            db.transaction(function (tx) {
-                tx.executeSql('CREATE TEMP TABLE IF NOT EXISTS tmp_categories (category TEXT,subcategory TEXT)');
-
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[0], "Essen (eigenes)"]);
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[0], "Essen (extern)"]);
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[0], "Trinken (eigenes)"]);
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[0], "Trinken (extern)"]);
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[1], "Wohnen"]);
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[1], "Gewand"]);
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[2], "Öffentlich"]);
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[2], "Auto"]);
-                tx.executeSql('INSERT INTO tmp_categories (category, subcategory) VALUES (?,?)', [defaultMainCategories[3], "Test123"]);
-
-                tx.executeSql('CREATE TABLE IF NOT EXISTS categories AS SELECT * FROM tmp_categories');
-            });
-        } catch (err) {
-            console.log("Error creating table in database: " + err);
-            return;
-        };
-        try {
-            db.transaction(function (tx) {
-                var results = tx.executeSql('SELECT * FROM categories');
-                categories = {};
-                for (var i = 0; i < results.rows.length; i++) {
-                    if (!(results.rows.item(i).category in categories)) {
-                        categories[results.rows.item(i).category] = [];
-                    }
-                    categories[results.rows.item(i).category].push(results.rows.item(i).subcategory);
-                }
-            });
-        } catch (err) {
-            console.log("Error reading table in database: " + err);
-            return;
-        };
-    }
 
     SwipeView {
         id: view_new_swipe
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.bottom: pageIndicator_new.top
+        anchors.bottomMargin: 10
         currentIndex: 1
 
         function next() {
@@ -120,6 +75,10 @@ Page {
         }
         Page_new_content {
             id: page_content
+            onDone: {
+                storeEntry(main_category, sub_category, datum, money)
+                view_stack.pop()
+            }
         }
 
     }
@@ -128,6 +87,7 @@ Page {
         count: view_new_swipe.count
         currentIndex: view_new_swipe.currentIndex
         anchors.bottom: button_new_cancel.top
+        anchors.bottomMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
     }
     Button {
@@ -136,5 +96,17 @@ Page {
         anchors.bottom: parent.bottom
         width: parent.width
         onClicked: cancel()
+    }
+
+
+    Dialog {
+        id: dialog
+        title: "Abbrechen"
+        standardButtons: Dialog.Ok | Dialog.Cancel
+
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        onAccepted: view_stack.pop()
     }
 }

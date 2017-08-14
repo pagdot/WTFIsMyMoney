@@ -2,6 +2,9 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import Qt.labs.calendar 1.0
+import QtQuick.LocalStorage 2.0
+
+import "database.js" as Db
 
 ApplicationWindow {
     visible: true
@@ -45,5 +48,9 @@ ApplicationWindow {
                 close.accepted = false
             }
         }
+    }
+
+    Component.onCompleted: {
+        Db.init(LocalStorage)
     }
 }
