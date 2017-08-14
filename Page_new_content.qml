@@ -60,26 +60,54 @@ Page {
         }
     }
 
-    Dial {
+    Item {
         anchors.top: row.bottom
-        anchors.margins: 50
         anchors.bottom: button.top
         anchors.left: parent.left
         anchors.right: parent.right
-        from: 0
-        to: 50
+        anchors.margins: 20
 
-        value: money
-        onValueChanged: money = value
+        Dial {
+            id: dial
+            from: 0
+            to: 30
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 50
+            value: money
+            onValueChanged: money = value
+        }
+
 
         TextField {
             focus: false
-            anchors.centerIn: parent
-            width: parent.implicitWidth / 2
+            anchors.top: parent.top
+            anchors.left: parent.left
+            width: Math.max(bt_plus.width, bt_minus.width)
             text: focus ? money : money + " €"
             validator: IntValidator{bottom: 0}
             onTextEdited: money = text
             onEditingFinished: focus = false
+        }
+
+        Button {
+            id: bt_plus
+            anchors.top: parent.top
+            anchors.right: parent.right
+            text: "+5 €"
+
+            onClicked: money = money + 5
+        }
+
+        Button {
+            id: bt_minus
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            text: "+5 €"
+
+            onClicked: money = money - 5
         }
     }
 
@@ -90,6 +118,8 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         onClicked: done()
     }
+
+    onDatumChanged: datePicker.selectedDate = page.datum
 
     DatePicker{
         id: datePicker
