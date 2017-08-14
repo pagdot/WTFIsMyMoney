@@ -11,8 +11,8 @@ Dialog{
 
     standardButtons: Dialog.Ok | Dialog.Cancel
 
-    width: 250
-    height: 375
+    width: 300
+    height: 500
     padding: 0
     topPadding: 0
 
@@ -88,11 +88,15 @@ Dialog{
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: rectangle.bottom
+            anchors.bottom: parent.bottom
         }
 
         Component {
             id: calendar
             Page {
+                leftPadding: 20
+                rightPadding: 20
+                bottomPadding: 0
                 id: calendar_view
 
                 RowLayout {
@@ -101,6 +105,7 @@ Dialog{
                     z: 1
 
                     anchors.top: parent.top
+                    anchors.topMargin: 10
                     anchors.left: listview.left
                     anchors.right: listview.right
 
@@ -126,12 +131,9 @@ Dialog{
                     property var currentYear: model.yearAt(currentIndex)
                     property var currentMonth: model.monthAt(currentIndex)
 
-                    anchors.top: parent.top
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    height: 220
-                    width: 200
+                    anchors.fill: parent
 
-                    spacing: 50
+                    spacing: 20
 
                     snapMode: ListView.SnapOneItem
                     orientation: ListView.Horizontal
@@ -154,7 +156,7 @@ Dialog{
                         to: listview.to
                     }
 
-                    delegate: ColumnLayout {
+                    delegate: Page {
 
                         width: listview.width
                         height: listview.height
@@ -162,7 +164,8 @@ Dialog{
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: Qt.locale().monthName(model.month) + " " + model.year
-                            topPadding: 15
+                            anchors.topMargin: 25
+                            anchors.top: parent.top
                             font: grid.font
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -170,8 +173,10 @@ Dialog{
 
                         DayOfWeekRow {
                             locale: model.locale
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
+                            anchors.bottom: grid.top
+                            anchors.left: grid.left
+                            anchors.right: grid.right
+                            Layout.alignment: Qt.AlignBottom
 
                             delegate: Text {
                                 text: model.narrowName
@@ -186,23 +191,24 @@ Dialog{
                             month: model.month
                             year: model.year
                             locale: model.locale
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.bottom
+
+                            height: Math.min(Layout.width, Layout.height)
+                            width: Math.min(Layout.width, Layout.height)
 
                             delegate: RadioButton {
                                 opacity: model.month === grid.month ? 1 : 0
                                 text: model.day
                                 font: grid.font
-                                implicitWidth: 24
-                                implicitHeight: 24
+                                width: 32
+                                height: 32
 
                                 Component.onCompleted: checked = (stack.tmp_date.getDate() === model.day) && (stack.tmp_date.getFullYear() === model.year) && (stack.tmp_date.getMonth() === model.month) ? true : false
 
                                 indicator: Rectangle {
-                                    anchors.centerIn: parent
-                                    implicitWidth: 24
-                                    implicitHeight: 24
-                                    radius: 30
+                                    anchors.fill: parent
+                                    radius: Math.max(width, height)/2
                                     visible: parent.checked
                                     color: Material.primary
                                 }
@@ -234,19 +240,36 @@ Dialog{
             id: year_view
 
             Page {
+                id: page
                 Tumbler {
                     id: yearTumbler
                     model: calcModel(start, end)
                     property int start: 1900
                     property int end: 2100
-                    visibleItemCount: 7
+                    visibleItemCount: 5
                     wrap: false
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: parent.height
 
-                    currentIndex: stack.tmp_date.getFullYear() - start - 1
+                    Component.onCompleted: console.log(parent.height)
+
+                    delegate: Text {
+                        id: label
+                        text: modelData
+                        color: Material.foreground
+                        font.pointSize: 16
+                        opacity: 1
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    currentIndex: stack.tmp_date.getFullYear() - start
 
                     onCurrentIndexChanged: {
                         var _date = stack.tmp_date
-                        _date.setFullYear(currentIndex + start + 1)
+                        _date.setFullYear(currentIndex + start)
                         stack.tmp_date = _date
                     }
 
