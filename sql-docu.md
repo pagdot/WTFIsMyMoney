@@ -24,7 +24,7 @@ index, date, subcat, money, note, change
 CREATE TABLE entries (
     nr INT AUTO_INCREMENT PRIMARY KEY,
     category INT NOT NULL,
-    date DATE NOT NULL,
+    datestamp DATE NOT NULL,
     money INT,
     change TIMESTAMP
 );
@@ -61,7 +61,7 @@ ON E.nr > (cnt.cnt - 100)
 
 ## Insert Entry by Category names
 
-INSERT INTO entries (category, date, money, notes)
+INSERT INTO entries (category, datestamp, money, notes)
 SELECT S.nr, "2018-09-15", "10", "note" 
 FROM (
     SELECT S.nr FROM subcategories S
@@ -71,17 +71,17 @@ FROM (
 
 ## Add new subcategory by category name
 
-INSERT INTO subcategories (name, catNr) SELECT "subcat14", C.name
+INSERT INTO subcategories (name, catNr) SELECT "subcat14", C.nr
 FROM (
-    SELECT name FROM categories
-    WHERE nr = 1
+    SELECT nr FROM categories
+    WHERE name = "cat1"
 ) C;
 
 ## Get entries by Date-range
 
 SELECT * FROM entries
-WHERE (date >= "2017-08-16")
-AND (date <= "2017-08-20")
+WHERE (datestamp >= "2017-08-16")
+AND (datestamp <= "2017-08-20")
 
 ## Get Category names
 
@@ -127,21 +127,21 @@ INSERT INTO subcategories (name, catNr) VALUES("subcat33", 3);
 CREATE TABLE entries (
     nr INT AUTO_INCREMENT PRIMARY KEY,
     category INT NOT NULL,
-    date DATE NOT NULL,
+    datestamp DATE NOT NULL,
     money INT,
     notes TEXT,
-    change TIMESTAMP,
+    lastChanged TIMESTAMP,
     INDEX(category),
-    INDEX(date)
+    INDEX(datestamp)
 );
 
-INSERT INTO entries (category, date) VALUES(1, "2017-08-14");
-INSERT INTO entries (category, date) VALUES(2, "2017-08-15");
-INSERT INTO entries (category, date) VALUES(2, "2017-08-16");
-INSERT INTO entries (category, date) VALUES(3, "2017-08-17");
-INSERT INTO entries (category, date) VALUES(3, "2017-08-18");
-INSERT INTO entries (category, date) VALUES(3, "2017-08-19");
+INSERT INTO entries (category, datestamp) VALUES(1, "2017-08-14");
+INSERT INTO entries (category, datestamp) VALUES(2, "2017-08-15");
+INSERT INTO entries (category, datestamp) VALUES(2, "2017-08-16");
+INSERT INTO entries (category, datestamp) VALUES(3, "2017-08-17");
+INSERT INTO entries (category, datestamp) VALUES(3, "2017-08-18");
+INSERT INTO entries (category, datestamp) VALUES(3, "2017-08-19");
 
-INSERT INTO entries (category, date) VALUES(4, "2017-08-20");
-INSERT INTO entries (category, date) VALUES(5, "2017-08-21");
-INSERT INTO entries (category, date) VALUES(6, "2017-08-22");
+INSERT INTO entries (category, datestamp) VALUES(4, "2017-08-20");
+INSERT INTO entries (category, datestamp) VALUES(5, "2017-08-21");
+INSERT INTO entries (category, datestamp) VALUES(6, "2017-08-22");

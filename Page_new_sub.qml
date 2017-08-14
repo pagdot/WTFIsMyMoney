@@ -20,7 +20,10 @@ Page {
 
         model: page.model
 
-        onAccepted: page._chosen(displayText)
+        onAccepted: {
+            page._chosen(displayText)
+            page.model.push(displayText)
+        }
         onActivated: page._chosen(displayText)
 
         baselineOffset: contentItem.baselineOffset + (Qt.platform.os == "android" ? 0.5 : 0)
@@ -38,6 +41,12 @@ Page {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             opacity: control.focus ? 1 : 0.3
+
+            onFocusChanged: {
+                if (focus) {
+                    parent.popup.open()
+                }
+            }
 
             onTextChanged: {
                 textmetrics.text = text

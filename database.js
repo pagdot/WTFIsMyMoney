@@ -1,5 +1,24 @@
 var localStorage;
 
+var defaultCategories = [
+    {
+        name: "Essen & Trinken",
+        sub: ["Essen (eigenes)", "Essen (extern)", "Trinken (eigenes)", "Trinken (extern)"],
+    },
+    {
+        name: "Leben & Wohnen",
+        sub: ["Wohnen", "Gewand", "Freizeit"],
+    },
+    {
+        name: "Transport",
+        sub: ["Öffentlich", "Auto"],
+    },
+    {
+        name: "Anderes",
+        sub: [],
+    }
+]
+
 function getDB() {
     try {
         var db = localStorage.openDatabaseSync("financeData", "", "", 4096);
@@ -37,71 +56,120 @@ function init(_localStorage) {
     }
 }
 
-function storeEntry(main, sub, date, money, note) {
-    var db = getDB()
-    try {
-        db.transaction(function(tx) {
-            tx.executeSql("INSERT INTO entries (category, date, money, notes)
-                SELECT S.nr, ?, ?, ?
-                FROM (
-                    SELECT S.nr FROM subcategories S
-                    INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?)
-                    WHERE S.name = ?
-            ) S;", date, money, note, main, sub);
-        });
-    } catch (err) {
-        console.log("Error: Could not create subcategory table: " + err)
+function getCategories() {
+    var categories = []
+    var rows = sql("SELECT * FROM categories");
+    for (var i in rows) {
+        categories.push(rows[i].name)
     }
+    return categories;
+}
+
+function getSubcategoriesOrderedPerUse(category) {
+    var rows = sql("SELECT COUNT(E.category) AS cnt, S.name\n"
+                 + "FROM entries E INNER JOIN (\n"
+                 +     "SELECT COUNT(*) AS cnt FROM entries\n"
+                 + ") cnt ON E.nr > (cnt.cnt - 20) INNER JOIN (\n"
+                 +     "SELECT S.nr FROM subcategories S, categories C\n"
+                 +     "WHERE (S.catNr = C.nr) AND (C.name = ?)\n"
+                 + ") Sub ON E.category = Sub.nr, subcategories S\n"
+                 + "WHERE E.category = S.nr\n"
+                 + "GROUP BY category ORDER BY cnt DESC", [category]);
+    console.log(JSON.stringify(rows))
+}
+
+function getSubcategories(category) {
+    var subcategories = [];
+    var rows = sql("SELECT S.* FROM subcategories S\n"
+                 + "INNER JOIN categories C ON\n"
+                 + "(S.catNr = C.nr) AND (C.name = ?)", category)
+    //console.log(JSON.stringify(rows))
+    for (var i in rows) {
+        subcategories.push(rows[i].name)
+    }
+    return subcategories
+}
+
+function storeEntry(main, sub, date, money, note) {
+    sql("INSERT INTO entries (category, datestamp, money, notes)\n"
+      + "SELECT S.nr, ?, ?, ? FROM (\n"
+      +     "SELECT S.nr FROM subcategories S \n"
+      +     "INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n"
+      + ") S;", [dateToISOString(date), money, note, main, sub]);
+}
+
+function addSubcategory(name, category) {
+    sql("INSERT INTO subcategories (name, catNr) SELECT ?, nr FROM categories WHERE name = ?;", [name, category]);
 }
 
 
 function createCategories() {
-    var db = getDB()
-    try {
-        db.transaction(function(tx) {
-            tx.executeSql("CREATE TABLE categories (
-                nr INT AUTO_INCREMENT PRIMARY KEY,
-                name TEXT NOT NULL
-            );");
-            //load categories
-        });
-    } catch (err) {
-        console.log("Error: Could not create category table: " + err)
+    sql("CREATE TABLE categories (nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);");
+    for (var c in defaultCategories) {
+        sql("INSERT INTO categories (name) VALUES (?)", [defaultCategories[c].name])
     }
 }
 
 function createSubcategories() {
-    var db = getDB()
-    try {
-        db.transaction(function(tx) {
-            tx.executeSql("nr, name, catIndex
-                CREATE TABLE subcategories (
-                nr INT AUTO_INCREMENT PRIMARY KEY,
-                name TEXT NOT NULL,
-                catNr INT NOT NULL
-            );");
-            //load subcategories
-        });
-    } catch (err) {
-        console.log("Error: Could not create subcategory table: " + err)
+    sql("CREATE TABLE subcategories (nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, catNr INT NOT NULL);");
+    for (var c in defaultCategories) {
+        for (var s in defaultCategories[c].sub) {
+            addSubcategory(defaultCategories[c].sub[s], defaultCategories[c].name);
+        }
     }
 }
 
 function createEntryTable() {
+    sql("CREATE TABLE entries (nr INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, datestamp DATE NOT NULL, money INT, notes TEXT, lastChanged TIMESTAMP);");
+}
+
+function reset() {
     var db = getDB()
     try {
         db.transaction(function(tx) {
-            tx.executeSql("index, date, subcat, money, note, change
-                CREATE TABLE entries (
-                nr INT AUTO_INCREMENT PRIMARY KEY,
-                category INT NOT NULL,
-                date DATE NOT NULL,
-                money INT,
-                change TIMESTAMP
-            );");
+            tx.executeSql("DROP TABLE categories;");
+            tx.executeSql("DROP TABLE subcategories;");
+            tx.executeSql("DROP TABLE entries;");
         });
-    } catch (err) {
-        console.log("Error: Could not create entry table: " + err)
+    } catch(err) {
+        console.log("Error: Could not delete tables: " + err)
+    }
+    init(localStorage)
+}
+
+function pad(number) {
+    if (number < 10) {
+        return '0' + number;
+    }
+    return number;
+}
+
+function sql(query, parameter) {
+    if (!parameter) {
+        parameter = []
     }
 
+    var db = getDB();
+    var rows = [];
+    try {
+        db.transaction(function(tx) {
+            var result = tx.executeSql(query, parameter)
+            for (var i = 0; i < result.rows.length; i++) {
+                rows.push(result.rows.item(i))
+            }
+        })
+    } catch(err) {
+        console.log("ERROR: Could not execute: \"" + query + "\" with parameter: " + JSON.stringify(parameter));
+        console.log("  " + err)
+    }
+    //console.log("Query: " + query)
+    //console.log("Rows: " + JSON.stringify(rows))
+    return rows;
 }
+
+function dateToISOString(date) {
+    return date.getUTCFullYear() +
+        '-' + pad(date.getUTCMonth() + 1) +
+        '-' + pad(date.getUTCDate())
+};
+

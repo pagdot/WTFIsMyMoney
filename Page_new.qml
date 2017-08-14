@@ -1,20 +1,16 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import QtQuick.LocalStorage 2.0
+
 import "database.js" as Db
 
 Page {
     title: view_new_swipe.currentItem ? view_new_swipe.currentItem.title : ""
+    id: page
     objectName: "create_new"
 
-    property var defaultMainCategories: [
-        "Essen & Trinken",
-        "Leben & Wohnen",
-        "Transport",
-        "Anderes"
-    ]
-
-    property var categories: ({})
+    property var categories: []
     property var main_category: ""
     property var sub_category: ""
 
@@ -24,6 +20,14 @@ Page {
         sub_category = ""
         view_new_swipe.removeItem(2)
         view_new_swipe.removeItem(1)
+        var tmp = Db.getCategories();
+        for (var i in tmp) {
+            categories.push({
+                name: tmp[i],
+                sub: Db.getSubcategories(tmp[i])
+            });
+        }
+        page_main.categories = categories
     }
 
     function cancel() {
@@ -61,6 +65,7 @@ Page {
         }
 
         Page_new_main {
+            id: page_main
             onChosen: {
                 main_category = text
                 view_new_swipe.next()
@@ -108,5 +113,9 @@ Page {
         y: (parent.height - height) / 2
 
         onAccepted: view_stack.pop()
+    }
+
+    Component.onCompleted: {
+        Db.init(LocalStorage)
     }
 }

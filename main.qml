@@ -24,16 +24,58 @@ ApplicationWindow {
 
     }
 
+
     Component {
         id: page_main
         Page {
-            Button {
-                id: bt_new
-                anchors.centerIn: parent
-                text: "New entry"
-                onClicked: {
-                    var item = view_stack.push("Page_new.qml")
-                    item.reset()
+            ColumnLayout {
+                anchors.fill: parent
+
+                Button {
+                    id: bt_new
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.alignment: Qt.AlignCenter
+                    text: "New entry"
+                    onClicked: {
+                        var item = view_stack.push("Page_new.qml")
+                        item.reset()
+                    }
+                }
+
+                Button {
+                    id: bt_reset
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.alignment: Qt.AlignCenter
+                    text: "Reset Database"
+                    onClicked: Db.reset()
+                }
+
+                Button {
+                    text: "sql"
+                    Layout.alignment: Qt.AlignCenter
+
+                    onClicked: dialog.open()
+
+                    Dialog {
+                        id: dialog
+                        width: 300
+                        height: 150
+
+                        onOpened: query_text.focus = true
+
+                        TextField {
+                            id: query_text
+                            anchors.centerIn: parent
+                            onAccepted: dialog.accept()
+                        }
+
+                        x: 0
+                        y: -400
+
+                        standardButtons: Dialog.Ok
+
+                        onAccepted: console.log("ROWS: " + JSON.stringify(Db.sql(query_text.text)))
+                    }
                 }
             }
         }
