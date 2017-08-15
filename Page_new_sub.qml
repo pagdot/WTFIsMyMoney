@@ -5,6 +5,11 @@ Page {
     id: page
     title: "Unterkategorie"
     property var model: []
+    onModelChanged: {
+        list.currentIndex = -1
+        control.editText = ""
+        control.focus = false
+    }
 
     signal chosen(string text)
 
@@ -41,13 +46,6 @@ Page {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             opacity: control.focus ? 1 : 0.3
-
-            onFocusChanged: {
-                if (focus) {
-                    parent.popup.open()
-                }
-            }
-
             onTextChanged: {
                 textmetrics.text = text
                 implicitWidth = textmetrics.width + spacing + control.indicator.width

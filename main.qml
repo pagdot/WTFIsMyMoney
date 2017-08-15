@@ -43,14 +43,7 @@ ApplicationWindow {
                 }
 
                 Button {
-                    id: bt_reset
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    Layout.alignment: Qt.AlignCenter
-                    text: "Reset Database"
-                    onClicked: Db.reset()
-                }
-
-                Button {
+                    id: sql_bt
                     text: "sql"
                     Layout.alignment: Qt.AlignCenter
 
@@ -69,8 +62,8 @@ ApplicationWindow {
                             onAccepted: dialog.accept()
                         }
 
-                        x: 0
-                        y: -400
+                        x: sql_bt.width/2 - width/2
+                        y: -300
 
                         standardButtons: Dialog.Ok
 

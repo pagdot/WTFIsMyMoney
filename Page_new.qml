@@ -50,11 +50,12 @@ Page {
                     view_new_swipe.addItem(page_sub)
                 }
 
-                var tmp = []
-                for (var i = 0; i < categories[main_category].length; i++) {
-                    tmp.push(categories[main_category][i]);
+                for (var i in categories) {
+                    if (categories[i].name === main_category) {
+                        page_sub.model = categories[i].sub
+                    }
                 }
-                page_sub.model = tmp;
+
             } else if (currentIndex == 1) {
                 if (view_new_swipe.count == 2) {
                     view_new_swipe.addItem(page_content)
@@ -81,7 +82,7 @@ Page {
         Page_new_content {
             id: page_content
             onDone: {
-                storeEntry(main_category, sub_category, datum, money)
+                Db.storeEntry(main_category, sub_category, datum, money)
                 view_stack.pop()
             }
         }

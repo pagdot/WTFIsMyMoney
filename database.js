@@ -91,11 +91,38 @@ function getSubcategories(category) {
 }
 
 function storeEntry(main, sub, date, money, note) {
-    sql("INSERT INTO entries (category, datestamp, money, notes)\n"
+    var cats = getCategories()
+    var found = false;
+    for (var i in cats) {
+        if (cats[i] === main) {
+            found = true
+        }
+    }
+    if (!found) {
+        console.log("Unknown category \"" +  main + "\"")
+        return false
+    }
+
+    cats = getSubcategories(main)
+    found = false
+    for (var i in cats) {
+        if(cats[i] === sub) {
+            found = true
+        }
+    }
+    if (!found) {
+        var ret = addSubcategory(sub, main)
+        if (ret === false) {
+            return false
+        }
+    }
+
+    var ret = sql("INSERT INTO entries (category, datestamp, money, notes)\n"
       + "SELECT S.nr, ?, ?, ? FROM (\n"
       +     "SELECT S.nr FROM subcategories S \n"
       +     "INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n"
       + ") S;", [dateToISOString(date), money, note, main, sub]);
+    return ret === false ? false : true;
 }
 
 function addSubcategory(name, category) {
@@ -120,7 +147,7 @@ function createSubcategories() {
 }
 
 function createEntryTable() {
-    sql("CREATE TABLE entries (nr INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, datestamp DATE NOT NULL, money INT, notes TEXT, lastChanged TIMESTAMP);");
+    sql("CREATE TABLE entries (nr INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, datestamp DATE NOT NULL, money INT, notes TEXT, lastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP);");
 }
 
 function reset() {
@@ -161,6 +188,7 @@ function sql(query, parameter) {
     } catch(err) {
         console.log("ERROR: Could not execute: \"" + query + "\" with parameter: " + JSON.stringify(parameter));
         console.log("  " + err)
+        return false
     }
     //console.log("Query: " + query)
     //console.log("Rows: " + JSON.stringify(rows))
