@@ -15,8 +15,6 @@ Page {
         for (var i in categories) {
             model.push(categories[i].name)
         }
-        //repeater.model = model
-        //console.log(JSON.stringify(categories))
     }
 
     function _chosen(text) {

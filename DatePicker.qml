@@ -253,8 +253,6 @@ Dialog{
                     anchors.right: parent.right
                     height: parent.height
 
-                    Component.onCompleted: console.log(parent.height)
-
                     delegate: Text {
                         id: label
                         text: modelData

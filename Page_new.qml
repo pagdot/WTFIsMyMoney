@@ -28,6 +28,8 @@ Page {
             });
         }
         page_main.categories = categories
+        page_content.datum = new Date;
+        page_content.money = 0.0
     }
 
     function cancel() {

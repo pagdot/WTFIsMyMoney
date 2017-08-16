@@ -26,8 +26,15 @@ Page {
         model: page.model
 
         onAccepted: {
-            page._chosen(displayText)
-            page.model.push(displayText)
+            if (editText === "") {
+                return
+            }
+
+            page._chosen(editText)
+            var tmp = page.model
+            tmp.push(editText)
+            page.model = tmp
+            displayText = tmp[tmp.length-1]
         }
         onActivated: page._chosen(displayText)
 

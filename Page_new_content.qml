@@ -6,7 +6,7 @@ Page {
     id: page
 
     property date datum: new Date()
-    property int money: 0
+    property double money: 0
 
     signal done
 
@@ -77,7 +77,14 @@ Page {
             anchors.right: parent.right
             anchors.margins: 50
             value: money
-            onValueChanged: money = value
+            snapMode: Dial.SnapAlways
+            stepSize: 0.5
+
+            onValueChanged: {
+                if (pressed) {
+                    money = value
+                }
+            }
         }
 
 
@@ -85,11 +92,12 @@ Page {
             focus: false
             anchors.top: parent.top
             anchors.left: parent.left
-            width: Math.max(bt_plus.width, bt_minus.width)
-            text: focus ? money : money + " €"
-            validator: IntValidator{bottom: 0}
-            onTextEdited: money = text
+            width: 60
+            text: focus ? (money + "").replace('.', ',') : (money + "").replace('.', ',') + " €"
+            validator: DoubleValidator{bottom: 0.0; decimals: 2}
+            onTextEdited: money = parseFloat(text.replace(',', '.'));
             onEditingFinished: focus = false
+            inputMethodHints: Qt.ImhDigitsOnly
         }
 
         Button {
@@ -105,9 +113,9 @@ Page {
             id: bt_minus
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            text: "+5 €"
+            text: "-5 €"
 
-            onClicked: money = money - 5
+            onClicked: money = money >= 5 ? money - 5 : 0
         }
     }
 
