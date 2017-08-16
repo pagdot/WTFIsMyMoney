@@ -20,6 +20,10 @@ var defaultCategories = [
 ]
 
 function getDB() {
+    if (!localStorage) {
+        return false;
+    }
+
     try {
         var db = localStorage.openDatabaseSync("financeData", "", "", 4096);
     } catch (err) {
@@ -90,6 +94,28 @@ function getSubcategories(category) {
     return subcategories
 }
 
+function getEntries(count) {
+    var rows;
+    if (count) {
+        rows = sql( "SELECT C.name AS category, S.name AS subcategory, datestamp, money, notes\n" +
+                    "FROM entries, categories C, subcategories S\n" +
+                    "WHERE (category = S.nr) AND (S.catNr = C.nr)\n" +
+                    "ORDER BY datestamp DESC\n" +
+                    "LIMIT 10")
+    } else {
+        rows = sql( "SELECT C.name AS category, S.name AS subcategory, datestamp, money, notes\n" +
+                    "FROM entries, categories C, subcategories S\n" +
+                    "WHERE (category = S.nr) AND (S.catNr = C.nr)\n" +
+                    "ORDER BY datestamp DESC")
+    }
+    for (var i in rows) {
+        rows[i].datestamp = new Date(rows[i].datestamp)
+        rows[i].money = rows[i].money / 100
+    }
+
+    return rows;
+}
+
 function storeEntry(main, sub, date, money, note) {
     var cats = getCategories()
     var found = false;
@@ -121,7 +147,7 @@ function storeEntry(main, sub, date, money, note) {
       + "SELECT S.nr, ?, ?, ? FROM (\n"
       +     "SELECT S.nr FROM subcategories S \n"
       +     "INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n"
-      + ") S;", [dateToISOString(date), money, note, main, sub]);
+      + ") S;", [dateToISOString(date), parseInt(money * 100), note, main, sub]);
     return ret === false ? false : true;
 }
 
