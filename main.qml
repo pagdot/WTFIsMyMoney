@@ -241,7 +241,7 @@ ApplicationWindow {
     */
 
     onClosing: {
-        if (Qt.platform.os == "android") {
+        if (Qt.platform.os === "android") {
             if (view_stack.depth <= 1) {
                 close.accepted = true
             } else {

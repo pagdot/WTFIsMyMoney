@@ -94,12 +94,13 @@ Page {
         id: pageIndicator_new
         count: view_new_swipe.count
         currentIndex: view_new_swipe.currentIndex
-        anchors.bottom: button_new_cancel.top
+        anchors.bottom: button_new_cancel.visible ? button_new_cancel.top : parent.bottom
         anchors.bottomMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
     }
     Button {
         id: button_new_cancel
+        visible: Qt.platform.os !== "android"
         text: "Abbrechen"
         anchors.bottom: parent.bottom
         width: parent.width
