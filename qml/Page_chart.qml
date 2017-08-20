@@ -13,6 +13,9 @@ Page {
     property date start: new Date()
     property date end: new Date()
 
+    property var type: "category"
+    property var category: ""
+
     property bool init: false
 
     function reset() {
@@ -20,6 +23,7 @@ Page {
         tmp.setMonth(tmp.getMonth() - 1)
         start = tmp
         end = new Date()
+        type = "category"
     }
 
     function cancel() {
@@ -32,8 +36,14 @@ Page {
     onInitChanged: updateChart()
 
     function updateChart() {
+        var values;
         if (init) {
-            var values = Db.getMoneyPerCategory(start, end)
+            if (type === "category") {
+                values = Db.getMoneyPerCategory(start, end)
+            } else if (type === "subcategory") {
+                values = getMoneyPerSubcategory(category, start, end)
+            }
+
             var other = 0;
             pieSeries.clear()
             for (var i in values) {
@@ -79,7 +89,6 @@ Page {
         anchors.fill: parent
         anchors.topMargin: dateRow.height
         anchors.bottomMargin: button_back.visible ? button_back.height : 0
-        //theme: ChartView.ChartThemeBrownSand
         antialiasing: true
 
 
@@ -88,8 +97,11 @@ Page {
             id: pieSeries
             onSliceAdded: {
                 slice.color = Material.color(Material.Green, shades[count - 1])
-                //slice.labelVisible = true
-                //slice.labelPosition = PieSlice.LabelInsideHorizontal
+                slice.onClicked = function() {
+                    category = slice.label
+                    type = "subcategory"
+                    updateChart()
+                }
             }
         }
     }

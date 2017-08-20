@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>add.svg</file>
+        <file>chevron-left.svg</file>
+        <file>chevron-right.svg</file>
+    </qresource>
+</RCC>

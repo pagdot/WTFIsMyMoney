@@ -131,6 +131,19 @@ function getMoneyPerCategory(start, end) {
     return rows
 }
 
+function getMoneyPerSubcategory(category, start, end) {
+    var subcategories = [];
+    var rows = sql("SELECT S.name, SUM(money) AS money\n" +
+                   "FROM entries E, subcategories S, categories C\n" +
+                   "WHERE (E.category = S.nr) AND (S.catNr = C.nr) AND (C.name = ?)\n" +
+                   "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
+                   "GROUP BY S.name", [category, dateToISOString(start), dateToISOString(end)])
+    for (var i in rows) {
+        rows[i].money = rows[i].money //* 100
+    }
+    return rows
+}
+
 function storeEntry(main, sub, date, money, note) {
     var cats = getCategories()
     var found = false;
