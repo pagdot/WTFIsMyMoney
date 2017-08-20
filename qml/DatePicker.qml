@@ -115,13 +115,13 @@ Dialog{
 
                     Button {
                         anchors.verticalCenter: parent.verticalCenter
-                        background: Image {source: "icons/chevron-left.svg"; height: 20; width: 20; anchors.centerIn: parent}
+                        background: Image {source: "chevron-left.svg"; height: 20; width: 20; anchors.centerIn: parent}
                         onClicked: listview.decrementCurrentIndex()
                         Layout.alignment: Qt.AlignLeft
                     }
                     Button {
                         anchors.verticalCenter: parent.verticalCenter
-                        background: Image {source: "icons/chevron-right.svg"; height: 20; width: 20; anchors.centerIn: parent}
+                        background: Image {source: "chevron-right.svg"; height: 20; width: 20; anchors.centerIn: parent}
                         onClicked: listview.incrementCurrentIndex()
                         Layout.alignment: Qt.AlignRight
                     }

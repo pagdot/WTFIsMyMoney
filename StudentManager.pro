@@ -5,13 +5,11 @@ CONFIG += c++11
 
 SOURCES += main.cpp
 
-RESOURCES += qml.qrc \
-    icons.qrc \
-    qml/qml.qrc \
+RESOURCES += qml/qml.qrc \
     icons/icons.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+QML_IMPORT_PATH = qml qml\jbQuick\Charts
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =

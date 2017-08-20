@@ -96,7 +96,7 @@ Page {
 
         background: Rectangle {
             Image {
-                source: "icons/add.svg"
+                source: "add.svg"
                 anchors.fill: parent
                 anchors.margins: (parent.width - 24)/2
                 ColorOverlay {

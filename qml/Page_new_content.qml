@@ -21,7 +21,7 @@ Page {
 
             background: Image {
                 anchors.centerIn: parent
-                source: "icons/chevron-left.svg"
+                source: "chevron-left.svg"
                 width: 24; height: 24
             }
 
@@ -48,7 +48,7 @@ Page {
 
             background: Image {
                 anchors.centerIn: parent
-                source: "icons/chevron-right.svg"
+                source: "chevron-right.svg"
                 width: 24; height: 24
             }
 
