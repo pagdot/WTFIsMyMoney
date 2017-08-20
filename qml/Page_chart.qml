@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
 import QtCharts 2.0
 import QtQuick.Controls.Material 2.2
+import "./Charts"
 
 import "database.js" as Db
 
@@ -37,6 +38,11 @@ Page {
 
     function updateChart() {
         var values;
+        var shades = [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
+
+        //console.log(JSON.stringify(chart.chartData))
+        //console.log(JSON.stringify(chart.chartData.datasets[0]))
+
         if (init) {
             if (type === "category") {
                 values = Db.getMoneyPerCategory(start, end)
@@ -45,17 +51,22 @@ Page {
             }
 
             var other = 0;
-            pieSeries.clear()
+            chart.chartData.datasets[0].backgroundColor = []
+            chart.chartData.datasets[0].data = []
+            chart.chartData.labels = []
             for (var i in values) {
                 if ((values.length > 10) && (i >= 10)) {
                     other += values[i].money
                 } else {
-                    pieSeries.append(values[i].name, values[i].money)
+                    chart.chartData.datasets[0].backgroundColor.push(Material.color(Material.Green, shades[i]))
+                    chart.chartData.datasets[0].data.push(values[i].money)
+                    chart.chartData.labels.push(values[i].name)
                 }
             }
             if (values.length > 10) {
-                pieSeries.append("Anderes", other)
+                //pieSeries.append("Anderes", other)
             }
+            //chart.chartData = chartData
         }
     }
 
@@ -84,26 +95,23 @@ Page {
         }
     }
 
-    ChartView {
-        id: chart
-        anchors.fill: parent
-        anchors.topMargin: dateRow.height
-        anchors.bottomMargin: button_back.visible ? button_back.height : 0
-        antialiasing: true
+    Chart {
+      id: chart;
+      anchors.fill: parent
+      anchors.topMargin: dateRow.height
+      anchors.bottomMargin: button_back.visible ? button_back.height : 0
 
+      function randomScalingFactor() {
+          return Math.round(Math.random() * 100);
+      }
 
-        PieSeries {
-            property var shades: [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
-            id: pieSeries
-            onSliceAdded: {
-                slice.color = Material.color(Material.Green, shades[count - 1])
-                slice.onClicked = function() {
-                    category = slice.label
-                    type = "subcategory"
-                    updateChart()
-                }
-            }
-        }
+      chartData: {
+          "datasets": [{
+                           "data": [],
+                           "backgroundColor": [],
+                       }],
+                  "labels": []
+      }
     }
 
     DatePicker {
