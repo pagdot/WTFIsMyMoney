@@ -8,6 +8,7 @@ import QtQuick.Controls.Material 2.2
 Dialog{
     id: dialog
     property date selectedDate: new Date()
+    //onSelectedDateChanged: console.log(dialog.objectName + " sel: " + selectedDate)
 
     standardButtons: Dialog.Ok | Dialog.Cancel
 
@@ -82,6 +83,7 @@ Dialog{
         StackView {
             id: stack
             property date tmp_date: selectedDate
+            //onTmp_dateChanged: console.log(dialog.objectName + " tmp: " + tmp_date)
 
             initialItem: calendar
 
@@ -203,8 +205,9 @@ Dialog{
                                 font: grid.font
                                 width: 32
                                 height: 32
+                                checked: (stack.tmp_date.getDate() === model.day) && (stack.tmp_date.getFullYear() === model.year) && (stack.tmp_date.getMonth() === model.month)
 
-                                Component.onCompleted: checked = (stack.tmp_date.getDate() === model.day) && (stack.tmp_date.getFullYear() === model.year) && (stack.tmp_date.getMonth() === model.month) ? true : false
+                                //Component.onCompleted: checked = (stack.tmp_date.getDate() === model.day) && (stack.tmp_date.getFullYear() === model.year) && (stack.tmp_date.getMonth() === model.month) ? true : false
 
                                 indicator: Rectangle {
                                     anchors.fill: parent
@@ -223,7 +226,7 @@ Dialog{
                                     z: 1
                                 }
 
-                                onCheckedChanged: {
+                                onClicked: {
                                     if (checked) {
                                         stack.tmp_date = model.date
                                     }
