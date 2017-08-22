@@ -9,4 +9,5 @@ QtObject {
     property string polar: "polar"
     property string radar: "radar"
     property string scatter: "scatter"
+    property string pie: "pie"
 }

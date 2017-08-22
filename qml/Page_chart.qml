@@ -28,11 +28,18 @@ Page {
     }
 
     function cancel() {
-        view_stack.pop()
+        if (type === "subcategory") {
+            type = "category"
+            category = ""
+            updateChart()
+        } else {
+            view_stack.pop()
+        }
     }
 
     onStartChanged: updateChart()
     onEndChanged: updateChart()
+    onTypeChanged: updateChart()
 
     onInitChanged: updateChart()
 
@@ -40,14 +47,11 @@ Page {
         var values;
         var shades = [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
 
-        //console.log(JSON.stringify(chart.chartData))
-        //console.log(JSON.stringify(chart.chartData.datasets[0]))
-
         if (init) {
             if (type === "category") {
                 values = Db.getMoneyPerCategory(start, end)
             } else if (type === "subcategory") {
-                values = getMoneyPerSubcategory(category, start, end)
+                values = Db.getMoneyPerSubcategory(category, start, end)
             }
 
             var other = 0;
@@ -64,9 +68,11 @@ Page {
                 }
             }
             if (values.length > 10) {
-                //pieSeries.append("Anderes", other)
+                chart.chartData.datasets[0].backgroundColor.push(Material.color(Material.Green, shades[10]))
+                chart.chartData.datasets[0].data.push(other)
+                chart.chartData.labels.push("Anderes")
             }
-            //chart.chartData = chartData
+            chart.update()
         }
     }
 
@@ -96,22 +102,39 @@ Page {
     }
 
     Chart {
-      id: chart;
-      anchors.fill: parent
-      anchors.topMargin: dateRow.height
-      anchors.bottomMargin: button_back.visible ? button_back.height : 0
+        id: chart;
+        anchors.fill: parent
+        anchors.topMargin: dateRow.height
+        anchors.bottomMargin: button_back.visible ? button_back.height : 0
+        chartType: ChartType.pie;
 
-      function randomScalingFactor() {
-          return Math.round(Math.random() * 100);
-      }
+        chartData: {
+            "datasets": [{
+                             "data": [],
+                             "backgroundColor": [],
+                         },],
+                    "labels": []
+        }
 
-      chartData: {
-          "datasets": [{
-                           "data": [],
-                           "backgroundColor": [],
-                       }],
-                  "labels": []
-      }
+        chartOptions: {
+            "maintainAspectRatio": false,
+            "defaultColor": 'rgba(0,0,0,0.1)',
+            "defaultFontFamily": defaultFontFamily,
+            "defaultFontSize": defaultFontSize,
+            "events": ['click']
+        }
+
+        onClick: {
+            var activeElement = getElementAtEvent(evt);
+            if (activeElement[0]) {
+                if (type === "category"){
+                    console.log("active: " + activeElement[0]._view.label)
+                    category = activeElement[0]._view.label
+                    type = "subcategory"
+                    updateChart()
+                }
+            }
+        }
     }
 
     DatePicker {

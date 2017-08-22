@@ -18,6 +18,7 @@ Page {
         view_new_swipe.setCurrentIndex(0)
         main_category = ""
         sub_category = ""
+        categories = []
         view_new_swipe.removeItem(2)
         view_new_swipe.removeItem(1)
         var tmp = Db.getCategories();

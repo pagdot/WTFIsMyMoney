@@ -14,19 +14,51 @@ Page {
 
     onInitChanged: updateEntries()
 
+    function getWeek(date) {
+        var onejan = new Date(date.getFullYear(), 0, 1);
+        return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+    }
+
     function updateEntries() {
         if (init){
+            var date = new Date()
             list.model = Db.getEntries(20)
+            lbmonth.text = Qt.locale().monthName(date.getMonth(), Locale.LongFormat) + ":"
+            lbweek.text = "Woche " + getWeek(date) + ":"
+            var start = new Date(date);
+            start.setDate(start.getDate() - start.getDay() + 1)
+            var end = new Date(start)
+            end.setDate(end.getDate() + 6)
+            week.text = Db.getSum(start, end) + " €"
+            start = new Date(date)
+            start.setDate(1)
+            end = new Date(date)
+            end.setMonth(end.getMonth() + 1)
+            end.setDate(0)
+            month.text = Db.getSum(start, end) + " €"
         }
+    }
+
+    GridLayout {
+        id: grid
+        columns: 2
+        columnSpacing: 10
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        Label {id: lbmonth; Layout.alignment: Qt.AlignRight}
+        Label {id: month}
+        Label {id: lbweek; Layout.alignment: Qt.AlignRight}
+        Label {id: week}
     }
 
     ListView {
         id: list
         anchors.fill: parent
         anchors.margins: 10
-        anchors.bottomMargin: anchors.margins + bottomBar.height
+        anchors.bottomMargin: bottomBar.height
+        anchors.topMargin: anchors.margins + grid.height
         spacing: 10
-
+        clip: true
 
         delegate: Item {
             width: list.width
@@ -89,7 +121,7 @@ Page {
         anchors.verticalCenter: bottomBar.top
         anchors.margins: 16
         onClicked: {
-            var item = view_stack.push("Page_new.qml")
+            var item = view_stack.push(page_new)
             item.reset()
             focus = false
         }
@@ -142,7 +174,7 @@ Page {
             elide: Text.ElideRight
         }
         onClicked: {
-            var item = view_stack.push("Page_chart.qml")
+            var item = view_stack.push(page_chart)
             item.reset()
             focus = false
         }

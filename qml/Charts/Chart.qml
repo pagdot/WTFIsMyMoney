@@ -12,7 +12,25 @@ Item {
     property string chartType: ChartType.doughnut;
     property var model;
     property var chartData;
+    property var chartOptions: {
+        "maintainAspectRatio": false,
+        "defaultColor": 'rgba(0,0,0,0.1)',
+        "defaultFontFamily": defaultFontFamily,
+        "defaultFontSize": defaultFontSize,
+    }
 
+    signal click(var evt)
+
+    function getElementAtEvent(evt) {
+        return canvas.chartInstance.getElementAtEvent(evt)
+    }
+
+    function update() {
+        if (canvas.chartInstance) {
+            canvas.chartInstance.update()
+            canvas.requestPaint()
+        }
+    }
 
     Canvas{
         id: canvas
@@ -70,17 +88,25 @@ Item {
             }
         }
 
+        function buildOptions(){
+            if(chartOptions)
+                return;
+
+            chartOptions = {
+                maintainAspectRatio: false,
+                defaultColor: 'rgba(0,0,0,0.1)',
+                defaultFontFamily: defaultFontFamily,
+                defaultFontSize: defaultFontSize,
+            }
+        }
+
         onPaint: {
             if(!canvas.chartInstance){
                 buildData();
-                canvas.chartInstance = new ChartJs.Chart( canvas, { options : {
-                                                  maintainAspectRatio: false,
-                                                  defaultColor: 'rgba(0,0,0,0.1)',
-                                                  defaultFontFamily: defaultFontFamily,
-                                                  defaultFontSize: defaultFontSize,
-                                              },
+                canvas.chartInstance = new ChartJs.Chart( canvas, {
                                               type: chartType,
-                                              data: chartData
+                                              data: chartData,
+                                              options: chartOptions,
                                           });
                 chartAnimator.start();
             }
@@ -127,6 +153,8 @@ Item {
 
         onClicked: {
             if(canvas.click){
+                chart.click({type: 'click', clientX: mouse.x,
+                                 clientY: mouse.y, srcElement: canvas})
                 canvas.click({type: 'click', clientX: mouse.x,
                                  clientY: mouse.y, srcElement: canvas});
                 canvas.requestPaint();

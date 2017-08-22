@@ -126,7 +126,7 @@ function getMoneyPerCategory(start, end) {
                    "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
                    "GROUP BY C.name", [dateToISOString(start), dateToISOString(end)])
     for (var i in rows) {
-        rows[i].money = rows[i].money //* 100
+        rows[i].money = rows[i].money / 100
     }
     return rows
 }
@@ -139,9 +139,17 @@ function getMoneyPerSubcategory(category, start, end) {
                    "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
                    "GROUP BY S.name", [category, dateToISOString(start), dateToISOString(end)])
     for (var i in rows) {
-        rows[i].money = rows[i].money //* 100
+        rows[i].money = rows[i].money / 100
     }
     return rows
+}
+
+function getSum(start, end) {
+    var rows = sql("SELECT SUM(E.money) AS money\n" +
+                   "FROM entries E\n" +
+                   "WHERE (E.datestamp >= ?) AND (E.datestamp <= ?)",
+                   [dateToISOString(start), dateToISOString(end)])
+    return rows[0].money / 100
 }
 
 function storeEntry(main, sub, date, money, note) {
