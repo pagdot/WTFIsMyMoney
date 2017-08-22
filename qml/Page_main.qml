@@ -23,31 +23,29 @@ Page {
         if (init){
             var date = new Date()
             list.model = Db.getEntries(20)
-            lbmonth.text = Qt.locale().monthName(date.getMonth(), Locale.LongFormat) + ":"
-            lbweek.text = "Woche " + getWeek(date) + ":"
+            month.text = Qt.locale().monthName(date.getMonth(), Locale.LongFormat) + ":  "
+            week.text = "Woche " + getWeek(date) + ":  "
             var start = new Date(date);
             start.setDate(start.getDate() - start.getDay() + 1)
             var end = new Date(start)
             end.setDate(end.getDate() + 6)
-            week.text = Db.getSum(start, end) + " €"
+            week.text += Db.getSum(start, end) + " €"
             start = new Date(date)
             start.setDate(1)
             end = new Date(date)
             end.setMonth(end.getMonth() + 1)
             end.setDate(0)
-            month.text = Db.getSum(start, end) + " €"
+            month.text += Db.getSum(start, end) + " €"
         }
     }
 
     GridLayout {
         id: grid
         columns: 2
-        columnSpacing: 10
+        columnSpacing: 20
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        Label {id: lbmonth; Layout.alignment: Qt.AlignRight}
         Label {id: month}
-        Label {id: lbweek; Layout.alignment: Qt.AlignRight}
         Label {id: week}
     }
 
