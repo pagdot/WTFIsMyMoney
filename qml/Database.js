@@ -103,7 +103,7 @@ function getEntries(count) {
                     "FROM entries, categories C, subcategories S\n" +
                     "WHERE (category = S.nr) AND (S.catNr = C.nr)\n" +
                     "ORDER BY datestamp DESC\n" +
-                    "LIMIT 10")
+                    "LIMIT ?", [count])
     } else {
         rows = sql( "SELECT C.name AS category, S.name AS subcategory, datestamp, money, notes\n" +
                     "FROM entries, categories C, subcategories S\n" +
@@ -144,12 +144,30 @@ function getMoneyPerSubcategory(category, start, end) {
     return rows
 }
 
+function getAll() {
+    var subcategories = [];
+    var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes\n" +
+                   "FROM entries E, subcategories S, categories C\n" +
+                   "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
+                   "ORDER BY E.datestamp ASC\n")
+
+    for (var i in rows) {
+        rows[i].money = rows[i].money / 100
+    }
+    return rows
+}
+
 function getSum(start, end) {
     var rows = sql("SELECT SUM(E.money) AS money\n" +
                    "FROM entries E\n" +
                    "WHERE (E.datestamp >= ?) AND (E.datestamp <= ?)",
                    [dateToISOString(start), dateToISOString(end)])
     return rows[0].money / 100
+}
+
+function getEntryCount() {
+    var rows = sql("SELECT COUNT(*) AS cnt FROM entries")
+    return rows[0].cnt
 }
 
 function storeEntry(main, sub, date, money, note) {

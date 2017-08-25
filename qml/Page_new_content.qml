@@ -5,6 +5,8 @@ import QtQuick.Controls 2.2
 Page {
     id: page
 
+    title: "Daten"
+
     property date datum: new Date()
     property double money: 0
 

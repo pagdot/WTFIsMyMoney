@@ -11,14 +11,9 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: "Studenten Finanz - " + view_stack.currentItem.title
+    title: view_stack.currentItem.title === "" ? Qt.application.name : Qt.application.name + " - " + view_stack.currentItem.title
 
     id: window
-
-    header: Label {
-            text: view_stack.currentItem.title
-            horizontalAlignment: Text.AlignHCenter
-    }
 
     StackView {
         id: view_stack
@@ -46,6 +41,10 @@ ApplicationWindow {
     Page_chart{
         id: page_chart
         visible: false
+    }
+
+    Component.onCompleted: {
+        Qt.application.displayName = "StudentenManager"
     }
 
     onClosing: {

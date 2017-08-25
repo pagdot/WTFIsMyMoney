@@ -3,5 +3,6 @@
         <file>add.svg</file>
         <file>chevron-left.svg</file>
         <file>chevron-right.svg</file>
+        <file>more-vert.svg</file>
     </qresource>
 </RCC>

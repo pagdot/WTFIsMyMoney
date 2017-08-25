@@ -11,6 +11,7 @@ import "database.js" as Db
 Page {
     id: page
 
+    title: "Statistik"
     property date start: new Date()
     property date end: new Date()
 
@@ -76,10 +77,30 @@ Page {
         }
     }
 
+    Rectangle {
+        id: bar
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 56
+
+        Text {
+            text: page.title
+            anchors.left: parent.left
+            anchors.leftMargin: 72
+            anchors.baseline: parent.bottom
+            anchors.baselineOffset: -20
+            font.pixelSize: 20
+            color: "white"
+        }
+
+        color: Material.primary
+    }
+
     RowLayout {
         id: dateRow
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+        anchors.top: bar.bottom
         Button {
             id: bt_startDate
             text: Qt.locale().monthName(start.getMonth(), Locale.ShortFormat) + ", " + start.getDate() + " " + start.getFullYear()
@@ -104,7 +125,7 @@ Page {
     Chart {
         id: chart;
         anchors.fill: parent
-        anchors.topMargin: dateRow.height
+        anchors.topMargin: dateRow.height + bar.height
         anchors.bottomMargin: button_back.visible ? button_back.height : 0
         chartType: ChartType.pie;
 

@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
+import QtQuick.Controls.Material 2.2
 
 import "database.js" as Db
 
@@ -37,10 +38,30 @@ Page {
         dialog.open()
     }
 
+    Rectangle {
+        id: bar
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 56
+
+        Text {
+            text: page.title
+            anchors.left: parent.left
+            anchors.leftMargin: 72
+            anchors.baseline: parent.bottom
+            anchors.baselineOffset: -20
+            font.pixelSize: 20
+            color: "white"
+        }
+
+        color: Material.primary
+    }
+
 
     SwipeView {
         id: view_new_swipe
-        anchors.top: parent.top
+        anchors.top: bar.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: pageIndicator_new.top

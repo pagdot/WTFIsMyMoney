@@ -1,23 +1,19 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
-#include <iostream>
-#include <QStringList>
-#include <QString>
+
+#include "fileio.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
+    qmlRegisterType<FileIO, 1>("FileIO", 1, 0, "FileIO");
+
     QQmlApplicationEngine engine;
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
-
-    auto imports = engine.importPathList();
-    for (int i = 0; i < imports.length(); i++) {
-        std::cout << "   " << imports.at(i).toStdString() << std::endl;
-    }
 
     return app.exec();
 }

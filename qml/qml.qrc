@@ -60,5 +60,7 @@
         <file>Charts/Chart.qml</file>
         <file>Charts/ChartType.qml</file>
         <file>Charts/qmldir</file>
+        <file>FileSave.qml</file>
+        <file>FileOpen.qml</file>
     </qresource>
 </RCC>

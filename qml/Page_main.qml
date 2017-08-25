@@ -4,6 +4,7 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.LocalStorage 2.0
+import FileIO 1.0
 
 import "database.js" as Db
 
@@ -11,6 +12,7 @@ Page {
     id: page_main
 
     property bool init: false
+    property int entryCount: 0
 
     onInitChanged: updateEntries()
 
@@ -36,6 +38,94 @@ Page {
             end.setMonth(end.getMonth() + 1)
             end.setDate(0)
             month.text += Db.getSum(start, end) + " €"
+            entryCount = Db.getEntryCount()
+        }
+    }
+
+    function createCSV() {
+        var data = Db.getAll();
+        var csv = "date,money,subcategory,category,notes\r\n";
+        for (var i in data) {
+            csv += data[i].datestamp + "," + data[i].money + "," + data[i].subcategory.replace(",", "") + "," + data[i].category.replace(",", "") + "," + data[i].notes + "\r\n"
+        }
+        return csv;
+    }
+
+    Rectangle {
+        id: bar
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 56
+
+        Button {
+            id: bt_menu
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 16
+            width: height
+            background: Image {
+                source: "more-vert.svg"
+            }
+            onClicked: menu.open()
+        }
+
+        Text {
+            text: Qt.application.displayName
+            anchors.left: parent.left
+            anchors.leftMargin: 72
+            anchors.baseline: parent.bottom
+            anchors.baselineOffset: -20
+            font.pixelSize: 20
+            color: "white"
+        }
+
+        color: Material.primary
+
+        Menu {
+            id: menu
+            x: bt_menu.x + bt_menu.width - menu.width + bt_menu.anchors.margins / 2
+            y: bt_menu.y - bt_menu.anchors.margins/2
+
+            MenuItem {
+                text: "Export"
+                onTriggered: {
+                    fileSave.open();
+                }
+
+                FileSave {
+                    id: fileSave
+                    visible: false
+                    onAccepted: {
+                        console.log("fileUrl: " + fileUrl)
+                        file.write(fileUrl, createCSV())
+                    }
+                }
+            }
+            MenuItem {
+                text: "Import"
+                onTriggered: {
+                    fileOpen.open();
+                }
+
+                FileOpen {
+                    id: fileOpen
+                    visible: false
+
+                    onAccepted: {
+                        console.log("file: " + fileUrl)
+                    }
+                }
+            }
+            MenuItem {
+                text: "Einstellungen"
+            }
+
+            FileIO {
+                id: file
+                onError: console.log(msg)
+            }
         }
     }
 
@@ -43,8 +133,9 @@ Page {
         id: grid
         columns: 2
         columnSpacing: 20
-        anchors.top: parent.top
+        anchors.top: bar.bottom
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.margins: 5
         Label {id: month}
         Label {id: week}
     }
@@ -54,7 +145,7 @@ Page {
         anchors.fill: parent
         anchors.margins: 10
         anchors.bottomMargin: bottomBar.height
-        anchors.topMargin: anchors.margins + grid.height
+        anchors.topMargin: anchors.margins + grid.height + bar.height
         spacing: 10
         clip: true
 
@@ -106,6 +197,16 @@ Page {
                 anchors.fill: parent
                 border.color: "black"
                 radius: 10
+            }
+        }
+        footer: Button {
+            text: "lade weitere"
+            width: list.width
+            height: 88
+            flat: true
+            visible: entryCount > list.count
+            onClicked: {
+                list.model = Db.getEntries(list.count + 20)
             }
         }
     }
