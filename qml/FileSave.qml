@@ -31,11 +31,10 @@ Item {
         sidebarVisible: control.sidebarVisible
         visible: control.visible
 
-        onFolderChanged: control.folder = folder
-        onFileUrlChanged: control.fileUrl = fileUrl
         onSelectedNameFilterChanged: control.selectedNameFilter = selectedNameFilter
 
         onAccepted: {
+            control.folder = folder
             control.fileUrl = fileUrl;
             control.accepted()
         }

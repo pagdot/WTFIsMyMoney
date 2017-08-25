@@ -32,12 +32,13 @@ Item {
         visible: control.visible
         selectMultiple: control.selectMultiple
         selectFolder: control.selectFolder
-
-        onFolderChanged: control.folder = folder
-        onFileUrlChanged: control.fileUrl = fileUrl
         onSelectedNameFilterChanged: control.selectedNameFilter = selectedNameFilter
 
-        onAccepted: control.accepted()
+        onAccepted: {
+            control.folder = folder
+            control.fileUrl = fileUrl
+            control.accepted()
+        }
         onRejected: control.rejected()
     }
 }

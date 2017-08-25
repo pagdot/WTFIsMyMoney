@@ -60,6 +60,20 @@ function init(_localStorage) {
     }
 }
 
+function clearDb() {
+    sql("DROP TABLE categories")
+    sql("DROP TABLE subcategories")
+    sql("DROP TABLE entries")
+
+    init(localStorage)
+}
+
+function importEntries(entries) {
+    for (var i in entries) {
+        storeEntry(entries[i].category, entries[i].subcategory, entries[i].date, entries[i].money, entries[i].note)
+    }
+}
+
 function getCategories() {
     var categories = []
     var rows = sql("SELECT * FROM categories");
@@ -257,6 +271,7 @@ function sql(query, parameter) {
     }
 
     var db = getDB();
+    if (!db) return [];
     var rows = [];
     try {
         db.transaction(function(tx) {
