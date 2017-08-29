@@ -60,7 +60,11 @@
         <file>Charts/Chart.qml</file>
         <file>Charts/ChartType.qml</file>
         <file>Charts/qmldir</file>
-        <file>FileSave.qml</file>
+        <file>+android/FileOpen.qml</file>
+        <file>+android/FileSave.qml</file>
+        <file>+windows/FileOpen.qml</file>
+        <file>+windows/FileSave.qml</file>
         <file>FileOpen.qml</file>
+        <file>FileSave.qml</file>
     </qresource>
 </RCC>

@@ -69,7 +69,6 @@ Page {
                 data.push(entry)
             }
         }
-        console.log("data: " + JSON.stringify(data))
         return data;
     }
 
