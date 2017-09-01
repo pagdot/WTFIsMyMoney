@@ -53,6 +53,7 @@ Page {
     function parseCSV(csv) {
         var data = []
         var cols = []
+        csv.replace("\r\n", "\n");
         var lines = csv.split("\n")
         for (var i in lines) {
             if (lines[i] === "") continue
@@ -60,7 +61,6 @@ Page {
             if (i === "0") {
                 cols = line
             } else {
-                console.log("line: " + JSON.stringify(line))
                 var entry = {}
                 for (var j in line) {
                     entry[cols[j]] = line[j]
@@ -112,6 +112,7 @@ Page {
             MenuItem {
                 text: "Export"
                 onTriggered: {
+                    fileSave.content = createCSV(Db.getAll());
                     fileSave.open();
                 }
 
@@ -119,8 +120,8 @@ Page {
                     id: fileSave
                     visible: false
                     onAccepted: {
-                        console.log("fileUrl: " + fileUrl)
-                        file.write(fileUrl, createCSV(Db.getAll()))
+                        //console.log("fileUrl: " + fileUrl)
+                        //file.write(fileUrl, createCSV(Db.getAll()))
                     }
                 }
             }
@@ -135,10 +136,10 @@ Page {
                     visible: false
 
                     onAccepted: {
-                        console.log("fileUrl: " + fileUrl)
-                        var data = parseCSV(file.read(fileUrl))
+                        var data = parseCSV(fileOpen.content)
                         Db.clearDb()
                         Db.importEntries(data)
+                        updateEntries()
                     }
                 }
             }
@@ -182,6 +183,7 @@ Page {
                 anchors.fill: parent
                 anchors.leftMargin: 16
                 anchors.rightMargin: 16
+
                 Text{
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -231,6 +233,49 @@ Page {
             visible: entryCount > list.count
             onClicked: {
                 list.model = Db.getEntries(list.count + 20)
+            }
+        }
+
+
+        MouseArea {
+            anchors.fill: parent
+            onPressAndHold: {
+                //var item = list.itemAt(mouse.x, mouse.y)
+                var nr = list.indexAt(mouse.x, mouse.y)
+                contextMenu.nr = list.model[nr].nr
+                contextMenu.x = x + mouse.x - contextMenu.width / 2
+                contextMenu.y = y + mouse.y - contextMenu.height
+                contextMenu.open()
+            }
+        }
+
+        Menu {
+            id: contextMenu
+
+            property int nr: 0
+
+            MenuItem {
+                id: editEntry
+                text: "Bearbeiten"
+            }
+            MenuItem {
+                id: deleteEntry
+                text: "Löschen"
+
+                onTriggered: {
+                    deleteDialog.open()
+                }
+
+                Dialog {
+                    id: deleteDialog
+                    title: "Löschen bestätigen"
+                    standardButtons: Dialog.Ok | Dialog.Cancel
+
+                    onAccepted: {
+                        Db.deleteEntry(contextMenu.nr)
+                        updateEntries()
+                    }
+                }
             }
         }
     }

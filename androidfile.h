@@ -2,35 +2,32 @@
 #define ANDROIDFILE_H
 
 #include <QObject>
-#include <QUrl>
 #include <QAndroidActivityResultReceiver>
-#include <qDebug>
+#include <QAndroidJniObject>
+#include <QUrl>
+#include <QString>
 
-
-
-class Receiver : public QAndroidActivityResultReceiver {
-public:
-    Receiver() : QAndroidActivityResultReceiver() {}
-
-    virtual void handleActivityResult(int receiverRequestCode, int resultCode, const QAndroidJniObject &data) override {
-        QAndroidJniObject uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
-        qDebug() << uri.toString();
-    }
-};
-
-class AndroidFile : public QObject
+class AndroidFile : public QObject, QAndroidActivityResultReceiver
 {
     Q_OBJECT
 public:
     explicit AndroidFile(QObject *parent = nullptr);
 
-    Q_INVOKABLE QUrl fileOpen();
-    Q_INVOKABLE QUrl fileCreate();
+    Q_INVOKABLE void fileOpenDialog();
+    Q_INVOKABLE void fileCreateDialog();
+
+    Q_INVOKABLE static QString fileOpen(QUrl fileUrl);
+    Q_INVOKABLE static void fileCreate(QUrl fileUrl, QString content);
+
+    virtual void handleActivityResult(int receiverRequestCode, int resultCode, const QAndroidJniObject &data) override;
 
 protected:
-    Receiver m_receiver;
+
+private:
 
 signals:
+    void opened(QUrl fileUri);
+    void created(QUrl fileUri);
 
 public slots:
 };

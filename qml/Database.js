@@ -61,11 +61,13 @@ function init(_localStorage) {
 }
 
 function clearDb() {
-    sql("DROP TABLE categories")
-    sql("DROP TABLE subcategories")
-    sql("DROP TABLE entries")
+    sql("DELETE FROM categories")
+    sql("DELETE FROM subcategories")
+    sql("DELETE FROM entries")
 
-    init(localStorage)
+    createCategories()
+    createSubcategories()
+    createEntryTable()
 }
 
 function importEntries(entries) {
@@ -84,24 +86,23 @@ function getCategories() {
 }
 
 function getSubcategoriesOrderedPerUse(category) {
-    var rows = sql("SELECT COUNT(E.category) AS cnt, S.name\n"
-                 + "FROM entries E INNER JOIN (\n"
-                 +     "SELECT COUNT(*) AS cnt FROM entries\n"
-                 + ") cnt ON E.nr > (cnt.cnt - 20) INNER JOIN (\n"
-                 +     "SELECT S.nr FROM subcategories S, categories C\n"
-                 +     "WHERE (S.catNr = C.nr) AND (C.name = ?)\n"
-                 + ") Sub ON E.category = Sub.nr, subcategories S\n"
-                 + "WHERE E.category = S.nr\n"
-                 + "GROUP BY category ORDER BY cnt DESC", [category]);
+    var rows = sql("SELECT COUNT(E.category) AS cnt, S.name\n" +
+                   "FROM entries E INNER JOIN (\n" +
+                   "    SELECT COUNT(*) AS cnt FROM entries\n" +
+                   ") cnt ON E.nr > (cnt.cnt - 20) INNER JOIN (\n" +
+                   "    SELECT S.nr FROM subcategories S, categories C\n" +
+                   "    WHERE (S.catNr = C.nr) AND (C.name = ?)\n" +
+                   ") Sub ON E.category = Sub.nr, subcategories S\n" +
+                   "WHERE E.category = S.nr\n" +
+                   "GROUP BY category ORDER BY cnt DESC", [category]);
     console.log(JSON.stringify(rows))
 }
 
 function getSubcategories(category) {
     var subcategories = [];
-    var rows = sql("SELECT S.* FROM subcategories S\n"
-                 + "INNER JOIN categories C ON\n"
-                 + "(S.catNr = C.nr) AND (C.name = ?)", category)
-    //console.log(JSON.stringify(rows))
+    var rows = sql("SELECT S.* FROM subcategories S\n" +
+                   "INNER JOIN categories C ON\n" +
+                   "(S.catNr = C.nr) AND (C.name = ?)", category)
     for (var i in rows) {
         subcategories.push(rows[i].name)
     }
@@ -113,16 +114,16 @@ function getSubcategories(category) {
 function getEntries(count) {
     var rows;
     if (count) {
-        rows = sql( "SELECT C.name AS category, S.name AS subcategory, datestamp, money, notes\n" +
-                    "FROM entries, categories C, subcategories S\n" +
-                    "WHERE (category = S.nr) AND (S.catNr = C.nr)\n" +
-                    "ORDER BY datestamp DESC\n" +
+        rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes\n" +
+                    "FROM entries E, categories C, subcategories S\n" +
+                    "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
+                    "ORDER BY E.datestamp DESC\n" +
                     "LIMIT ?", [count])
     } else {
-        rows = sql( "SELECT C.name AS category, S.name AS subcategory, datestamp, money, notes\n" +
-                    "FROM entries, categories C, subcategories S\n" +
-                    "WHERE (category = S.nr) AND (S.catNr = C.nr)\n" +
-                    "ORDER BY datestamp DESC")
+        rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes\n" +
+                    "FROM entries E, categories C, subcategories S\n" +
+                    "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
+                    "ORDER BY E.datestamp DESC")
     }
     for (var i in rows) {
         rows[i].datestamp = new Date(rows[i].datestamp)
@@ -211,28 +212,34 @@ function storeEntry(main, sub, date, money, note) {
         }
     }
 
-    var ret = sql("INSERT INTO entries (category, datestamp, money, notes)\n"
-      + "SELECT S.nr, ?, ?, ? FROM (\n"
-      +     "SELECT S.nr FROM subcategories S \n"
-      +     "INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n"
-      + ") S;", [dateToISOString(date), parseInt(money * 100), note, main, sub]);
+    var ret = sql("INSERT INTO entries (category, datestamp, money, notes)\n" +
+                  "SELECT S.nr, ?, ?, ? FROM (\n" +
+                  "   SELECT S.nr FROM subcategories S \n" +
+                  "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +
+                  ") S;", [dateToISOString(date), parseInt(money * 100), note, main, sub]);
     return ret === false ? false : true;
 }
 
 function addSubcategory(name, category) {
-    sql("INSERT INTO subcategories (name, catNr) SELECT ?, nr FROM categories WHERE name = ?;", [name, category]);
+    sql("INSERT INTO subcategories (name, catNr)\n" +
+        "SELECT ?, nr FROM categories\n" +
+        "WHERE name = ?;", [name, category]);
 }
 
 
 function createCategories() {
-    sql("CREATE TABLE categories (nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);");
+    sql("CREATE TABLE IF NOT EXISTS categories (\n" +
+        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL\n" +
+        ");");
     for (var c in defaultCategories) {
         sql("INSERT INTO categories (name) VALUES (?)", [defaultCategories[c].name])
     }
 }
 
 function createSubcategories() {
-    sql("CREATE TABLE subcategories (nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, catNr INT NOT NULL);");
+    sql("CREATE TABLE IF NOT EXISTS subcategories (\n" +
+        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, catNr INT NOT NULL\n" +
+        ");");
     for (var c in defaultCategories) {
         for (var s in defaultCategories[c].sub) {
             addSubcategory(defaultCategories[c].sub[s], defaultCategories[c].name);
@@ -241,7 +248,11 @@ function createSubcategories() {
 }
 
 function createEntryTable() {
-    sql("CREATE TABLE entries (nr INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, datestamp DATE NOT NULL, money INT, notes TEXT, lastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP);");
+    sql("CREATE TABLE IF NOT EXISTS entries (\n" +
+        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, \n" +
+        "   datestamp DATE NOT NULL, money INT, notes TEXT, \n" +
+        "   lastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n" +
+        ");");
 }
 
 function reset() {
@@ -256,6 +267,11 @@ function reset() {
         console.log("Error: Could not delete tables: " + err)
     }
     init(localStorage)
+}
+
+function deleteEntry(nr) {
+    sql("DELETE FROM entries\n" +
+        "WHERE (nr = ?)", [nr])
 }
 
 function pad(number) {
@@ -285,8 +301,6 @@ function sql(query, parameter) {
         console.log("  " + err)
         return false
     }
-    //console.log("Query: " + query)
-    //console.log("Rows: " + JSON.stringify(rows))
     return rows;
 }
 

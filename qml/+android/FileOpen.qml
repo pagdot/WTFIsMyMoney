@@ -11,18 +11,27 @@ Item {
     property bool sidebarVisible : true
     property bool selectMultiple: false
     property bool selectFolder: false
+    property string content: ""
 
     signal accepted()
     signal rejected()
 
     function open() {
-        androidOpenDialog.open()
+        androidOpenDialog.fileOpenDialog()
+    }
+
+    function close() {
+
     }
 
     AndroidFile {
         id: androidOpenDialog
         function open() {
             fileOpen();
+        }
+        onOpened: {
+            control.content = fileOpen(fileUri);
+            accepted()
         }
     }
 }
