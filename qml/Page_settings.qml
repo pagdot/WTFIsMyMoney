@@ -8,6 +8,9 @@ import "database.js" as Db
 
 
 Page {
+    function cancel() {
+        view_stack.pop()
+    }
 
     Rectangle {
         id: bar
@@ -31,9 +34,9 @@ Page {
 
 
     ColumnLayout {
-        anchors.fill: parent
-        anchors.topMargin: bar.height
-        anchors.bottomMargin: button_back.visible ? button_back.height : 0
+        anchors.top: bar.bottom
+        anchors.bottom: button_back.visible ? button_back.top : parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
         ColumnLayout {
             Label {
                 text: "Daten:"

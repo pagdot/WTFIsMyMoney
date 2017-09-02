@@ -133,6 +133,40 @@ Page {
                     view_stack.push(page_settings)
                 }
             }
+
+            MenuItem {
+                text: "Über"
+                onTriggered: about.open()
+
+                Dialog {
+                    id: about
+                    parent: page_main
+//                    x: (page_main.width - width) /2
+//                    y: (page_main.height - height) /2
+                    margins: 40
+                    width: page_main.width - 2*margins
+                    height: page_main.height - 2*margins
+                    title: "Über"
+                    standardButtons: DialogButtonBox.Ok
+
+                    GridLayout {
+                        anchors.centerIn: parent
+                        columns: 2
+
+                        Label{text: "Author: "}
+                        Label{text: "Paul Götzinger"}
+
+                        Label{text: "Version: "}
+                        Label{text: Qt.application.version}
+
+                    }
+
+                    footer: DialogButtonBox {
+                        alignment: Qt.AlignHCenter
+                        visible: true
+                    }
+                }
+            }
         }
     }
 
@@ -342,7 +376,7 @@ Page {
         verticalOffset: 6
         radius: width / 2
         samples: 1 + radius * 2
-        opacity: 0.8
+        opacity: 0.6
         z:1
     }
 
