@@ -242,7 +242,7 @@ Page {
             onPressAndHold: {
                 //var item = list.itemAt(mouse.x, mouse.y)
                 var nr = list.indexAt(mouse.x, mouse.y)
-                contextMenu.nr = list.model[nr].nr
+                contextMenu.model = list.model[nr]
                 contextMenu.x = x + mouse.x - contextMenu.width / 2
                 contextMenu.y = y + mouse.y - contextMenu.height
                 contextMenu.open()
@@ -252,11 +252,16 @@ Page {
         Menu {
             id: contextMenu
 
-            property int nr: 0
+            property var model;
 
             MenuItem {
                 id: editEntry
                 text: "Bearbeiten"
+
+                onTriggered: {
+                    var item = view_stack.push(page_new)
+                    item.load(contextMenu.model)
+                }
             }
             MenuItem {
                 id: deleteEntry
@@ -269,10 +274,13 @@ Page {
                 Dialog {
                     id: deleteDialog
                     title: "Löschen bestätigen"
+                    parent: page_main
+                    x: (page_main.width - width) /2
+                    y: (page_main.height - height) /2
                     standardButtons: Dialog.Ok | Dialog.Cancel
 
                     onAccepted: {
-                        Db.deleteEntry(contextMenu.nr)
+                        Db.deleteEntry(contextMenu.model.nr)
                         updateEntries()
                     }
                 }

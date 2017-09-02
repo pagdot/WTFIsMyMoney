@@ -14,6 +14,8 @@ Page {
     property var categories: []
     property var main_category: ""
     property var sub_category: ""
+    property bool newEntry: true
+    property int nr;
 
     function reset() {
         view_new_swipe.setCurrentIndex(0)
@@ -32,6 +34,38 @@ Page {
         page_main.categories = categories
         page_content.datum = new Date;
         page_content.money = 0.0
+        newEntry = true;
+    }
+
+    function load(item) {
+        if (!item) {
+            return
+        }
+
+        view_new_swipe.setCurrentIndex(0)
+        main_category = item.category
+        sub_category = item.subcategory
+        categories = []
+        var tmp = Db.getCategories();
+        for (var i in tmp) {
+            categories.push({
+                name: tmp[i],
+                sub: Db.getSubcategories(tmp[i])
+            });
+        }
+        page_main.categories = categories
+        main_category = item.category
+        sub_category = item.subcategory
+        for (var i in categories) {
+            if (categories[i].name === main_category) {
+                page_sub.model = categories[i].sub
+            }
+        }
+        page_sub.setText(sub_category)
+        page_content.datum = item.datestamp;
+        page_content.money = item.money
+        nr = item.nr
+        newEntry = false
     }
 
     function cancel() {
@@ -80,6 +114,10 @@ Page {
                     }
                 }
 
+                if (view_new_swipe.count == 3) {
+                    sub_category = page_sub.getText()
+                }
+
             } else if (currentIndex == 1) {
                 if (view_new_swipe.count == 2) {
                     view_new_swipe.addItem(page_content)
@@ -106,7 +144,12 @@ Page {
         Page_new_content {
             id: page_content
             onDone: {
-                Db.storeEntry(main_category, sub_category, datum, money)
+                if (newEntry) {
+                    Db.storeEntry(main_category, sub_category, datum, money)
+                } else {
+                    Db.updateEntry(nr, main_category, sub_category, datum, money)
+                }
+
                 view_stack.pop()
             }
         }

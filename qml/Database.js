@@ -274,6 +274,40 @@ function deleteEntry(nr) {
         "WHERE (nr = ?)", [nr])
 }
 
+function updateEntry(nr, main, sub, date, money, note) {
+    var cats = getCategories()
+    var found = false;
+    for (var i in cats) {
+        if (cats[i] === main) {
+            found = true
+        }
+    }
+    if (!found) {
+        console.log("Unknown category \"" +  main + "\"")
+        return false
+    }
+
+    cats = getSubcategories(main)
+    found = false
+    for (var i in cats) {
+        if(cats[i] === sub) {
+            found = true
+        }
+    }
+    if (!found) {
+        var ret = addSubcategory(sub, main)
+        if (ret === false) {
+            return false
+        }
+    }
+
+    sql("REPLACE INTO entries (nr, category, datestamp, money, notes)\n" +
+        "SELECT ?, S.nr, ?, ?, ? FROM (\n" +
+        "   SELECT S.nr FROM subcategories S \n" +
+        "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +
+        ") S;", [nr, dateToISOString(date), parseInt(money * 100), note, main, sub]);
+}
+
 function pad(number) {
     if (number < 10) {
         return '0' + number;

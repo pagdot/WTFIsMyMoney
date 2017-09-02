@@ -17,6 +17,25 @@ Page {
         chosen(text)
     }
 
+    function setText(text) {
+        if (text === "") {
+            control.currentIndex = -1
+            control.editText = ""
+            return
+        }
+
+        for (var i = 0; i < model.length; i++) {
+            if (model[i] === text) {
+                control.currentIndex = i
+                return
+            }
+        }
+    }
+
+    function getText() {
+        return control.currentText
+    }
+
     ComboBox {
         id: control
 
