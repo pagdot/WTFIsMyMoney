@@ -128,46 +128,10 @@ Page {
             y: bt_menu.y - bt_menu.anchors.margins/2
 
             MenuItem {
-                text: "Export"
-                onTriggered: {
-                    fileSave.content = createCSV(Db.getAll());
-                    fileSave.open();
-                }
-
-                FileSave {
-                    id: fileSave
-                    visible: false
-                    onAccepted: {
-                        //console.log("fileUrl: " + fileUrl)
-                        //file.write(fileUrl, createCSV(Db.getAll()))
-                    }
-                }
-            }
-            MenuItem {
-                text: "Import"
-                onTriggered: {
-                    fileOpen.open();
-                }
-
-                FileOpen {
-                    id: fileOpen
-                    visible: false
-
-                    onAccepted: {
-                        var data = parseCSV(fileOpen.content)
-                        Db.clearDb()
-                        Db.importEntries(data)
-                        updateEntries()
-                    }
-                }
-            }
-            MenuItem {
                 text: "Einstellungen"
-            }
-
-            FileIO {
-                id: file
-                onError: console.log(msg)
+                onTriggered: {
+                    view_stack.push(page_settings)
+                }
             }
         }
     }

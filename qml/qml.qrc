@@ -67,5 +67,6 @@
         <file>FileOpen.qml</file>
         <file>FileSave.qml</file>
         <file>Icon.qml</file>
+        <file>Page_settings.qml</file>
     </qresource>
 </RCC>

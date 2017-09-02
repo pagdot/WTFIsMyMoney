@@ -38,13 +38,18 @@ ApplicationWindow {
         visible: false
     }
 
+    Page_settings{
+        id: page_settings
+        visible: false
+    }
+
     /*Page_chart{
         id: page_chart
         visible: false
     }*/
 
     Component.onCompleted: {
-        Qt.application.displayName = "StudentenManager"
+        Qt.application.displayName = "WTFIsMyMoney"
     }
 
     onClosing: {
