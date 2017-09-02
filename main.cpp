@@ -3,6 +3,7 @@
 #include <QQmlFileSelector>
 #include <QFileSelector>
 #include <QDebug>
+#include <QFontDatabase>
 
 #include "fileio.h"
 
@@ -16,7 +17,6 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     qmlRegisterType<FileIO, 1>("FileIO", 1, 0, "FileIO");
-
 #ifdef ANDROID
     qmlRegisterType<AndroidFile, 1>("AndroidFile", 1, 0, "AndroidFile");
 #endif

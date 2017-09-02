@@ -30,6 +30,11 @@ Item {
             fileOpen();
         }
         onOpened: {
+            if (!fileUri) {
+                rejected()
+                return
+            }
+
             control.content = fileOpen(fileUri);
             accepted()
         }

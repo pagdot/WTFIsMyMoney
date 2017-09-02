@@ -26,6 +26,10 @@ Item {
             fileCreate();
         }
         onCreated: {
+            if (!fileUri) {
+                rejected()
+                return
+            }
             fileCreate(fileUri, control.content);
             accepted()
         }

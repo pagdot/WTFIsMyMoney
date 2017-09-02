@@ -66,5 +66,6 @@
         <file>+windows/FileSave.qml</file>
         <file>FileOpen.qml</file>
         <file>FileSave.qml</file>
+        <file>Icon.qml</file>
     </qresource>
 </RCC>

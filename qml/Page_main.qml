@@ -21,6 +21,10 @@ Page {
         return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
     }
 
+    Icon {
+        id: icon
+    }
+
     function updateEntries() {
         if (init){
             var date = new Date()
@@ -84,12 +88,26 @@ Page {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.margins: 16
+            anchors.margins: 0
             width: height
-            background: Image {
-                source: "more-vert.svg"
-            }
+            flat: true
+            font.family: icon.family
+            font.pointSize: 48
+            text: icon.icons.more_vert
             onClicked: menu.open()
+
+            contentItem: Text {
+                anchors.fill: parent
+                anchors.margins: 16
+                text: parent.text
+                font: parent.font
+                opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+                fontSizeMode: Text.VerticalFit
+            }
         }
 
         Text {
@@ -244,44 +262,71 @@ Page {
                 var nr = list.indexAt(mouse.x, mouse.y)
                 contextMenu.model = list.model[nr]
                 contextMenu.x = x + mouse.x - contextMenu.width / 2
-                contextMenu.y = y + mouse.y - contextMenu.height
+                contextMenu.y = y + mouse.y - contextMenu.height - 30
                 contextMenu.open()
             }
         }
 
-        Menu {
+        Popup {
             id: contextMenu
 
             property var model;
+            padding: 0
+            leftPadding: 10
+            rightPadding: 10
 
-            MenuItem {
-                id: editEntry
-                text: "Bearbeiten"
+            RowLayout {
 
-                onTriggered: {
-                    var item = view_stack.push(page_new)
-                    item.load(contextMenu.model)
+                Button {
+                    id: editEntry
+                    text: "Bearbeiten"
+                    flat: true
+                    contentItem: Text {
+                        text: parent.text
+                        font: parent.font
+                        opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
+                        color: Material.accent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+                    onClicked: {
+                        contextMenu.close()
+                        var item = view_stack.push(page_new)
+                        item.load(contextMenu.model)
+                    }
                 }
-            }
-            MenuItem {
-                id: deleteEntry
-                text: "Löschen"
+                Button {
+                    id: deleteEntry
+                    text: "Löschen"
+                    flat: true
 
-                onTriggered: {
-                    deleteDialog.open()
-                }
+                    onClicked: {
+                        contextMenu.close()
+                        deleteDialog.open()
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        font: parent.font
+                        opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
+                        color: Material.accent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
 
-                Dialog {
-                    id: deleteDialog
-                    title: "Löschen bestätigen"
-                    parent: page_main
-                    x: (page_main.width - width) /2
-                    y: (page_main.height - height) /2
-                    standardButtons: Dialog.Ok | Dialog.Cancel
+                    Dialog {
+                        id: deleteDialog
+                        title: "Löschen bestätigen"
+                        parent: page_main
+                        x: (page_main.width - width) /2
+                        y: (page_main.height - height) /2
+                        standardButtons: Dialog.Ok | Dialog.Cancel
 
-                    onAccepted: {
-                        Db.deleteEntry(contextMenu.model.nr)
-                        updateEntries()
+                        onAccepted: {
+                            Db.deleteEntry(contextMenu.model.nr)
+                            updateEntries()
+                        }
                     }
                 }
             }
@@ -296,38 +341,46 @@ Page {
         anchors.right: parent.right
         anchors.verticalCenter: bottomBar.top
         anchors.margins: 16
+        font.family: icon.family
+        text: icon.icons.add
+        font.pointSize: 100
+
         onClicked: {
             var item = view_stack.push(page_new)
             item.reset()
             focus = false
         }
 
-        background: Rectangle {
-            Image {
-                source: "add.svg"
-                anchors.fill: parent
-                anchors.margins: (parent.width - 24)/2
-                ColorOverlay {
-                    anchors.fill: parent
-                    source: parent
-                    color: parent.focus ? Material.color(Material.Grey) : Material.background
-                }
+        contentItem: Text {
+            anchors.centerIn: parent
+            width: 24
+            height: 24
+            text: parent.text
+            font: parent.font
+            opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
+            color: "white"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+            fontSizeMode: Text.Fit
+        }
 
-            }
+        background: Rectangle {
             anchors.fill: parent
             radius: width/2
-            color: parent.focus ? "white" : Material.accent
-            }
+            color: Material.accent
         }
+    }
 
-        DropShadow {
-            anchors.fill: addButton
-            source: addButton
-            verticalOffset: 6
-            radius: width / 2
-            samples: 1 + radius * 2
-            opacity: 0.8
-        }
+    DropShadow {
+        anchors.fill: addButton
+        source: addButton
+        verticalOffset: 6
+        radius: width / 2
+        samples: 1 + radius * 2
+        opacity: 0.8
+        z:1
+    }
 
     Button {
         id: bottomBar
@@ -353,66 +406,6 @@ Page {
             var item = view_stack.push(page_chart)
             item.reset()
             focus = false
-        }
-    }
-
-
-    ColumnLayout {
-        visible: false
-        anchors.fill: parent
-
-        Button {
-            id: bt_new
-            anchors.horizontalCenter: parent.horizontalCenter
-            Layout.alignment: Qt.AlignCenter
-            text: "New entry"
-            onClicked: {
-                var item = view_stack.push("Page_new.qml")
-                item.reset()
-            }
-        }
-
-        Button {
-            id: sql_bt
-            text: "sql"
-            Layout.alignment: Qt.AlignCenter
-
-            onClicked: dialog.open()
-
-            Dialog {
-                id: dialog
-                width: 250
-                height: 150
-
-                onOpened: query_text.focus = true
-
-                TextField {
-                    id: query_text
-                    anchors.centerIn: parent
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    onAccepted: dialog.accept()
-                }
-
-                x: sql_bt.width/2 - width/2
-                y: -300
-
-                standardButtons: Dialog.Ok | Dialog.Cancel
-
-                Dialog {
-                    id: response
-                    property string text: ""
-                    Text {
-                        text: response.text
-                    }
-                    standardButtons: Dialog.Close
-                }
-
-                onAccepted: {
-                    response.text = JSON.stringify(Db.sql(query_text.text))
-                    response.open()
-                }
-            }
         }
     }
 
