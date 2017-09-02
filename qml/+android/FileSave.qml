@@ -10,6 +10,7 @@ Item {
     property string selectedNameFilter : ""
     property bool sidebarVisible : true
     property string content: ""
+    property string mime: "*/*"
 
     signal accepted()
     signal rejected()

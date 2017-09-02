@@ -10,60 +10,8 @@
         <file>database.js</file>
         <file>Page_main.qml</file>
         <file>Page_chart.qml</file>
-        <file>Charts/src/charts/Chart.Bar.js</file>
-        <file>Charts/src/charts/Chart.Bubble.js</file>
-        <file>Charts/src/charts/Chart.Doughnut.js</file>
-        <file>Charts/src/charts/Chart.Line.js</file>
-        <file>Charts/src/charts/Chart.PolarArea.js</file>
-        <file>Charts/src/charts/Chart.Radar.js</file>
-        <file>Charts/src/charts/Chart.Scatter.js</file>
-        <file>Charts/src/controllers/controller.bar.js</file>
-        <file>Charts/src/controllers/controller.bubble.js</file>
-        <file>Charts/src/controllers/controller.doughnut.js</file>
-        <file>Charts/src/controllers/controller.line.js</file>
-        <file>Charts/src/controllers/controller.polarArea.js</file>
-        <file>Charts/src/controllers/controller.radar.js</file>
-        <file>Charts/src/core/core.animation.js</file>
-        <file>Charts/src/core/core.canvasHelpers.js</file>
-        <file>Charts/src/core/core.controller.js</file>
-        <file>Charts/src/core/core.datasetController.js</file>
-        <file>Charts/src/core/core.element.js</file>
-        <file>Charts/src/core/core.helpers.js</file>
-        <file>Charts/src/core/core.js</file>
-        <file>Charts/src/core/core.layoutService.js</file>
-        <file>Charts/src/core/core.legend.js</file>
-        <file>Charts/src/core/core.plugin.js</file>
-        <file>Charts/src/core/core.scale.js</file>
-        <file>Charts/src/core/core.scaleService.js</file>
-        <file>Charts/src/core/core.title.js</file>
-        <file>Charts/src/core/core.tooltip.js</file>
-        <file>Charts/src/elements/element.arc.js</file>
-        <file>Charts/src/elements/element.line.js</file>
-        <file>Charts/src/elements/element.point.js</file>
-        <file>Charts/src/elements/element.rectangle.js</file>
-        <file>Charts/src/scales/scale.category.js</file>
-        <file>Charts/src/scales/scale.linear.js</file>
-        <file>Charts/src/scales/scale.linearbase.js</file>
-        <file>Charts/src/scales/scale.logarithmic.js</file>
-        <file>Charts/src/scales/scale.radialLinear.js</file>
-        <file>Charts/src/scales/scale.time.js</file>
-        <file>Charts/src/chart.js</file>
-        <file>Charts/src/chartjs-color.js</file>
-        <file>Charts/src/color-convert.js</file>
-        <file>Charts/src/color-name.js</file>
-        <file>Charts/src/color-string.js</file>
-        <file>Charts/src/conversions.js</file>
-        <file>Charts/src/moment-with-locales.js</file>
-        <file>Charts/src/moment.js</file>
-        <file>Charts/src/route.js</file>
-        <file>Charts/Chart.js</file>
-        <file>Charts/Chart.qml</file>
-        <file>Charts/ChartType.qml</file>
-        <file>Charts/qmldir</file>
         <file>+android/FileOpen.qml</file>
         <file>+android/FileSave.qml</file>
-        <file>+windows/FileOpen.qml</file>
-        <file>+windows/FileSave.qml</file>
         <file>FileOpen.qml</file>
         <file>FileSave.qml</file>
         <file>Icon.qml</file>

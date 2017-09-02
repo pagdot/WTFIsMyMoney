@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Dialogs 1.0
+import FileIO 1.0
 
 Item {
     id: control
@@ -11,6 +12,8 @@ Item {
     property bool sidebarVisible : true
     property bool selectMultiple: false
     property bool selectFolder: false
+    property string content: ""
+    property string mime: "*/*"
 
     signal accepted()
     signal rejected()
@@ -37,8 +40,14 @@ Item {
         onAccepted: {
             control.folder = folder
             control.fileUrl = fileUrl
+            control.content = file.read(fileUrl)
             control.accepted()
         }
         onRejected: control.rejected()
+    }
+
+    FileIO {
+        id: file
+        onError: console.log("FileIO error: " + msg)
     }
 }

@@ -4,7 +4,6 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import QtQuick.LocalStorage 2.0
-import FileIO 1.0
 
 import "database.js" as Db
 
@@ -141,8 +140,6 @@ Page {
                 Dialog {
                     id: about
                     parent: page_main
-//                    x: (page_main.width - width) /2
-//                    y: (page_main.height - height) /2
                     margins: 40
                     width: page_main.width - 2*margins
                     height: page_main.height - 2*margins
@@ -153,11 +150,14 @@ Page {
                         anchors.centerIn: parent
                         columns: 2
 
+                        Label{text: "Version: "}
+                        Label{text: Qt.application.version}
+
                         Label{text: "Author: "}
                         Label{text: "Paul Götzinger"}
 
-                        Label{text: "Version: "}
-                        Label{text: Qt.application.version}
+                        Label{text: "Kontakt: "}
+                        Label{text: "<a href=\"mailto:paul70079@gmail.com\">paul70079@gmail.com</a>"; onLinkActivated: Qt.openUrlExternally(link)}
 
                     }
 

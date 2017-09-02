@@ -1,13 +1,12 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
-#include <QQmlFileSelector>
-#include <QFileSelector>
-#include <QDebug>
-#include <QFontDatabase>
+#include <QtGlobal>
 
+#ifdef Q_OS_WIN
 #include "fileio.h"
+#endif
 
-#ifdef ANDROID
+#ifdef Q_OS_ANDROID
 #include "androidfile.h"
 #endif
 
@@ -16,15 +15,15 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
+#ifdef Q_OS_WIN
     qmlRegisterType<FileIO, 1>("FileIO", 1, 0, "FileIO");
-#ifdef ANDROID
+#endif
+
+#ifdef Q_OS_ANDROID
     qmlRegisterType<AndroidFile, 1>("AndroidFile", 1, 0, "AndroidFile");
 #endif
 
     QQmlApplicationEngine engine;
-    QQmlFileSelector* selector = new QQmlFileSelector(&engine);
-
-    qDebug() << selector->selector()->allSelectors();
 
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

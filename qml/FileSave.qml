@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Dialogs 1.0
+import FileIO 1.0
 
 Item {
     id: control
@@ -9,6 +10,8 @@ Item {
     property var nameFilters: []
     property string selectedNameFilter : ""
     property bool sidebarVisible : true
+    property string content: ""
+    property string mime: "*/*"
 
     signal accepted()
     signal rejected()
@@ -36,8 +39,14 @@ Item {
         onAccepted: {
             control.folder = folder
             control.fileUrl = fileUrl;
+            file.write(fileUrl, content)
             control.accepted()
         }
         onRejected: control.rejected()
+    }
+
+    FileIO {
+        id: file
+        onError: console.log("FileIO error: " + msg)
     }
 }

@@ -1,10 +1,9 @@
-QT += qml quick quickcontrols2 core
-QT += svg xml sql
+QT += qml quick quickcontrols2 core \
+    svg xml sql
 
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    fileio.cpp
+SOURCES += main.cpp
 
 RESOURCES += qml/qml.qrc \
     icons/icons.qrc
@@ -33,9 +32,6 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-HEADERS += \
-    fileio.h
-
 android: {
     QT += androidextras
     SOURCES += androidfile.cpp
@@ -53,3 +49,7 @@ android: {
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
 
+windows: {
+    HEADERS += fileio.h
+    SOURCES += fileio.cpp
+}
