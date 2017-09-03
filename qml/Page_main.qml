@@ -62,7 +62,7 @@ Page {
             flat: true
             font.family: icon.family
             font.pointSize: 48
-            text: icon.icons.more_vert
+            text: icon.icons.dots_vertical
             onClicked: menu.open()
 
             contentItem: Text {
@@ -85,7 +85,8 @@ Page {
             anchors.leftMargin: 72
             anchors.baseline: parent.bottom
             anchors.baselineOffset: -20
-            font.pixelSize: 20
+            font.pointSize: 20
+            font.weight: Font.Medium
             color: "white"
         }
 
@@ -147,8 +148,8 @@ Page {
         anchors.top: bar.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 5
-        Label {id: month}
-        Label {id: week}
+        Label {id: month; font.pointSize: 16}
+        Label {id: week; font.pointSize: 16}
     }
 
     ListView {
@@ -157,64 +158,70 @@ Page {
         anchors.margins: 10
         anchors.bottomMargin: bottomBar.height
         anchors.topMargin: anchors.margins + grid.height + bar.height
-        spacing: 10
+        spacing: 0
         clip: true
 
         delegate: Item {
             width: list.width
-            height: 88
+            height: 72
 
-            Item {
-                z: 1
+            Text {
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.margins: 16
+                height: parent.height - 2 * anchors.margins
+                width: height
+                text: icon.icons[modelData.icon]
+                fontSizeMode: Text.Fit
+                font.family: icon.family
+                color: Material.accent
+                font.pointSize: 100
+            }
+
+            ColumnLayout {
                 anchors.fill: parent
-                anchors.leftMargin: 16
+                anchors.leftMargin: 72
                 anchors.rightMargin: 16
+                spacing: 0
 
-                Text{
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 40
-                    height: 40
-                    verticalAlignment: Qt.AlignVCenter
-                    font.bold: true
-                    font.pointSize: 24
-                    fontSizeMode: Text.HorizontalFit
-                    text: modelData.money + " €"
+                Text {
+                    text: (new String(modelData.money)).replace(".", ",") + " €"
+                    font.pointSize: 16
+                    Layout.alignment: Qt.AlignBottom
                 }
 
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: 56
-                    spacing: 10
-
-                    Text{
-                        font.bold: true
-                        font.pointSize: 12
-                        text: modelData.category + ": " + modelData.subcategory
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-
-                    Text{
-                        font.pointSize: 12
-                        color: Material.color(Material.Grey)
-                        text: Qt.locale().monthName(modelData.datestamp.getMonth(), Locale.ShortFormat) + ", " + modelData.datestamp.getDate() + " " + modelData.datestamp.getFullYear()
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-
+                Text {
+                    text: modelData.category + ": " + modelData.subcategory
+                    font.pointSize: 16
+                    Layout.alignment: Qt.AlignTop
+                    color: Material.color(Material.Grey, Material.Shade500)
                 }
+
             }
 
-            Rectangle {
-                anchors.fill: parent
-                border.color: "black"
-                radius: 10
+            Text {
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.margins: 16
+                text: Qt.locale().monthName(modelData.datestamp.getMonth(), Locale.ShortFormat) + ". " + modelData.datestamp.getDate() + ", " + modelData.datestamp.getFullYear()
+                font.pointSize: 16
+                color: Material.color(Material.Grey, Material.Shade500)
             }
+
+//            Rectangle {
+//                anchors.fill: parent
+//                z: -1
+//                border.width: 1
+//                border.color: Material.color(Material.Grey, Material.Shade500)
+//            }
+
+
         }
         footer: Button {
             text: "lade weitere"
             width: list.width
-            height: 88
+            height: 72
             flat: true
             visible: entryCount > list.count
             onClicked: {
@@ -303,14 +310,14 @@ Page {
 
     Button {
         id: addButton
-        z: 1
+        z: 2
         width: 56
         height: width
         anchors.right: parent.right
         anchors.verticalCenter: bottomBar.top
         anchors.margins: 16
         font.family: icon.family
-        text: icon.icons.add
+        text: icon.icons.plus
         font.pointSize: 100
 
         onClicked: {
