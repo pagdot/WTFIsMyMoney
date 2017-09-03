@@ -3,18 +3,34 @@ var localStorage;
 var defaultCategories = [
     {
         name: "Essen & Trinken",
-        sub: ["Essen (eigenes)", "Essen (extern)", "Trinken (eigenes)", "Trinken (extern)"],
+        icon: "silverware",
+        sub: [
+            {name:"Essen (eigenes)", icon: "food"},
+            {name:"Essen (extern)", icon: "store"},
+            {name:"Trinken (eigenes)", icon: "store"},
+            {name:"Trinken (extern)", icon: "martini"}
+        ],
     },
     {
         name: "Leben & Wohnen",
-        sub: ["Wohnen", "Gewand", "Freizeit"],
+        icon: "home",
+        sub: [
+            {name:"Wohnen", icon: "home"},
+            {name:"Gewand", icon: "tshirt_crew"},
+            {name:"Freizeit", icon: "readability"}
+        ],
     },
     {
         name: "Transport",
-        sub: ["Öffentlich", "Auto"],
+        icon: "car",
+        sub: [
+            {name:"Öffentlich", icon: "bus"},
+            {name:"Auto", icon: "car"}
+        ],
     },
     {
         name: "Anderes",
+        icon: "plus",
         sub: [],
     }
 ]
@@ -72,7 +88,7 @@ function clearDb() {
 
 function importEntries(entries) {
     for (var i in entries) {
-        storeEntry(entries[i].category, entries[i].subcategory, entries[i].date, entries[i].money, entries[i].note)
+        storeEntry(entries[i].category, entries[i].subcategory, entries[i].date, entries[i].money, entries[i].note, entries[i].icon)
     }
 }
 
@@ -86,16 +102,6 @@ function getCategories() {
 }
 
 function getSubcategoriesOrderedPerUse(category) {
-    var rows = sql("SELECT COUNT(E.category) AS cnt, S.name\n" +
-                   "FROM entries E INNER JOIN (\n" +
-                   "    SELECT COUNT(*) AS cnt FROM entries\n" +
-                   ") cnt ON E.nr > (cnt.cnt - 20) INNER JOIN (\n" +
-                   "    SELECT S.nr FROM subcategories S, categories C\n" +
-                   "    WHERE (S.catNr = C.nr) AND (C.name = ?)\n" +
-                   ") Sub ON E.category = Sub.nr, subcategories S\n" +
-                   "WHERE E.category = S.nr\n" +
-                   "GROUP BY category ORDER BY cnt DESC", [category]);
-    console.log(JSON.stringify(rows))
 }
 
 function getSubcategories(category) {
@@ -109,18 +115,16 @@ function getSubcategories(category) {
     return subcategories
 }
 
-
-
 function getEntries(count) {
     var rows;
     if (count) {
-        rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes\n" +
+        rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes, S.icon\n" +
                     "FROM entries E, categories C, subcategories S\n" +
                     "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
                     "ORDER BY E.datestamp DESC\n" +
                     "LIMIT ?", [count])
     } else {
-        rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes\n" +
+        rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes, S.icon\n" +
                     "FROM entries E, categories C, subcategories S\n" +
                     "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
                     "ORDER BY E.datestamp DESC")
@@ -135,7 +139,7 @@ function getEntries(count) {
 
 function getMoneyPerCategory(start, end) {
     var subcategories = [];
-    var rows = sql("SELECT C.name, SUM(money) AS money\n" +
+    var rows = sql("SELECT C.icon, C.name, SUM(money) AS money\n" +
                    "FROM entries E, subcategories S, categories C\n" +
                    "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
                    "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
@@ -148,7 +152,7 @@ function getMoneyPerCategory(start, end) {
 
 function getMoneyPerSubcategory(category, start, end) {
     var subcategories = [];
-    var rows = sql("SELECT S.name, SUM(money) AS money\n" +
+    var rows = sql("SELECT S.name, SUM(money) AS money, S.icon\n" +
                    "FROM entries E, subcategories S, categories C\n" +
                    "WHERE (E.category = S.nr) AND (S.catNr = C.nr) AND (C.name = ?)\n" +
                    "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
@@ -161,7 +165,7 @@ function getMoneyPerSubcategory(category, start, end) {
 
 function getAll() {
     var subcategories = [];
-    var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes\n" +
+    var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes, S.icon\n" +
                    "FROM entries E, subcategories S, categories C\n" +
                    "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
                    "ORDER BY E.datestamp ASC\n")
@@ -185,7 +189,7 @@ function getEntryCount() {
     return rows[0].cnt
 }
 
-function storeEntry(main, sub, date, money, note) {
+function storeEntry(main, sub, date, money, note, icon) {
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
@@ -206,7 +210,7 @@ function storeEntry(main, sub, date, money, note) {
         }
     }
     if (!found) {
-        var ret = addSubcategory(sub, main)
+        var ret = addSubcategory(sub, main, icon)
         if (ret === false) {
             return false
         }
@@ -220,29 +224,33 @@ function storeEntry(main, sub, date, money, note) {
     return ret === false ? false : true;
 }
 
-function addSubcategory(name, category) {
-    sql("INSERT INTO subcategories (name, catNr)\n" +
-        "SELECT ?, nr FROM categories\n" +
-        "WHERE name = ?;", [name, category]);
+function addSubcategory(name, category, icon) {
+    if ((!icon) || (icon === "")) {
+        icon = "android"
+    }
+
+    sql("INSERT INTO subcategories (name, catNr, icon)\n" +
+        "SELECT ?, nr, ? FROM categories\n" +
+        "WHERE name = ?;", [name, icon, category]);
 }
 
 
 function createCategories() {
     sql("CREATE TABLE IF NOT EXISTS categories (\n" +
-        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL\n" +
+        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, icon TEXT NOT NULL\n" +
         ");");
     for (var c in defaultCategories) {
-        sql("INSERT INTO categories (name) VALUES (?)", [defaultCategories[c].name])
+        sql("INSERT INTO categories (name, icon) VALUES (?, ?)", [defaultCategories[c].name, defaultCategories[c].icon])
     }
 }
 
 function createSubcategories() {
     sql("CREATE TABLE IF NOT EXISTS subcategories (\n" +
-        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, catNr INT NOT NULL\n" +
+        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, catNr INT NOT NULL, icon TEXT NOT NULL\n" +
         ");");
     for (var c in defaultCategories) {
         for (var s in defaultCategories[c].sub) {
-            addSubcategory(defaultCategories[c].sub[s], defaultCategories[c].name);
+            addSubcategory(defaultCategories[c].sub[s].name, defaultCategories[c].name, defaultCategories[c].sub[s].icon);
         }
     }
 }
