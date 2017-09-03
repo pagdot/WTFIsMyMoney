@@ -7,7 +7,7 @@ Item {
     property string title: "Speichern unter"
     property url folder: ""
     property url fileUrl: ""
-    property var nameFilters: []
+    property var nameFilters: ["*.csv"]
     property string selectedNameFilter : ""
     property bool sidebarVisible : true
     property string content: ""

@@ -10,7 +10,7 @@ Item {
     property string selectedNameFilter : ""
     property bool sidebarVisible : true
     property string content: ""
-    property string mime: "*/*"
+    property string mime: "text/csv"
 
     signal accepted()
     signal rejected()
@@ -23,6 +23,8 @@ Item {
 
     AndroidFile {
         id: androidCreateDialog
+        mime: control.mime
+
         function create() {
             fileCreate();
         }

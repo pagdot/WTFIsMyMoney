@@ -45,36 +45,6 @@ Page {
         }
     }
 
-    function createCSV(data) {
-        var csv = "date,money,subcategory,category,notes\r\n";
-        for (var i in data) {
-            csv += data[i].datestamp + "," + data[i].money + "," + data[i].subcategory.replace(",", "") + "," + data[i].category.replace(",", "") + "," + data[i].notes + "\r\n"
-        }
-        return csv;
-    }
-
-    function parseCSV(csv) {
-        var data = []
-        var cols = []
-        csv.replace("\r\n", "\n");
-        var lines = csv.split("\n")
-        for (var i in lines) {
-            if (lines[i] === "") continue
-            var line = lines[i].split(",")
-            if (i === "0") {
-                cols = line
-            } else {
-                var entry = {}
-                for (var j in line) {
-                    entry[cols[j]] = line[j]
-                }
-                if (entry.date) entry.date = new Date(entry.date)
-                data.push(entry)
-            }
-        }
-        return data;
-    }
-
     Rectangle {
         id: bar
         anchors.top: parent.top

@@ -13,7 +13,7 @@ void AndroidFile::fileOpenDialog() {
     QAndroidJniObject intent("android/content/Intent", "()V");
     QAndroidJniObject action = QAndroidJniObject::fromString("android.intent.action.OPEN_DOCUMENT");
     QAndroidJniObject category = QAndroidJniObject::fromString("android.intent.category.OPENABLE");
-    QAndroidJniObject mime = QAndroidJniObject::fromString("*/*");
+    QAndroidJniObject mime = QAndroidJniObject::fromString(m_mime);
     intent.callObjectMethod("setAction",  "(Ljava/lang/String;)Landroid/content/Intent;", action.object<jstring>());
     intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", mime.object<jstring>());
     intent.callObjectMethod("addCategory", "(Ljava/lang/String;)Landroid/content/Intent;", category.object<jstring>());
@@ -24,7 +24,7 @@ void AndroidFile::fileCreateDialog() {
     QAndroidJniObject intent("android/content/Intent", "()V");
     QAndroidJniObject action = QAndroidJniObject::fromString("android.intent.action.CREATE_DOCUMENT");
     QAndroidJniObject category = QAndroidJniObject::fromString("android.intent.category.OPENABLE");
-    QAndroidJniObject mime = QAndroidJniObject::fromString("*/*");
+    QAndroidJniObject mime = QAndroidJniObject::fromString(m_mime);
     intent.callObjectMethod("setAction",  "(Ljava/lang/String;)Landroid/content/Intent;", action.object<jstring>());
     intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", mime.object<jstring>());
     intent.callObjectMethod("addCategory", "(Ljava/lang/String;)Landroid/content/Intent;", category.object<jstring>());

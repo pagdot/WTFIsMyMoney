@@ -13,6 +13,8 @@ class AndroidFile : public QObject, QAndroidActivityResultReceiver
 public:
     explicit AndroidFile(QObject *parent = nullptr);
 
+    Q_PROPERTY(QString mime MEMBER m_mime NOTIFY mimeChanged)
+
     Q_INVOKABLE void fileOpenDialog();
     Q_INVOKABLE void fileCreateDialog();
 
@@ -24,10 +26,12 @@ public:
 protected:
 
 private:
+    QString m_mime = "*/*";
 
 signals:
     void opened(QUrl fileUri);
     void created(QUrl fileUri);
+    void mimeChanged();
 
 public slots:
 };
