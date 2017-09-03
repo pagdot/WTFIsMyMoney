@@ -12,7 +12,7 @@ Item {
     property bool selectMultiple: false
     property bool selectFolder: false
     property string content: ""
-    property string mime: "text/csv"
+    property string mime: "text/*"
 
     signal accepted()
     signal rejected()
