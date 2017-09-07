@@ -96,7 +96,7 @@ function getCategories() {
     var categories = []
     var rows = sql("SELECT * FROM categories");
     for (var i in rows) {
-        categories.push(rows[i].name)
+        categories.push(rows[i])
     }
     return categories;
 }
@@ -110,7 +110,7 @@ function getSubcategories(category) {
                    "INNER JOIN categories C ON\n" +
                    "(S.catNr = C.nr) AND (C.name = ?)", category)
     for (var i in rows) {
-        subcategories.push(rows[i].name)
+        subcategories.push(rows[i])
     }
     return subcategories
 }
@@ -193,7 +193,7 @@ function storeEntry(main, sub, date, money, note, icon) {
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
-        if (cats[i] === main) {
+        if (cats[i].name === main) {
             found = true
         }
     }
@@ -205,7 +205,7 @@ function storeEntry(main, sub, date, money, note, icon) {
     cats = getSubcategories(main)
     found = false
     for (var i in cats) {
-        if(cats[i] === sub) {
+        if(cats[i].name === sub) {
             found = true
         }
     }
@@ -233,7 +233,6 @@ function addSubcategory(name, category, icon) {
         "SELECT ?, nr, ? FROM categories\n" +
         "WHERE name = ?;", [name, icon, category]);
 }
-
 
 function createCategories() {
     sql("CREATE TABLE IF NOT EXISTS categories (\n" +
@@ -286,7 +285,7 @@ function updateEntry(nr, main, sub, date, money, note) {
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
-        if (cats[i] === main) {
+        if (cats[i].name === main) {
             found = true
         }
     }
@@ -298,7 +297,7 @@ function updateEntry(nr, main, sub, date, money, note) {
     cats = getSubcategories(main)
     found = false
     for (var i in cats) {
-        if(cats[i] === sub) {
+        if(cats[i].name === sub) {
             found = true
         }
     }

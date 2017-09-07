@@ -204,7 +204,7 @@ Page {
                 anchors.top: parent.top
                 anchors.right: parent.right
                 anchors.margins: 16
-                text: Qt.locale().monthName(modelData.datestamp.getMonth(), Locale.ShortFormat) + ". " + modelData.datestamp.getDate() + ", " + modelData.datestamp.getFullYear()
+                text: Qt.locale().monthName(modelData.datestamp.getMonth(), Locale.ShortFormat) + " " + modelData.datestamp.getDate() + ", " + modelData.datestamp.getFullYear()
                 font.pointSize: 16
                 color: Material.color(Material.Grey, Material.Shade500)
             }

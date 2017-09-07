@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import QtQuick.Controls.Material 2.2
 
 Page {
     id: page
@@ -13,12 +14,16 @@ Page {
     onCategoriesChanged: {
         var model = []
         for (var i in categories) {
-            model.push(categories[i].name)
+            model.push(categories[i])
         }
     }
 
     function _chosen(text) {
         chosen(text)
+    }
+
+    Icon {
+        id: icon
     }
 
     GridLayout {
@@ -29,40 +34,56 @@ Page {
 
         Repeater {
             id: repeater
-            model: categories.length
+            model: categories
 
             delegate: Button {
-                Layout.alignment: (modelData % 2) == 1 ? Qt.AlignLeft : Qt.AlignRight
-                text: categories[modelData].name
+                id: control
+                //Layout.alignment: (index % 2) == 1 ? Qt.AlignLeft : Qt.AlignRight
+                text: modelData.name
                 onClicked: page._chosen(text)
+                flat: true
+                checkable: true
+                checked: false
+
+                contentItem: RowLayout {
+                    Item {
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        Layout.alignment: Qt.AlignVCenter
+                        implicitWidth: circle.width
+                        implicitHeight: circle.height
+                        Rectangle {
+                            id: circle
+                            width: catIcon.width * 2
+                            height: width
+                            radius: width/2
+                            color: Material.accent
+                            opacity: 0.26
+                            visible: control.checked
+                        }
+
+                        Text {
+                            id: catIcon
+                            anchors.centerIn: circle
+                            text: icon.icons[modelData.icon]
+                            font.family: icon.family
+                            font.pointSize: control.font.pointSize * 2
+                            color: Material.accent
+                            opacity: 1
+                        }
+                    }
+
+                    Text {
+                        Layout.alignment: Qt.AlignVCenter
+                        text: control.text
+                        font: control.font
+                        elide: Text.ElideRight
+                    }
+                }
+
+                background: Item {}
             }
         }
-
-        /*Button {
-            id: bt_1
-            text: defaultMainCategories[0]
-            anchors.right: parent.horizontalCenter
-            onClicked: page._chosen(text)
-        }
-
-        Button {
-            id: bt_2
-            text: defaultMainCategories[1]
-            onClicked: page._chosen(text)
-        }
-
-        Button {
-            id: bt_3
-            text: defaultMainCategories[2]
-            anchors.right: parent.horizontalCenter
-            onClicked: page._chosen(text)
-        }
-
-        Button {
-            id: bt_4
-            text: defaultMainCategories[3]
-            onClicked: page._chosen(text)
-        }*/
     }
 }
 

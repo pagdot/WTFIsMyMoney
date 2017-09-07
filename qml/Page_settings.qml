@@ -11,9 +11,9 @@ Page {
 
 
     function createCSV(data) {
-        var csv = "date,money,subcategory,category,notes\r\n";
+        var csv = "date,money,subcategory,category,notes, icon\r\n";
         for (var i in data) {
-            csv += data[i].datestamp + "," + data[i].money + "," + data[i].subcategory.replace(",", "") + "," + data[i].category.replace(",", "") + "," + data[i].notes + "\r\n"
+            csv += data[i].datestamp + "," + data[i].money + "," + data[i].subcategory.replace(",", "") + "," + data[i].category.replace(",", "") + "," + data[i].notes + "," + data[i].icon + "\r\n"
         }
         return csv;
     }

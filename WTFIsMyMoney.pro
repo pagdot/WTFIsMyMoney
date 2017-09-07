@@ -53,3 +53,11 @@ windows: {
     HEADERS += fileio.h
     SOURCES += fileio.cpp
 }
+
+DISTFILES += \
+    android/res/values/libs.xml \
+    android/res/mipmap-hdpi/ic_launcher.png \
+    android/res/mipmap-mdpi/ic_launcher.png \
+    android/res/mipmap-xhdpi/ic_launcher.png \
+    android/res/mipmap-xxhdpi/ic_launcher.png \
+    android/res/mipmap-xxxhdpi/ic_launcher.png
