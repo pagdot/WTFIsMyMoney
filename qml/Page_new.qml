@@ -28,7 +28,7 @@ Page {
             categories.push({
                 name: tmp[i].name,
                 icon: tmp[i].icon,
-                sub: Db.getSubcategories(tmp[i].name)
+                sub: Db.getSubcategoriesOrderedPerUse(tmp[i].name)
             });
         }
         money = 0.0

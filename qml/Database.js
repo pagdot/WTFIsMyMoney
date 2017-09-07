@@ -102,6 +102,36 @@ function getCategories() {
 }
 
 function getSubcategoriesOrderedPerUse(category) {
+    var subcategories = [];
+    var rows = sql("SELECT S.*, COUNT(E.nr) as cnt FROM subcategories S, (\n" +
+                   "    SELECT * FROM entries\n" +
+                   "    ORDER BY nr DESC\n" +
+                   "    LIMIT 20\n" +
+                   ") E\n" +
+                   "INNER JOIN categories C ON\n" +
+                   "(S.catNr = C.nr) AND (C.name = ?)\n" +
+                   "WHERE E.category = S.nr\n" +
+                   "GROUP BY E.category\n" +
+                   "ORDER BY cnt DESC", category)
+    for (var i in rows) {
+        subcategories.push(rows[i])
+    }
+
+    rows = sql("SELECT S.* FROM subcategories S\n" +
+               "INNER JOIN categories C ON\n" +
+               "(S.catNr = C.nr) AND (C.name = ?)", category)
+    for (var i in rows) {
+        var found = false;
+        for (var j in subcategories) {
+            if (subcategories[j].name === rows[i].name) {
+                found = true
+            }
+        }
+        if (!found) {
+            subcategories.push(rows[i])
+        }
+    }
+    return subcategories
 }
 
 function getSubcategories(category) {
