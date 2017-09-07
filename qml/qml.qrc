@@ -3,9 +3,6 @@
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>Page_new.qml</file>
-        <file>Page_new_main.qml</file>
-        <file>Page_new_sub.qml</file>
-        <file>Page_new_content.qml</file>
         <file>DatePicker.qml</file>
         <file>database.js</file>
         <file>Page_main.qml</file>

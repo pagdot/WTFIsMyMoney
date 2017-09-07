@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
 import QtCharts 2.0
 import QtQuick.Controls.Material 2.2
-import "./Charts"
 
 import "database.js" as Db
 

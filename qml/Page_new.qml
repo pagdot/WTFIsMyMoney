@@ -536,7 +536,6 @@ Page {
             flat: true
 
             onClicked: {
-                console.log("click")
                 Db.storeEntry(main_category.name, sub_category.name, datum, money, "", sub_category.icon)
                 view_stack.pop()
             }
