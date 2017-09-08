@@ -1,3 +1,26 @@
+/* Page_new.qml -- New Entry page
+ * Page to add new entries into the storage
+ *
+ * Copyright (C) 2017 Paul Goetzinger
+ * All Rights Reserved.
+ *
+ * This file is part of WTFIsMyMoney.
+ *
+ * WTFIsMyMoney is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * WTFIsMyMoney is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with WTFIsMyMoney.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
@@ -444,6 +467,184 @@ Page {
                         anchors.leftMargin: 72
                         verticalAlignment: Text.AlignVCenter
                         font.pointSize: 16
+                    }
+                }
+
+                footer: MouseArea {
+                    //TODO highlight element somehow
+                    implicitHeight: 56
+                    width: subList.width
+                    onClicked: {
+                        newSubIcon.iconName = "android"
+                        newSubName.text = ""
+                        dialogNewSub.open()
+                    }
+
+                    Text {
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.margins: 8
+                        anchors.leftMargin: 16
+                        font.pixelSize: 32
+                        fontSizeMode: Text.VerticalFit
+                        font.family: icon.family
+                        color: Material.accent
+                        text: icon.icons.plus
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    Text {
+                        text: "Neu"
+                        anchors.fill: parent
+                        anchors.leftMargin: 72
+                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: 16
+                    }
+
+                    Dialog {
+                        id: dialogNewSub
+                        parent: page
+                        title: "Neue Unterkategorie"
+                        x: (page.width - width) / 2
+                        y: (page.height - height) / 2
+
+                        RowLayout {
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            spacing: 10
+
+                            Button {
+                                id: newSubIcon
+                                flat: true
+                                property string iconName: "android"
+                                text: icon.icons[iconName]
+                                font.family: icon.family
+
+                                onClicked: {
+                                    var model = [];
+                                    for (var i in icon.icons) {
+                                        model.push({name: i, icon: icon.icons[i]})
+                                    }
+                                    iconRepeater.model = model
+                                    iconPicker.selected = iconName
+                                    iconPicker.open()
+                                }
+
+
+                                contentItem: Text {
+                                    anchors.fill: parent
+                                    anchors.margins: 16
+                                    text: parent.text
+                                    font: parent.font
+                                    opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
+                                    color: Material.accent
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                    fontSizeMode: Text.VerticalFit
+                                }
+
+                                Dialog {
+                                    id: iconPicker
+                                    parent: page
+                                    width: parent.width - 2 * margins
+                                    height: parent.height - 2 * margins
+                                    margins: 20
+                                    x: (page.width - width) / 2
+                                    y: (page.height - height) / 2
+
+                                    property string selected: "android"
+
+                                    standardButtons: Dialog.Ok | Dialog.Cancel
+
+                                    ColumnLayout {
+                                        anchors.fill: parent
+
+                                        TextField {
+                                            id: iconFilter
+                                            Layout.fillWidth: true
+                                            placeholderText: "Filter Icons"
+
+                                            onTextChanged: {
+                                                var model = [];
+                                                for (var i in icon.icons) {
+                                                    if (i.includes(text) || (text === "")) {
+                                                        model.push({name: i, icon: icon.icons[i]})
+                                                    }
+                                                }
+                                                iconRepeater.model = model
+                                            }
+                                        }
+
+                                        GridView {
+                                            id: iconRepeater
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            cellHeight: 32
+                                            cellWidth: 32
+                                            clip: true
+
+                                            delegate: MouseArea {
+                                                property bool chosen: iconPicker.selected === modelData.name
+                                                width: iconRepeater.cellWidth
+                                                height: iconRepeater.cellWidth
+
+                                                Label {
+                                                    anchors.fill: parent
+                                                    anchors.margins: 4
+                                                    text: modelData ? modelData.icon : ""
+                                                    font.family: icon.family
+                                                    font.pointSize: 32
+                                                    color: chosen ? Material.background : Material.accent
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    elide: Text.ElideRight
+                                                    fontSizeMode: Text.VerticalFit
+                                                }
+
+                                                Rectangle {
+                                                    visible: chosen
+                                                    anchors.fill: parent
+                                                    radius: Math.max(width, height)
+                                                    color: Material.accent
+                                                    z: -1
+                                                }
+
+                                                onClicked: iconPicker.selected = modelData.name
+
+                                            }
+
+                                        }
+                                    }
+
+                                    onAccepted: newSubIcon.iconName = selected
+                                }
+                            }
+
+                            TextField {
+                                id: newSubName
+                                ToolTip.text: "Name"
+                                Layout.fillWidth: true
+                            }
+                        }
+
+                        standardButtons: newSubName.text === "" ? Dialog.Cancel : Dialog.Ok | Dialog.Cancel
+
+                        onAccepted: {
+                            for (var i in categories) {
+                                if (categories[i].name === main_category.name) {
+                                    categories[i].sub.push({icon: newSubIcon.iconName, name: newSubName.text})
+                                    main_category = categories[i]
+                                }
+                                if ((!sub_category) || (sub_category.name !== modelData.name)) {
+                                    sub_category = modelData
+                                }
+                                subLayout.opened = false
+                            }
+
+                        }
+
                     }
                 }
             }
