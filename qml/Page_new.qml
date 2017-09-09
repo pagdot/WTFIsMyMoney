@@ -277,7 +277,7 @@ Page {
             Button {
                 id: mainChip
                 implicitHeight: 32
-                visible: (!mainLayout.opened) && mainLayout.enabled
+                visible: !mainLayout.opened
 
                 onClicked: {
                     subLayout.opened = false
@@ -289,20 +289,26 @@ Page {
                     spacing: 0
                     anchors.fill: parent
 
-
-                    Rectangle {
+                    Item {
                         height: parent.height
                         width: height
-                        radius: height/2
                         anchors.verticalCenter: parent.verticalCenter
-                        color: Material.accent
 
                         Text {
                             anchors.centerIn: parent
                             font.family: icon.family
-                            color: "white"
+                            color: enabled ? "white" : "black"
                             font.pointSize: 13
                             text: main_category ? icon.icons[main_category.icon] : "?"
+                            opacity: enabled ? 1 : 0.26
+                            z: 1
+                        }
+
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: height/2
+                            color: Material.accent
+                            opacity: enabled ? 1 : 0
                         }
                     }
 
@@ -311,6 +317,7 @@ Page {
                         rightPadding: 12
                         font.pointSize: 13
                         anchors.verticalCenter: parent.verticalCenter
+                        opacity: enabled ? 1 : 0.26
 
                         text: main_category ? main_category.name : "Kategorie"
                     }
@@ -331,7 +338,7 @@ Page {
                 Layout.fillHeight: true
                 clip: true
 
-                delegate: MouseArea {
+                delegate: AbstractButton {
                     implicitHeight: 56
                     width: mainList.width
                     onClicked: {
@@ -445,7 +452,7 @@ Page {
                 visible: subLayout.opened
                 clip: true
 
-                delegate: MouseArea {
+                delegate: AbstractButton {
                     implicitHeight: 56
                     width: subList.width
                     onClicked: {
@@ -478,7 +485,7 @@ Page {
                     }
                 }
 
-                footer: MouseArea {
+                footer: AbstractButton {
                     //TODO highlight element somehow
                     implicitHeight: 56
                     width: subList.width
@@ -602,7 +609,7 @@ Page {
                                             cellWidth: 32
                                             clip: true
 
-                                            delegate: MouseArea {
+                                            delegate: AbstractButton {
                                                 property bool chosen: iconPicker.selected === modelData.name
                                                 width: iconRepeater.cellWidth
                                                 height: iconRepeater.cellWidth
@@ -668,7 +675,6 @@ Page {
 
         ColumnLayout {
             id: dateLayout
-            enabled: (main_category ? true : false) && (sub_category ? true : false) && (money > 0.0)
 
             property bool opened;
 
@@ -680,12 +686,8 @@ Page {
             Button {
                 id: dateChip
                 implicitHeight: 32
-                visible: enabled
 
                 onClicked: {
-                    moneyLayout.opened = false
-                    mainLayout.opened = false
-                    subLayout.opened = false
                     dateLayout.opened = true
                 }
 

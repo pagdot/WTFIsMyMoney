@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>chevron-left.svg</file>
-        <file>chevron-right.svg</file>
         <file>materialdesignicons-webfont.ttf</file>
     </qresource>
 </RCC>

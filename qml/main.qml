@@ -31,8 +31,8 @@ import "database.js" as Db
 
 ApplicationWindow {
     visible: true
-    width: 640
-    height: 480
+    width: 480
+    height: 720
     title: view_stack.currentItem.title === "" ? Qt.application.name : Qt.application.name + " - " + view_stack.currentItem.title
 
     id: window

@@ -33,6 +33,10 @@ Dialog{
 
     standardButtons: Dialog.Ok | Dialog.Cancel
 
+    Icon {
+        id: icon
+    }
+
     width: 300
     height: 500
     padding: 0
@@ -128,23 +132,37 @@ Dialog{
                     z: 1
 
                     anchors.top: parent.top
-                    anchors.topMargin: 10
+                    anchors.topMargin: 25
                     anchors.left: listview.left
                     anchors.right: listview.right
 
                     height: children.height
 
-                    Button {
-                        anchors.verticalCenter: parent.verticalCenter
-                        background: Image {source: "chevron-left.svg"; height: 20; width: 20; anchors.centerIn: parent}
-                        onClicked: listview.decrementCurrentIndex()
+                    AbstractButton {
+                        height: 20; width: 20;
                         Layout.alignment: Qt.AlignLeft
+                        onClicked: listview.decrementCurrentIndex()
+                        Text {
+                            anchors.fill: parent
+                            fontSizeMode: Text.Fit
+                            font.pointSize: 32
+                            font.family: icon.family
+                            text: icon.icons.chevron_left
+                        }
                     }
-                    Button {
-                        anchors.verticalCenter: parent.verticalCenter
-                        background: Image {source: "chevron-right.svg"; height: 20; width: 20; anchors.centerIn: parent}
-                        onClicked: listview.incrementCurrentIndex()
+
+
+                    AbstractButton {
+                        height: 20; width: 20;
                         Layout.alignment: Qt.AlignRight
+                        onClicked: listview.incrementCurrentIndex()
+                        Text {
+                            anchors.fill: parent
+                            fontSizeMode: Text.Fit
+                            font.pointSize: 32
+                            font.family: icon.family
+                            text: icon.icons.chevron_right
+                        }
                     }
                 }
 
