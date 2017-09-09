@@ -384,7 +384,7 @@ Page {
             Button {
                 id: subChip
                 implicitHeight: 32
-                visible: (!subLayout.opened) && (main_category ? true : false)
+                visible: !subLayout.opened
 
                 onClicked: {
                     mainLayout.opened = false
@@ -396,19 +396,26 @@ Page {
                     spacing: 0
                     anchors.fill: parent
 
-                    Rectangle {
+                    Item {
                         height: parent.height
                         width: height
-                        radius: height/2
                         anchors.verticalCenter: parent.verticalCenter
-                        color: Material.accent
 
                         Text {
                             anchors.centerIn: parent
                             font.family: icon.family
-                            color: "white"
+                            color: enabled ? "white" : "black"
                             font.pointSize: 13
                             text: sub_category ? icon.icons[sub_category.icon] : "?"
+                            opacity: enabled ? 1 : 0.26
+                            z: 1
+                        }
+
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: height/2
+                            color: Material.accent
+                            opacity: enabled ? 1 : 0
                         }
                     }
 
@@ -417,6 +424,7 @@ Page {
                         rightPadding: 12
                         font.pointSize: 13
                         anchors.verticalCenter: parent.verticalCenter
+                        opacity: enabled ? 1 : 0.26
 
                         text: sub_category ? sub_category.name : "Unterkategorie"
                     }
@@ -520,6 +528,11 @@ Page {
                                 property string iconName: "android"
                                 text: icon.icons[iconName]
                                 font.family: icon.family
+                                font.pointSize: 13
+                                padding: 0
+                                implicitWidth: 32
+                                implicitHeight: 32
+                                Layout.alignment: Qt.AlignVCenter
 
                                 onClicked: {
                                     var model = [];
@@ -534,15 +547,19 @@ Page {
 
                                 contentItem: Text {
                                     anchors.fill: parent
-                                    anchors.margins: 16
                                     text: parent.text
                                     font: parent.font
                                     opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
-                                    color: Material.accent
+                                    color: "white"
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                     elide: Text.ElideRight
-                                    fontSizeMode: Text.VerticalFit
+                                }
+
+                                background: Rectangle {
+                                    anchors.fill: parent
+                                    radius: width/2
+                                    color: Material.accent
                                 }
 
                                 Dialog {
@@ -592,15 +609,13 @@ Page {
 
                                                 Label {
                                                     anchors.fill: parent
-                                                    anchors.margins: 4
                                                     text: modelData ? modelData.icon : ""
                                                     font.family: icon.family
-                                                    font.pointSize: 32
+                                                    font.pointSize: 13
                                                     color: chosen ? Material.background : Material.accent
                                                     horizontalAlignment: Text.AlignHCenter
                                                     verticalAlignment: Text.AlignVCenter
                                                     elide: Text.ElideRight
-                                                    fontSizeMode: Text.VerticalFit
                                                 }
 
                                                 Rectangle {
@@ -626,6 +641,7 @@ Page {
                                 id: newSubName
                                 ToolTip.text: "Name"
                                 Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
                             }
                         }
 
