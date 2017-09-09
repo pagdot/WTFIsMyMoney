@@ -1,27 +1,3 @@
-/* Page_chart.qml -- Chart and statistic page
- * Displays the statistics and charts of the processed data
- *
- * Copyright (C) 2017 Paul Goetzinger <paul70079@gmail.com>
- *
- * SPDX-License-Identifier: GPL-3.0
- * License-Filename: LICENSE/GPL-3.0.txt
- *
- * This file is part of WTFIsMyMoney.
- *
- * WTFIsMyMoney is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * WTFIsMyMoney is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with WTFIsMyMoney.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
@@ -34,7 +10,6 @@ import "database.js" as Db
 Page {
     id: page
 
-    title: "Statistik"
     property date start: new Date()
     property date end: new Date()
 
@@ -52,78 +27,42 @@ Page {
     }
 
     function cancel() {
-        if (type === "subcategory") {
-            type = "category"
-            category = ""
-            updateChart()
-        } else {
-            view_stack.pop()
-        }
+        view_stack.pop()
     }
 
     onStartChanged: updateChart()
     onEndChanged: updateChart()
-    onTypeChanged: updateChart()
 
     onInitChanged: updateChart()
 
     function updateChart() {
         var values;
-        var shades = [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
-
         if (init) {
             if (type === "category") {
                 values = Db.getMoneyPerCategory(start, end)
             } else if (type === "subcategory") {
-                values = Db.getMoneyPerSubcategory(category, start, end)
+                values = getMoneyPerSubcategory(category, start, end)
             }
 
             var other = 0;
-            chart.chartData.datasets[0].backgroundColor = []
-            chart.chartData.datasets[0].data = []
-            chart.chartData.labels = []
+            pieSeries.clear()
             for (var i in values) {
                 if ((values.length > 10) && (i >= 10)) {
                     other += values[i].money
                 } else {
-                    chart.chartData.datasets[0].backgroundColor.push(Material.color(Material.Green, shades[i]))
-                    chart.chartData.datasets[0].data.push(values[i].money)
-                    chart.chartData.labels.push(values[i].name)
+                    pieSeries.append(values[i].name, values[i].money)
                 }
             }
             if (values.length > 10) {
-                chart.chartData.datasets[0].backgroundColor.push(Material.color(Material.Green, shades[10]))
-                chart.chartData.datasets[0].data.push(other)
-                chart.chartData.labels.push("Anderes")
+                pieSeries.append("Anderes", other)
             }
-            chart.update()
         }
-    }
-
-    Rectangle {
-        id: bar
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 56
-
-        Text {
-            text: page.title
-            anchors.left: parent.left
-            anchors.leftMargin: 72
-            anchors.baseline: parent.bottom
-            anchors.baselineOffset: -20
-            font.pixelSize: 20
-            color: "white"
-        }
-
-        color: Material.primary
     }
 
     RowLayout {
         id: dateRow
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: bar.bottom
+        anchors.top: parent.top
         Button {
             id: bt_startDate
             text: Qt.locale().monthName(start.getMonth(), Locale.ShortFormat) + ", " + start.getDate() + " " + start.getFullYear()
@@ -145,38 +84,24 @@ Page {
         }
     }
 
-    Chart {
-        id: chart;
+    ChartView {
+        id: chart
         anchors.fill: parent
-        anchors.topMargin: dateRow.height + bar.height
+        anchors.topMargin: dateRow.height
         anchors.bottomMargin: button_back.visible ? button_back.height : 0
-        chartType: ChartType.pie;
+        antialiasing: true
 
-        chartData: {
-            "datasets": [{
-                             "data": [],
-                             "backgroundColor": [],
-                         },],
-                    "labels": []
-        }
 
-        chartOptions: {
-            "maintainAspectRatio": false,
-            "defaultColor": 'rgba(0,0,0,0.1)',
-            "defaultFontFamily": defaultFontFamily,
-            "defaultFontSize": defaultFontSize,
-            "events": ['click']
-        }
-
-        onClick: {
-            var activeElement = getElementAtEvent(evt);
-            if (activeElement[0]) {
-                if (type === "category"){
-                    console.log("active: " + activeElement[0]._view.label)
-                    category = activeElement[0]._view.label
-                    type = "subcategory"
-                    updateChart()
-                }
+        PieSeries {
+            property var shades: [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
+            id: pieSeries
+            onSliceAdded: {
+                slice.color = Material.color(Material.Green, shades[count - 1])
+//                slice.onClicked = function() {
+//                    category = slice.label
+//                    type = "subcategory"
+//                    updateChart()
+//                }
             }
         }
     }

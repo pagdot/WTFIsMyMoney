@@ -67,10 +67,10 @@ ApplicationWindow {
         visible: false
     }
 
-    /*Page_chart{
+    Page_chart{
         id: page_chart
         visible: false
-    }*/
+    }
 
     Component.onCompleted: {
         Qt.application.displayName = "WTFIsMyMoney"
