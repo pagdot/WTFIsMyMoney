@@ -1,10 +1,12 @@
 /* main.qml -- Main GUI file
  * Manages the different pages of the project and the back key on android
  *
- * Copyright (C) 2017 Paul Goetzinger
- * All Rights Reserved.
+ * Copyright (C) 2017 Paul Goetzinger <paul70079@gmail.com>
  *
  * This file is part of WTFIsMyMoney.
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ * License-Filename: LICENSE/GPL-3.0.txt
  *
  * WTFIsMyMoney is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

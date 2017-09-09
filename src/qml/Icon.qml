@@ -1,8 +1,10 @@
 /* Icon.qml -- Icon font wrapper
  * Returns the character of an icon by its name
  *
- * Copyright (C) 2017 Paul Goetzinger
- * All Rights Reserved.
+ * Copyright (C) 2017 Paul Goetzinger <paul70079@gmail.com>
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ * License-Filename: LICENSE/GPL-3.0.txt
  *
  * This file is part of WTFIsMyMoney.
  *

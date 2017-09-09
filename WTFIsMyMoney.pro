@@ -3,9 +3,11 @@ QT += qml quick quickcontrols2 core \
 
 CONFIG += c++11
 
-SOURCES += main.cpp
+INCLUDEPATH += inc
 
-RESOURCES += qml/qml.qrc \
+SOURCES += src/main.cpp
+
+RESOURCES += src/qml/qml.qrc \
     icons/icons.qrc
 
 VERSION = 0.1
@@ -34,8 +36,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 android: {
     QT += androidextras
-    SOURCES += androidfile.cpp
-    HEADERS += androidfile.h
+    SOURCES += src/androidfile.cpp
+    HEADERS += inc/androidfile.h
 
     DISTFILES += \
         android/AndroidManifest.xml \
@@ -50,8 +52,8 @@ android: {
 }
 
 windows: {
-    HEADERS += fileio.h
-    SOURCES += fileio.cpp
+    HEADERS += inc/fileio.h
+    SOURCES += src/fileio.cpp
 }
 
 DISTFILES += \

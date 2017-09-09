@@ -1,9 +1,10 @@
 /* FileSave.qml -- FileSave wrapper
  * Opens a file save dialog, opens the chosen file and saves the content to the file
- * on android
  *
- * Copyright (C) 2017 Paul Goetzinger
- * All Rights Reserved.
+ * Copyright (C) 2017 Paul Goetzinger <paul70079@gmail.com>
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ * License-Filename: LICENSE/GPL-3.0.txt
  *
  * This file is part of WTFIsMyMoney.
  *
@@ -22,42 +23,54 @@
  */
 
 import QtQuick 2.7
-import AndroidFile 1.0
+import QtQuick.Dialogs 1.0
+import FileIO 1.0
 
 Item {
     id: control
     property string title: "Speichern unter"
     property url folder: ""
     property url fileUrl: ""
-    property var nameFilters: []
+    property var nameFilters: ["*.csv"]
     property string selectedNameFilter : ""
     property bool sidebarVisible : true
     property string content: ""
-    property string mime: "text/csv"
+    property string mime: "*/*"
 
     signal accepted()
     signal rejected()
 
     function open() {
-        androidCreateDialog.fileCreateDialog()
+        winSaveDialog.open()
     }
     function close() {
+        winSaveDialog.close()
     }
 
-    AndroidFile {
-        id: androidCreateDialog
-        mime: control.mime
+    FileDialog {
+        id: winSaveDialog
+        title: control.title
+        selectExisting: false
+        selectMultiple: false
+        selectFolder: false
+        nameFilters: control.nameFilters
+        selectedNameFilter: control.selectedNameFilter
+        sidebarVisible: control.sidebarVisible
+        visible: control.visible
 
-        function create() {
-            fileCreate();
+        onSelectedNameFilterChanged: control.selectedNameFilter = selectedNameFilter
+
+        onAccepted: {
+            control.folder = folder
+            control.fileUrl = fileUrl;
+            file.write(fileUrl, content)
+            control.accepted()
         }
-        onCreated: {
-            if (!fileUri) {
-                rejected()
-                return
-            }
-            fileCreate(fileUri, control.content);
-            accepted()
-        }
+        onRejected: control.rejected()
+    }
+
+    FileIO {
+        id: file
+        onError: console.log("FileIO error: " + msg)
     }
 }

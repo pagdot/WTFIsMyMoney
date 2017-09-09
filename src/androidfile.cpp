@@ -1,8 +1,10 @@
 /* androidfile.cpp -- android file wrapper
  * Provides functions to open, create, read and write files on android
  *
- * Copyright (C) 2017 Paul Goetzinger
- * All Rights Reserved.
+ * Copyright (C) 2017 Paul Goetzinger <paul70079@gmail.com>
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ * License-Filename: LICENSE/GPL-3.0.txt
  *
  * This file is part of WTFIsMyMoney.
  *
