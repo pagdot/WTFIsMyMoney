@@ -95,10 +95,15 @@ void AndroidFile::fileCreate(QUrl fileUrl, QString content) {
 }
 
 void AndroidFile::handleActivityResult(int receiverRequestCode, int resultCode, const QAndroidJniObject &data) {
-    QAndroidJniObject uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
+    QString fileUri = "";
+    if (data.isValid()) {
+        QAndroidJniObject uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
+        fileUri = uri.toString();
+    }
+
     if(receiverRequestCode == 0) {
-        emit opened(uri.toString());
+        emit opened(fileUri);
     } else if (receiverRequestCode == 1) {
-        emit created(uri.toString());
+        emit created(fileUri);
     }
 }

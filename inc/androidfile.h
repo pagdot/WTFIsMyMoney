@@ -53,8 +53,8 @@ private:
     QString m_mime = "*/*";
 
 signals:
-    void opened(QUrl fileUri);
-    void created(QUrl fileUri);
+    void opened(QString fileUri);
+    void created(QString fileUri);
     void mimeChanged();
 
 public slots:

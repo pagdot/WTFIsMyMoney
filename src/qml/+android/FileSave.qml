@@ -54,7 +54,7 @@ Item {
             fileCreate();
         }
         onCreated: {
-            if (!fileUri) {
+            if ((!fileUri) || (fileUri === "")) {
                 rejected()
                 return
             }

@@ -56,7 +56,7 @@ Item {
             fileOpen();
         }
         onOpened: {
-            if (!fileUri) {
+            if ((!fileUri) || (fileUri === "")) {
                 rejected()
                 return
             }
