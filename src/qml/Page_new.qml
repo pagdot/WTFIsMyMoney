@@ -120,6 +120,26 @@ Page {
         anchors.right: parent.right
         height: 56
 
+        AbstractButton {
+            id: buttonBack
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 16
+            implicitWidth: height
+
+            Text {
+                anchors.fill: parent
+                font.family: icon.family
+                text: icon.icons.arrow_left
+                color: "white"
+                font.pointSize: 32
+                fontSizeMode: Text.VerticalFit
+            }
+
+            onClicked: dialog.open()
+        }
+
         Text {
             text: page.title
             anchors.left: parent.left
@@ -138,7 +158,7 @@ Page {
         anchors.top: bar.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: button_new_cancel.visible ? button_new_cancel.top : parent.bottom
+        anchors.bottom: parent.bottom
         anchors.leftMargin: 16
         spacing: 20
 
@@ -763,20 +783,10 @@ Page {
         }
     }
 
-
-    Button {
-        id: button_new_cancel
-        visible: Qt.platform.os !== "android"
-        text: "Abbrechen"
-        anchors.bottom: parent.bottom
-        width: parent.width
-        onClicked: cancel()
-    }
-
-
     Dialog {
         id: dialog
         title: "Abbrechen"
+        parent: page
         standardButtons: Dialog.Ok | Dialog.Cancel
 
         x: (parent.width - width) / 2

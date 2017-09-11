@@ -33,7 +33,6 @@ import "database.js" as Db
 
 Page {
 
-
     function createCSV(data) {
         var csv = "date,money,subcategory,category,notes, icon\r\n";
         for (var i in data) {
@@ -68,12 +67,36 @@ Page {
         view_stack.pop()
     }
 
+    Icon {
+        id: icon
+    }
+
     Rectangle {
         id: bar
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         height: 56
+
+        AbstractButton {
+            id: buttonBack
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 16
+            implicitWidth: height
+
+            Text {
+                anchors.fill: parent
+                font.family: icon.family
+                text: icon.icons.arrow_left
+                color: "white"
+                font.pointSize: 32
+                fontSizeMode: Text.VerticalFit
+            }
+
+            onClicked: cancel()
+        }
 
         Text {
             text: "Einstellungen"
@@ -91,7 +114,7 @@ Page {
 
     ColumnLayout {
         anchors.top: bar.bottom
-        anchors.bottom: button_back.visible ? button_back.top : parent.bottom
+        anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         ColumnLayout {
             Label {
@@ -150,16 +173,6 @@ Page {
                 }
             }
         }
-    }
-
-
-    Button {
-        id: button_back
-        visible: Qt.platform.os !== "android"
-        text: "Zurück"
-        anchors.bottom: parent.bottom
-        width: parent.width
-        onClicked: cancel()
     }
 
     Component.onCompleted: {

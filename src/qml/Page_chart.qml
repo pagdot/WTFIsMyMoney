@@ -159,7 +159,6 @@ Page {
         id: chart
         anchors.fill: parent
         anchors.topMargin: dateRow.height + bar.height
-        anchors.bottomMargin: button_back.visible ? button_back.height : 0
         antialiasing: true
 
 
@@ -193,16 +192,6 @@ Page {
         onClosed: end = selectedDate
         x: (page.width - width) / 2
         y: (page.height - height) / 2
-    }
-
-
-    Button {
-        id: button_back
-        visible: Qt.platform.os !== "android"
-        text: "Zurück"
-        anchors.bottom: parent.bottom
-        width: parent.width
-        onClicked: cancel()
     }
 
     Component.onCompleted: {
