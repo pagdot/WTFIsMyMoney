@@ -112,7 +112,7 @@ function clearDb() {
 
 function importEntries(entries) {
     for (var i in entries) {
-        storeEntry(entries[i].category, entries[i].subcategory, entries[i].date, entries[i].money, entries[i].note, entries[i].icon)
+        storeEntry(entries[i].category, entries[i].subcategory, entries[i].date, entries[i].money, entries[i].note, entries[i].icon, entries[i].extra, entries[i].tags)
     }
 }
 
@@ -243,7 +243,7 @@ function getEntryCount() {
     return rows[0].cnt
 }
 
-function storeEntry(main, sub, date, money, note, icon) {
+function storeEntry(main, sub, date, money, note, icon, extra, tags) {
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
@@ -254,6 +254,18 @@ function storeEntry(main, sub, date, money, note, icon) {
     if (!found) {
         console.log("Unknown category \"" +  main + "\"")
         return false
+    }
+
+    if (extra) {
+        extra = JSON.stringify(extra)
+    } else {
+        extra = "";
+    }
+
+    if (tags) {
+        tags = JSON.stringify(tags)
+    } else {
+        tags = ""
     }
 
     cats = getSubcategories(main)
@@ -270,11 +282,11 @@ function storeEntry(main, sub, date, money, note, icon) {
         }
     }
 
-    var ret = sql("INSERT INTO entries (category, datestamp, money, notes)\n" +
-                  "SELECT S.nr, ?, ?, ? FROM (\n" +
+    var ret = sql("INSERT INTO entries (category, datestamp, money, notes, extra, tags)\n" +
+                  "SELECT S.nr, ?, ?, ?, ?, ? FROM (\n" +
                   "   SELECT S.nr FROM subcategories S \n" +
                   "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +
-                  ") S;", [dateToISOString(date), parseInt(money * 100), note, main, sub]);
+                  ") S;", [dateToISOString(date), parseInt(money * 100), note, main, sub, extra, tags]);
     return ret === false ? false : true;
 }
 
@@ -312,6 +324,7 @@ function createEntryTable() {
     sql("CREATE TABLE IF NOT EXISTS entries (\n" +
         "   nr INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, \n" +
         "   datestamp DATE NOT NULL, money INT, notes TEXT, \n" +
+        "   tags TEXT, extra TEXT\n" +
         "   lastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n" +
         ");");
 }
@@ -335,7 +348,7 @@ function deleteEntry(nr) {
         "WHERE (nr = ?)", [nr])
 }
 
-function updateEntry(nr, main, sub, date, money, note) {
+function updateEntry(nr, main, sub, date, money, note, extra, tags) {
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
@@ -346,6 +359,18 @@ function updateEntry(nr, main, sub, date, money, note) {
     if (!found) {
         console.log("Unknown category \"" +  main + "\"")
         return false
+    }
+
+    if (extra) {
+        extra = JSON.stringify(extra)
+    } else {
+        extra = "";
+    }
+
+    if (tags) {
+        tags = JSON.stringify(tags)
+    } else {
+        tags = ""
     }
 
     cats = getSubcategories(main)
@@ -362,11 +387,11 @@ function updateEntry(nr, main, sub, date, money, note) {
         }
     }
 
-    sql("REPLACE INTO entries (nr, category, datestamp, money, notes)\n" +
+    sql("REPLACE INTO entries (nr, category, datestamp, money, notes, extra tags)\n" +
         "SELECT ?, S.nr, ?, ?, ? FROM (\n" +
         "   SELECT S.nr FROM subcategories S \n" +
         "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +
-        ") S;", [nr, dateToISOString(date), parseInt(money * 100), note, main, sub]);
+        ") S;", [nr, dateToISOString(date), parseInt(money * 100), note, main, sub, extra, tags]);
 }
 
 function pad(number) {

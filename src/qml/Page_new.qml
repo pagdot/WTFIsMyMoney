@@ -777,7 +777,7 @@ Page {
             flat: true
 
             onClicked: {
-                Db.storeEntry(main_category.name, sub_category.name, datum, money, "", sub_category.icon)
+                Db.storeEntry(main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
                 view_stack.pop()
             }
         }
