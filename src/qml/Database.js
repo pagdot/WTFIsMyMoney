@@ -184,6 +184,15 @@ function getEntries(count) {
                     "ORDER BY E.datestamp DESC")
     }
     for (var i in rows) {
+        if (rows[i].notes === null) {
+            rows[i].notes = "";
+        }
+        if (rows[i].extra === null) {
+            rows[i].extra = "";
+        }
+        if (rows[i].tags === null) {
+            rows[i].tags = "";
+        }
         rows[i].datestamp = new Date(rows[i].datestamp)
         rows[i].money = rows[i].money / 100
     }
@@ -219,12 +228,22 @@ function getMoneyPerSubcategory(category, start, end) {
 
 function getAll() {
     var subcategories = [];
-    var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes, S.icon\n" +
+    var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes, E.extra, E.tags, S.icon\n" +
                    "FROM entries E, subcategories S, categories C\n" +
                    "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
                    "ORDER BY E.datestamp ASC\n")
 
     for (var i in rows) {
+        if (rows[i].notes === null) {
+            rows[i].notes = "";
+        }
+        if (rows[i].extra === null) {
+            rows[i].extra = "";
+        }
+        if (rows[i].tags === null) {
+            rows[i].tags = "";
+        }
+
         rows[i].money = rows[i].money / 100
     }
     return rows
@@ -286,7 +305,7 @@ function storeEntry(main, sub, date, money, note, icon, extra, tags) {
                   "SELECT S.nr, ?, ?, ?, ?, ? FROM (\n" +
                   "   SELECT S.nr FROM subcategories S \n" +
                   "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +
-                  ") S;", [dateToISOString(date), parseInt(money * 100), note, main, sub, extra, tags]);
+                  ") S;", [dateToISOString(date), parseInt(money * 100), note, extra, tags, main, sub]);
     return ret === false ? false : true;
 }
 
@@ -387,7 +406,7 @@ function updateEntry(nr, main, sub, date, money, note, extra, tags) {
         }
     }
 
-    sql("REPLACE INTO entries (nr, category, datestamp, money, notes, extra tags)\n" +
+    sql("REPLACE INTO entries (nr, category, datestamp, money, notes, extra, tags)\n" +
         "SELECT ?, S.nr, ?, ?, ? FROM (\n" +
         "   SELECT S.nr FROM subcategories S \n" +
         "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +

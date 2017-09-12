@@ -71,28 +71,37 @@ Page {
             return
         }
 
-        view_new_swipe.setCurrentIndex(0)
-        main_category = item.category
-        sub_category = item.subcategory
         categories = []
         var tmp = Db.getCategories();
         for (var i in tmp) {
             categories.push({
-                name: tmp[i],
-                sub: Db.getSubcategories(tmp[i])
+                name: tmp[i].name,
+                icon: tmp[i].icon,
+                sub: Db.getSubcategoriesOrderedPerUse(tmp[i].name)
             });
         }
-        page_main.categories = categories
-        main_category = item.category
-        sub_category = item.subcategory
+
         for (var i in categories) {
-            if (categories[i].name === main_category) {
-                page_sub.model = categories[i].sub
+            if (item.category === categories[i].name) {
+                main_category = categories[i]
+                break
             }
         }
-        page_sub.setText(sub_category)
-        page_content.datum = item.datestamp;
-        page_content.money = item.money
+
+        for (var i in main_category.sub) {
+            if (item.subcategory === main_category.sub[i].name) {
+                sub_category = main_category.sub[i]
+                break
+            }
+        }
+
+        money = item.money
+        datum = item.datestamp
+
+        mainLayout.opened = false;
+        subLayout.opened = false;
+        moneyLayout.opened = false;
+
         nr = item.nr
         newEntry = false
     }
@@ -777,7 +786,11 @@ Page {
             flat: true
 
             onClicked: {
-                Db.storeEntry(main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
+                if (newEntry) {
+                    Db.storeEntry(main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
+                } else {
+                    Db.updateEntry(nr, main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
+                }
                 view_stack.pop()
             }
         }

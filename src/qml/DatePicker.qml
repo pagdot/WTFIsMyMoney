@@ -110,7 +110,6 @@ Dialog{
         StackView {
             id: stack
             property date tmp_date: selectedDate
-            //onTmp_dateChanged: console.log(dialog.objectName + " tmp: " + tmp_date)
 
             initialItem: calendar
 

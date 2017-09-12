@@ -34,9 +34,12 @@ import "database.js" as Db
 Page {
 
     function createCSV(data) {
-        var csv = "date,money,subcategory,category,notes, icon\r\n";
+        var csv = "date,money,subcategory,category,notes,icon,tags,extra\r\n";
         for (var i in data) {
-            csv += data[i].datestamp + "," + data[i].money + "," + data[i].subcategory.replace(",", "") + "," + data[i].category.replace(",", "") + "," + data[i].notes + "," + data[i].icon + "\r\n"
+            csv += data[i].datestamp + "," + data[i].money + "," +
+                   data[i].subcategory.replace(",", "") + "," +
+                   data[i].category.replace(",", "") + "," + data[i].notes + "," +
+                   data[i].icon + "," + data[i].tags + "," + data[i].extra + "\r\n"
         }
         return csv;
     }

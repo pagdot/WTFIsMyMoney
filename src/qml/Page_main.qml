@@ -232,15 +232,6 @@ Page {
                 font.pointSize: 16
                 color: Material.color(Material.Grey, Material.Shade500)
             }
-
-//            Rectangle {
-//                anchors.fill: parent
-//                z: -1
-//                border.width: 1
-//                border.color: Material.color(Material.Grey, Material.Shade500)
-//            }
-
-
         }
         footer: Button {
             text: "lade weitere"
@@ -257,7 +248,6 @@ Page {
         MouseArea {
             anchors.fill: parent
             onPressAndHold: {
-                //var item = list.itemAt(mouse.x, mouse.y)
                 var nr = list.indexAt(mouse.x, mouse.y)
                 contextMenu.model = list.model[nr]
                 contextMenu.x = x + mouse.x - contextMenu.width / 2
