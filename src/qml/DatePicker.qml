@@ -39,6 +39,8 @@ Dialog{
         id: icon
     }
 
+    Material.elevation: 24
+
     width: 300
     height: 500
     padding: 0

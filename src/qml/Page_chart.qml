@@ -28,6 +28,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
 import QtCharts 2.0
 import QtQuick.Controls.Material 2.2
+import QtQuick.Controls.Material.impl 2.2
 
 import "database.js" as Db
 
@@ -89,12 +90,25 @@ Page {
         id: icon
     }
 
-    Rectangle {
+    Pane {
         id: bar
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         height: 56
+        Material.elevation: 4
+        padding: 0
+        z: 1
+
+        background: Rectangle {
+            anchors.fill: parent
+            color: Material.primary
+
+            layer.enabled: bar.enabled && bar.Material.elevation > 0
+            layer.effect: ElevationEffect {
+                elevation: bar.Material.elevation
+            }
+        }
 
         AbstractButton {
             id: buttonBack
@@ -125,8 +139,6 @@ Page {
             font.pixelSize: 20
             color: "white"
         }
-
-        color: Material.primary
     }
 
 

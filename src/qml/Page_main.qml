@@ -25,8 +25,9 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
+import QtQuick.Controls.Material.impl 2.2
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 import QtQuick.LocalStorage 2.0
 
 import "database.js" as Db
@@ -69,12 +70,26 @@ Page {
         }
     }
 
-    Rectangle {
+    Pane {
         id: bar
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         height: 56
+        padding: 0
+        z:1
+
+        Material.elevation: 4
+
+        background: Rectangle {
+            anchors.fill: parent
+            color: Material.primary
+
+            layer.enabled: bar.enabled && bar.Material.elevation > 0
+            layer.effect: ElevationEffect {
+                elevation: bar.Material.elevation
+            }
+        }
 
         Button {
             id: bt_menu
@@ -114,7 +129,7 @@ Page {
             color: "white"
         }
 
-        color: Material.primary
+
 
         Menu {
             id: menu
@@ -165,156 +180,165 @@ Page {
         }
     }
 
-    GridLayout {
-        id: grid
-        columns: 2
-        columnSpacing: 20
+    Pane {
+        id: mainPane
+        anchors.left: parent.left
         anchors.top: bar.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.margins: 5
-        Label {id: month; font.pointSize: 16}
-        Label {id: week; font.pointSize: 16}
-    }
+        anchors.right: parent.right
+        anchors.bottom: bottomBar.top
+        padding: 0
 
-    ListView {
-        id: list
-        anchors.fill: parent
-        anchors.margins: 10
-        anchors.bottomMargin: bottomBar.height
-        anchors.topMargin: anchors.margins + grid.height + bar.height
-        spacing: 0
-        clip: true
+        GridLayout {
+            id: grid
+            columns: 2
+            columnSpacing: 20
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: 5
 
-        delegate: Item {
-            width: list.width
-            height: 72
+            Label {id: month; font.pointSize: 16}
+            Label {id: week; font.pointSize: 16}
+        }
 
-            Text {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.margins: 16
-                height: parent.height - 2 * anchors.margins
-                width: height
-                text: icon.icons[modelData.icon]
-                fontSizeMode: Text.Fit
-                font.family: icon.family
-                color: Material.accent
-                font.pointSize: 100
-            }
+        ListView {
+            id: list
+            anchors.fill: parent
+            anchors.margins: 10
+            anchors.topMargin: anchors.margins + grid.height
+            spacing: 0
+            clip: true
 
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 72
-                anchors.rightMargin: 16
-                spacing: 0
+            delegate: Item {
+                width: list.width
+                height: 72
 
                 Text {
-                    text: (new String(modelData.money)).replace(".", ",") + " €"
-                    font.pointSize: 16
-                    Layout.alignment: Qt.AlignBottom
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.margins: 16
+                    height: parent.height - 2 * anchors.margins
+                    width: height
+                    text: icon.icons[modelData.icon]
+                    fontSizeMode: Text.Fit
+                    font.family: icon.family
+                    color: Material.accent
+                    font.pointSize: 100
+                }
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 72
+                    anchors.rightMargin: 16
+                    spacing: 0
+
+                    Text {
+                        text: (new String(modelData.money)).replace(".", ",") + " €"
+                        font.pointSize: 16
+                        Layout.alignment: Qt.AlignBottom
+                    }
+
+                    Text {
+                        text: modelData.category + ": " + modelData.subcategory
+                        font.pointSize: 16
+                        Layout.alignment: Qt.AlignTop
+                        color: Material.color(Material.Grey, Material.Shade500)
+                    }
+
                 }
 
                 Text {
-                    text: modelData.category + ": " + modelData.subcategory
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.margins: 16
+                    text: Qt.locale().monthName(modelData.datestamp.getMonth(), Locale.ShortFormat) + " " + modelData.datestamp.getDate() + ", " + modelData.datestamp.getFullYear()
                     font.pointSize: 16
-                    Layout.alignment: Qt.AlignTop
                     color: Material.color(Material.Grey, Material.Shade500)
                 }
-
             }
-
-            Text {
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.margins: 16
-                text: Qt.locale().monthName(modelData.datestamp.getMonth(), Locale.ShortFormat) + " " + modelData.datestamp.getDate() + ", " + modelData.datestamp.getFullYear()
-                font.pointSize: 16
-                color: Material.color(Material.Grey, Material.Shade500)
-            }
-        }
-        footer: Button {
-            text: "lade weitere"
-            width: list.width
-            height: 72
-            flat: true
-            visible: entryCount > list.count
-            onClicked: {
-                list.model = Db.getEntries(list.count + 20)
-            }
-        }
-
-
-        MouseArea {
-            anchors.fill: parent
-            onPressAndHold: {
-                var nr = list.indexAt(mouse.x, mouse.y)
-                contextMenu.model = list.model[nr]
-                contextMenu.x = x + mouse.x - contextMenu.width / 2
-                contextMenu.y = y + mouse.y - contextMenu.height - 30
-                contextMenu.open()
-            }
-        }
-
-        Popup {
-            id: contextMenu
-
-            property var model;
-            padding: 0
-            leftPadding: 10
-            rightPadding: 10
-
-            RowLayout {
-
-                Button {
-                    id: editEntry
-                    text: "Bearbeiten"
-                    flat: true
-                    contentItem: Text {
-                        text: parent.text
-                        font: parent.font
-                        opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
-                        color: Material.accent
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
-                    onClicked: {
-                        contextMenu.close()
-                        var item = view_stack.push(page_new)
-                        item.load(contextMenu.model)
-                    }
+            footer: Button {
+                text: "lade weitere"
+                width: list.width
+                height: 72
+                flat: true
+                visible: entryCount > list.count
+                onClicked: {
+                    list.model = Db.getEntries(list.count + 20)
                 }
-                Button {
-                    id: deleteEntry
-                    text: "Löschen"
-                    flat: true
+            }
 
-                    onClicked: {
-                        contextMenu.close()
-                        deleteDialog.open()
+
+            MouseArea {
+                anchors.fill: parent
+                onPressAndHold: {
+                    var nr = list.indexAt(mouse.x, mouse.y)
+                    contextMenu.model = list.model[nr]
+                    contextMenu.x = x + mouse.x - contextMenu.width / 2
+                    contextMenu.y = y + mouse.y - contextMenu.height - 30
+                    contextMenu.open()
+                }
+            }
+
+            Popup {
+                id: contextMenu
+
+                property var model;
+                padding: 0
+                leftPadding: 10
+                rightPadding: 10
+
+                RowLayout {
+
+                    Button {
+                        id: editEntry
+                        text: "Bearbeiten"
+                        flat: true
+                        contentItem: Text {
+                            text: parent.text
+                            font: parent.font
+                            opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
+                            color: Material.accent
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
+                        onClicked: {
+                            contextMenu.close()
+                            var item = view_stack.push(page_new)
+                            item.load(contextMenu.model)
+                        }
                     }
-                    contentItem: Text {
-                        text: parent.text
-                        font: parent.font
-                        opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
-                        color: Material.accent
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
+                    Button {
+                        id: deleteEntry
+                        text: "Löschen"
+                        flat: true
 
-                    Dialog {
-                        id: deleteDialog
-                        title: "Löschen bestätigen"
-                        parent: page_main
-                        x: (page_main.width - width) /2
-                        y: (page_main.height - height) /2
-                        standardButtons: Dialog.Ok | Dialog.Cancel
+                        onClicked: {
+                            contextMenu.close()
+                            deleteDialog.open()
+                        }
+                        contentItem: Text {
+                            text: parent.text
+                            font: parent.font
+                            opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
+                            color: Material.accent
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
 
-                        onAccepted: {
-                            Db.deleteEntry(contextMenu.model.nr)
-                            updateEntries()
+                        Dialog {
+                            id: deleteDialog
+                            title: "Löschen bestätigen"
+                            parent: page_main
+                            x: (page_main.width - width) /2
+                            y: (page_main.height - height) /2
+                            standardButtons: Dialog.Ok | Dialog.Cancel
+
+                            onAccepted: {
+                                Db.deleteEntry(contextMenu.model.nr)
+                                updateEntries()
+                            }
                         }
                     }
                 }
@@ -322,17 +346,19 @@ Page {
         }
     }
 
-    Button {
+    RoundButton {
         id: addButton
-        z: 2
+        z: 8
         width: 56
         height: width
+        radius: width /2
         anchors.right: parent.right
         anchors.verticalCenter: bottomBar.top
         anchors.margins: 16
         font.family: icon.family
         text: icon.icons.plus
         font.pointSize: 100
+        Material.elevation: 12
 
         onClicked: {
             var item = view_stack.push(page_new)
@@ -341,6 +367,7 @@ Page {
         }
 
         contentItem: Text {
+            z: 1
             anchors.centerIn: parent
             width: 24
             height: 24
@@ -358,43 +385,52 @@ Page {
             anchors.fill: parent
             radius: width/2
             color: Material.accent
+
+            layer.enabled: addButton.enabled && addButton.Material.elevation > 0
+            layer.effect: ElevationEffect {
+                elevation: addButton.Material.elevation
+            }
         }
     }
 
-    DropShadow {
-        anchors.fill: addButton
-        source: addButton
-        verticalOffset: 6
-        radius: width / 2
-        samples: 1 + radius * 2
-        opacity: 0.6
-        z:1
-    }
-
-    Button {
+    Pane {
         id: bottomBar
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         height: 56
-        text: "Statistik"
-        background: Rectangle {
+        z: 4
+        padding: 0
+        Material.elevation: 8
+
+        Button {
             anchors.fill: parent
-            color: Material.primary
-        }
-        contentItem: Text {
-            text: parent.text
-            font: parent.font
-            opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
-            color: "white"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
-        }
-        onClicked: {
-            var item = view_stack.push(page_chart)
-            item.reset()
-            focus = false
+            text: "Statistik"
+            Material.elevation: 300
+
+
+            background: Rectangle {
+                anchors.fill: parent
+                color: Material.primary
+                layer.enabled: parent.enabled && parent.Material.elevation > 0
+                layer.effect: ElevationEffect {
+                    elevation: parent.Material.elevation
+                }
+            }
+            contentItem: Text {
+                text: parent.text
+                font: parent.font
+                opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+            onClicked: {
+                var item = view_stack.push(page_chart)
+                item.reset()
+                focus = false
+            }
         }
     }
 

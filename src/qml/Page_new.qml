@@ -28,6 +28,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
 import QtQuick.Controls.Material 2.2
+import QtQuick.Controls.Material.impl 2.2
 
 import "database.js" as Db
 
@@ -122,12 +123,15 @@ Page {
         id: icon
     }
 
-    Rectangle {
+    Pane {
         id: bar
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         height: 56
+        padding: 0
+        Material.elevation: 4
+        z:1
 
         AbstractButton {
             id: buttonBack
@@ -159,7 +163,15 @@ Page {
             color: "white"
         }
 
-        color: Material.primary
+        background: Rectangle {
+            anchors.fill: parent
+            color: Material.primary
+
+            layer.enabled: bar.enabled && bar.Material.elevation > 0
+            layer.effect: ElevationEffect {
+                elevation: bar.Material.elevation
+            }
+        }
     }
 
 
@@ -801,6 +813,7 @@ Page {
         title: "Abbrechen"
         parent: page
         standardButtons: Dialog.Ok | Dialog.Cancel
+        Material.elevation: 24
 
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
