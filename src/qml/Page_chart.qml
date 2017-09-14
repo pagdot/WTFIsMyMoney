@@ -50,6 +50,7 @@ Page {
         start = tmp
         end = new Date()
         type = "category"
+        updateChart()
     }
 
     function cancel() {
@@ -67,7 +68,7 @@ Page {
             if (type === "category") {
                 values = Db.getMoneyPerCategory(start, end)
             } else if (type === "subcategory") {
-                values = getMoneyPerSubcategory(category, start, end)
+                values = Db.getMoneyPerSubcategory(category, start, end)
             }
 
             var other = 0;
@@ -172,18 +173,19 @@ Page {
         anchors.fill: parent
         anchors.topMargin: dateRow.height + bar.height
         antialiasing: true
-
+        backgroundColor: Material.background
 
         PieSeries {
             property var shades: [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
             id: pieSeries
             onSliceAdded: {
                 slice.color = Material.color(Material.Green, shades[count - 1])
-//                slice.onClicked = function() {
-//                    category = slice.label
-//                    type = "subcategory"
-//                    updateChart()
-//                }
+            }
+
+            onClicked: {
+                page.category = slice.label
+                page.type = "subcategory"
+                updateChart()
             }
         }
     }
