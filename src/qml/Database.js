@@ -226,6 +226,22 @@ function getMoneyPerSubcategory(category, start, end) {
     return rows
 }
 
+function getMoneyPerMonth(start, end) {
+    var tmpStart = new Date(start)
+    var tmpEnd = lastDayOfMonth(tmpStart)
+    var array = [];
+    while (tmpEnd <= end) {
+        var tmp = getSum(tmpStart, tmpEnd)
+        array.push({month: new Date(tmpStart), money: tmp})
+        tmpStart.setMonth(tmpStart.getMonth() + 1)
+        tmpEnd = lastDayOfMonth(tmpStart)
+    }
+    if (isSameDate(tmpEnd, end)) {
+        var tmp = getSum(tmpStart, end)
+        array.push({month: new Date(tmpStart), money: tmp})
+    }
+    return array
+}
 function getAll() {
     var subcategories = [];
     var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes, E.extra, E.tags, S.icon\n" +
@@ -447,5 +463,25 @@ function dateToISOString(date) {
     return date.getUTCFullYear() +
         '-' + pad(date.getUTCMonth() + 1) +
         '-' + pad(date.getUTCDate())
-};
+}
 
+function copy(object) {
+    var objString = JSON.stringify(object)
+    var obj = JSON.parse(objString)
+    return obj
+}
+
+function lastDayOfMonth(month) {
+    var tmp = new Date(month)
+    tmp.setMonth(tmp.getMonth() + 1)
+    tmp.setDate(0)
+    return tmp
+}
+
+function isSameDate(date1, date2) {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }

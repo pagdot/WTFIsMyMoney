@@ -39,53 +39,54 @@ Page {
     property date start: new Date()
     property date end: new Date()
 
-    property var type: "category"
-    property var category: ""
-
     property bool init: false
+
+    onStartChanged: update();
+    onEndChanged: update();
 
     function reset() {
         var tmp = new Date()
-        tmp.setMonth(tmp.getMonth() - 1)
+        tmp.setMonth(tmp.getMonth() - 5)
+        tmp.setDate(1);
         start = tmp
-        end = new Date()
-        type = "category"
-        updateChart()
+        tmp = new Date()
+        tmp.setMonth(tmp.getMonth()+1)
+        tmp.setDate(0)
+        end = tmp
+        update();
     }
 
     function cancel() {
         view_stack.pop()
     }
 
-    onStartChanged: updateChart()
-    onEndChanged: updateChart()
+    function update() {
+        if (!init) {
+            return
+        }
 
-    onInitChanged: updateChart()
-
-    function updateChart() {
-        var values;
-        if (init) {
-            if (type === "category") {
-                values = Db.getMoneyPerCategory(start, end)
-            } else if (type === "subcategory") {
-                values = Db.getMoneyPerSubcategory(category, start, end)
+        var monthMoney = Db.getMoneyPerMonth(start, end)
+        var max;
+        var min;
+        var avg
+        var sum = 0;
+        for (var i in monthMoney) {
+            sum += monthMoney[i].money
+            if ((!max) || (max.money < monthMoney[i].money)) {
+                max = monthMoney[i]
             }
-
-            var other = 0;
-            pieSeries.clear()
-            for (var i in values) {
-                if ((values.length > 10) && (i >= 10)) {
-                    other += values[i].money
-                } else {
-                    pieSeries.append(values[i].name, values[i].money)
-                }
-            }
-            if (values.length > 10) {
-                pieSeries.append("Anderes", other)
+            if ((!min) || (min.money > monthMoney[i].money)) {
+                min = monthMoney[i]
             }
         }
+        avg = sum / monthMoney.length
+        mostExpensiveMonthName.text = Qt.locale().monthName(max.month.getMonth(), Locale.LongFormat)
+        mostExpensiveMonthMoney.text = max.money + " €"
+        leastExpensiveMonthName.text = Qt.locale().monthName(min.month.getMonth(), Locale.LongFormat)
+        leastExpensiveMonthMoney.text = min.money + " €"
+        averageMonth.text = avg + " €"
+        list.model = monthMoney
     }
-
 
     Icon {
         id: icon
@@ -142,70 +143,267 @@ Page {
         }
     }
 
-
-    RowLayout {
-        id: dateRow
-        anchors.horizontalCenter: parent.horizontalCenter
+    ColumnLayout {
+        id: mainLayout
         anchors.top: bar.bottom
-        Button {
-            id: bt_startDate
-            text: Qt.locale().monthName(start.getMonth(), Locale.ShortFormat) + ", " + start.getDate() + " " + start.getFullYear()
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
 
-            onClicked: {
-                datePickerStart.open()
+        RowLayout {
+            id: dateRow
+            implicitHeight: 100
+            anchors.horizontalCenter: parent.horizontalCenter
+            Button {
+                id: bt_startDate
+                text: Qt.locale().monthName(start.getMonth(), Locale.ShortFormat) + ", " + start.getDate() + " " + start.getFullYear()
+
+                onClicked: {
+                    datePickerStart.open()
+                }
+
+            }
+            Button {
+                id: bt_endDate
+                text: Qt.locale().monthName(end.getMonth(), Locale.ShortFormat) + ", " + end.getDate() + " " + end.getFullYear()
+
+
+                onClicked: {
+                    datePickerEnd.open()
+                }
+
+            }
+
+            DatePicker {
+                id: datePickerStart
+                parent: page
+                objectName: "start"
+                selectedDate: start
+                onClosed: start = selectedDate
+                x: (page.width - width) / 2
+                y: (page.height - height) / 2
+            }
+
+            DatePicker {
+                id: datePickerEnd
+                parent: page
+                objectName: "end"
+                selectedDate: end
+                onClosed: end = selectedDate
+                x: (page.width - width) / 2
+                y: (page.height - height) / 2
+            }
+        }
+
+        GridLayout {
+            id: grid
+            columns: 3
+            columnSpacing: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: 5
+
+            Label {
+                id: mostExpensiveMonthLabel;
+                font.pointSize: 16
+                text: "Teuerstes Monat:"
+            }
+            Label {
+                id: mostExpensiveMonthName
+                font.pointSize: 16
+            }
+            Label {
+                id: mostExpensiveMonthMoney
+                font.pointSize: 16
+            }
+            Label {
+                id: leastExpensiveMonthLabel;
+                font.pointSize: 16
+                text: "Günstigster Monat:"
+            }
+            Label {
+                id: leastExpensiveMonthName
+                font.pointSize: 16
+            }
+            Label {
+                id: leastExpensiveMonthMoney
+                font.pointSize: 16
+            }
+            Label {
+                id: averageMonthLabel;
+                font.pointSize: 16
+                text: "Durchschnitt:"
+            }
+            Label {
+                id: averageMonth
+                font.pointSize: 16
+            }
+        }
+
+        ListView {
+            id: list
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Layout.fillHeight: true
+            anchors.margins: 8
+            spacing: 8
+            clip: true
+
+            header: Item{height: 8}
+            footer: Item{height: 8}
+
+            delegate: Pane {
+                padding: 16
+                topPadding: 24
+                bottomPadding: 24
+                Material.elevation: 2
+                width: parent.width
+                implicitHeight: money.height + monthAndYear.height + 2*padding
+                AbstractButton {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (modelData.money > 0) {
+                            dialog.openDialog(modelData.month)
+                        }
+                    }
+
+                    Text {
+                        id: money
+                        text: (new String(modelData.money)).replace(".", ",") + " €"
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        font.pointSize: 24
+                    }
+
+                    Text {
+                        id: monthAndYear
+                        anchors.top: money.bottom
+                        anchors.left: parent.left
+                        font.pointSize: 14
+                        color: Material.color(Material.Grey, Material.Shade500)
+                        text: Qt.locale().monthName(modelData.month.getMonth(), Locale.ShortFormat) + " " + modelData.month.getFullYear()
+                    }
+
+                    Dialog {
+                        id: dialog
+                        parent: page
+                        x: (page.width - width)/2
+                        y: (page.height - height)/2
+                        margins: 50
+                        width: page.width - leftMargin - rightMargin
+                        height: page.height - topMargin - bottomMargin
+
+                        property date start;
+                        property date end;
+
+                        function openDialog(month) {
+                            start = new Date(month)
+                            end = Db.lastDayOfMonth(month)
+                            chart.type = "category"
+                            updateChart()
+                            open()
+                        }
+
+                        function updateChart() {
+                            var values;
+                            if (chart.type === "category") {
+                                values = Db.getMoneyPerCategory(start, end)
+                            } else if (chart.type === "subcategory") {
+                                values = Db.getMoneyPerSubcategory(chart.category, start, end)
+                            } else {
+                                return
+                            }
+
+                            pieSeries.clear()
+
+                            for (var i in values) {
+                                pieSeries.append(values[i].name, values[i].money)
+                            }
+                            repeater.model = values
+                        }
+
+                        title: Qt.locale().monthName(modelData.month.getMonth(), Locale.LongFormat)
+
+                        ColumnLayout {
+                            id: legendBox
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            spacing: 0
+
+                            Repeater {
+                                id: repeater
+                                Rectangle {
+                                    implicitHeight: 32
+
+                                    Rectangle {
+                                        id: rect
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 16
+                                        height: 16
+                                        color: Material.color(Material.Green, chart.shades[index])
+                                    }
+
+                                    Text {
+                                        anchors.left: parent.left
+                                        anchors.top: parent.top
+                                        anchors.bottom: parent.bottom
+                                        anchors.leftMargin: 32
+
+                                        verticalAlignment: Text.AlignVCenter
+
+                                        text: modelData.name + " " + (new String(modelData.money)).replace(".", ",") + " €"
+                                        font.pointSize: 14
+
+                                    }
+                                }
+                            }
+                        }
+
+                        ChartView {
+                            id: chart
+
+                            property string category;
+                            property string type;
+
+                            property var shades: [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
+                            height: width
+                            //anchors.top: legendBox.bottom
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            antialiasing: true
+                            legend.visible: false
+
+                            PieSeries {
+                                id: pieSeries
+                                onSliceAdded: {
+                                    slice.color = Material.color(Material.Green, chart.shades[count - 1])
+                                }
+                                size: 1
+
+                                onClicked: {
+                                    if (chart.type === "category") {
+                                        chart.category = slice.label
+                                        chart.type = "subcategory"
+                                    } else if (chart.type == "subcategory") {
+                                        chart.category = "";
+                                        chart.type = "category"
+                                    } else {
+                                        return;
+                                    }
+
+                                    dialog.updateChart()
+                                }
+                            }
+                        }
+
+                        standardButtons: Dialog.Ok
+                    }
+                }
             }
 
         }
-        Button {
-            id: bt_endDate
-            text: Qt.locale().monthName(end.getMonth(), Locale.ShortFormat) + ", " + end.getDate() + " " + end.getFullYear()
-
-
-            onClicked: {
-                datePickerEnd.open()
-            }
-
-        }
-    }
-
-    ChartView {
-        id: chart
-        anchors.fill: parent
-        anchors.topMargin: dateRow.height + bar.height
-        antialiasing: true
-        backgroundColor: Material.background
-
-        PieSeries {
-            property var shades: [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
-            id: pieSeries
-            onSliceAdded: {
-                slice.color = Material.color(Material.Green, shades[count - 1])
-            }
-
-            onClicked: {
-                page.category = slice.label
-                page.type = "subcategory"
-                updateChart()
-            }
-        }
-    }
-
-    DatePicker {
-        id: datePickerStart
-        objectName: "start"
-        selectedDate: start
-        onClosed: start = selectedDate
-        x: (page.width - width) / 2
-        y: (page.height - height) / 2
-    }
-
-    DatePicker {
-        id: datePickerEnd
-        objectName: "end"
-        selectedDate: end
-        onClosed: end = selectedDate
-        x: (page.width - width) / 2
-        y: (page.height - height) / 2
     }
 
     Component.onCompleted: {
