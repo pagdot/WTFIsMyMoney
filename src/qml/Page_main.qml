@@ -129,8 +129,6 @@ Page {
             color: "white"
         }
 
-
-
         Menu {
             id: menu
             x: bt_menu.x + bt_menu.width - menu.width + bt_menu.anchors.margins / 2
@@ -156,19 +154,48 @@ Page {
                     title: "Über"
                     standardButtons: DialogButtonBox.Ok
 
-                    GridLayout {
-                        anchors.centerIn: parent
-                        columns: 2
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 20
 
-                        Label{text: "Version: "}
-                        Label{text: Qt.application.version}
+                        GridLayout {
+                            columns: 2
 
-                        Label{text: "Author: "}
-                        Label{text: "Paul Götzinger"}
+                            Label{text: "Version: "}
+                            Label{text: Qt.application.version}
 
-                        Label{text: "Kontakt: "}
-                        Label{text: "<a href=\"mailto:paul70079@gmail.com\">paul70079@gmail.com</a>"; onLinkActivated: Qt.openUrlExternally(link)}
+                            Label{text: "Author: "}
+                            Label{text: "Paul Götzinger"}
 
+                            Label{text: "Kontakt: "}
+                            Label{text: "<a href=\"mailto:paul70079@gmail.com\">paul70079@gmail.com</a>"; onLinkActivated: Qt.openUrlExternally(link)}
+                        }
+
+                        ScrollView {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            clip: true
+                            contentWidth: width
+
+                            Text {
+                                id: license
+                                width: parent.width
+                                font.pointSize: 12
+                                wrapMode: Text.WordWrap
+                                onLinkActivated: Qt.openUrlExternally(link)
+
+                                text:  "<p>WTFIsMyMoney is free software: you can redistribute it and/or modify " +
+                                       "it under the terms of the GNU General Public License as published by " +
+                                       "the Free Software Foundation, either version 3 of the License, or " +
+                                       "(at your option) any later version. </p>" +
+                                       "<br></br>" +
+                                       "<p>WTFIsMyMoney is distributed in the hope that it will be useful, " +
+                                       "but WITHOUT ANY WARRANTY; without even the implied warranty of " +
+                                       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " +
+                                       "GNU General Public License for more details.</p>" +
+                                       "<a href=\"http://www.gnu.org/licenses/\">http://www.gnu.org/licenses/</a>"
+                            }
+                        }
                     }
 
                     footer: DialogButtonBox {
