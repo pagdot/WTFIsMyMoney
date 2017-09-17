@@ -174,7 +174,6 @@ Page {
         }
     }
 
-
     ColumnLayout {
         anchors.top: bar.bottom
         anchors.left: parent.left
@@ -186,8 +185,6 @@ Page {
         ColumnLayout {
             id: moneyLayout
             property bool opened: false
-
-
 
             Label {
                 id: moneyLabel
@@ -243,7 +240,6 @@ Page {
                 }
             }
 
-
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -269,7 +265,6 @@ Page {
                     }
                 }
 
-
                 TextField {
                     focus: false
                     anchors.top: parent.top
@@ -277,8 +272,7 @@ Page {
                     width: 60
                     text: focus ? money.toFixed(2).replace('.', ',') : money.toFixed(2).replace('.', ',') + " €"
                     validator: DoubleValidator{bottom: 0.0; decimals: 2}
-                    onTextEdited: money = parseFloat(text.replace(',', '.'));
-                    onEditingFinished: focus = false
+                    onEditingFinished: money = parseFloat(text.replace(',', '.'));
                     inputMethodHints: Qt.ImhDigitsOnly
                 }
 
