@@ -253,7 +253,7 @@ Page {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.margins: 50
+                    anchors.margins: 0
                     value: money
                     snapMode: Dial.SnapAlways
                     stepSize: 0.5
@@ -271,9 +271,32 @@ Page {
                     anchors.left: parent.left
                     width: 60
                     text: focus ? money.toFixed(2).replace('.', ',') : money.toFixed(2).replace('.', ',') + " €"
-                    validator: DoubleValidator{bottom: 0.0; decimals: 2}
-                    onEditingFinished: money = parseFloat(text.replace(',', '.'));
-                    inputMethodHints: Qt.ImhDigitsOnly
+                    validator: RegExpValidator{ regExp: /\d*[\.,]{0,2}\d*/}
+                    onTextEdited: {
+                        var tmp = text.replace(/(\d*)[\.,]*(\d{0,2})\d*/ ,"$1.$2")
+                        var val = parseFloat(tmp)
+                        var tmpPos = cursorPosition;
+                        var oldText = text
+                        var beforeFirstDigit = text.search(/[1-9]?/)
+                        var beforeFirstSeparatorPos = text.search(/[\.,]/)
+                        var beforeLastSeparatorPos = text.length - text.split('').reverse().join('').search(/[\.,]/) -1
+                        money = -1
+                        if (!isNaN(val)) {
+                            money = val
+                            var afterSeparatorPos = text.search(/[\.,]/)
+
+                            if (beforeFirstSeparatorPos == -1) {
+                                cursorPosition = tmpPos - beforeFirstDigit
+                            } else {
+                                cursorPosition = afterSeparatorPos +
+                                        (tmpPos - (tmpPos <= beforeLastSeparatorPos ? beforeFirstSeparatorPos : beforeLastSeparatorPos))
+                            }
+                        } else {
+                            money = 0.0
+                            cursorPosition = 0
+                        }
+                    }
+                    inputMethodHints: Qt.ImhFormattedNumbersOnly | Qt.ImhNoPredictiveText
                 }
 
                 Button {
@@ -560,6 +583,7 @@ Page {
                         title: "Neue Unterkategorie"
                         x: (page.width - width) / 2
                         y: (page.height - height) / 2
+                        property string name;
 
                         RowLayout {
                             anchors.left: parent.left
@@ -626,8 +650,9 @@ Page {
                                             id: iconFilter
                                             Layout.fillWidth: true
                                             placeholderText: "Filter Icons"
+                                            inputMethodHints: Qt.ImhNoPredictiveText
 
-                                            onTextChanged: {
+                                            onTextEdited: {
                                                 var model = [];
                                                 for (var i in icon.icons) {
                                                     if (i.includes(text) || (text === "")) {
@@ -684,12 +709,15 @@ Page {
                             TextField {
                                 id: newSubName
                                 ToolTip.text: "Name"
+                                property string currentText;
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignVCenter
+                                inputMethodHints: Qt.ImhNoPredictiveText
+                                onTextEdited: dialogNewSub.name = text
                             }
                         }
 
-                        standardButtons: newSubName.text === "" ? Dialog.Cancel : Dialog.Ok | Dialog.Cancel
+                        standardButtons: name === "" ? Dialog.Cancel : Dialog.Ok | Dialog.Cancel
 
                         onAccepted: {
                             for (var i in categories) {
