@@ -150,7 +150,6 @@ Page {
                     parent: page_main
                     margins: 40
                     width: page_main.width - 2*margins
-                    height: page_main.height - 2*margins
                     title: "Über"
                     standardButtons: DialogButtonBox.Ok
 
@@ -171,29 +170,78 @@ Page {
                             Label{text: "<a href=\"mailto:paul70079@gmail.com\">paul70079@gmail.com</a>"; onLinkActivated: Qt.openUrlExternally(link)}
                         }
 
-                        ScrollView {
+                        ColumnLayout {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            clip: true
-                            contentWidth: width
-
                             Text {
-                                id: license
-                                width: parent.width
-                                font.pointSize: 12
-                                wrapMode: Text.WordWrap
-                                onLinkActivated: Qt.openUrlExternally(link)
+                                text: "Lizenz"
+                                font.pointSize: 16
+                            }
+                            ScrollView {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                clip: true
+                                contentWidth: width
+                                ScrollBar.horizontal.policy: Qt.ScrollBarAlwaysOff
 
-                                text:  "<p>WTFIsMyMoney is free software: you can redistribute it and/or modify " +
-                                       "it under the terms of the GNU General Public License as published by " +
-                                       "the Free Software Foundation, either version 3 of the License, or " +
-                                       "(at your option) any later version. </p>" +
-                                       "<br></br>" +
-                                       "<p>WTFIsMyMoney is distributed in the hope that it will be useful, " +
-                                       "but WITHOUT ANY WARRANTY; without even the implied warranty of " +
-                                       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " +
-                                       "GNU General Public License for more details.</p>" +
-                                       "<a href=\"http://www.gnu.org/licenses/\">http://www.gnu.org/licenses/</a>"
+                                Column {
+                                    width: parent.width
+
+                                    Text {
+                                        id: gplLicense
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        font.pointSize: 12
+                                        wrapMode: Text.WordWrap
+                                        onLinkActivated: Qt.openUrlExternally(link)
+
+                                        text:  "<p>WTFIsMyMoney is free software: you can redistribute it and/or modify " +
+                                               "it under the terms of the GNU General Public License as published by " +
+                                               "the Free Software Foundation, either version 3 of the License, or " +
+                                               "(at your option) any later version. </p>" +
+                                               "<br></br>" +
+                                               "<p>WTFIsMyMoney is distributed in the hope that it will be useful, " +
+                                               "but WITHOUT ANY WARRANTY; without even the implied warranty of " +
+                                               "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " +
+                                               "GNU General Public License for more details.</p>" +
+                                               "<a href=\"http://www.gnu.org/licenses/\">http://www.gnu.org/licenses/</a>"
+                                    }
+
+                                    Text {
+                                        id: thirdParty
+                                        topPadding: 20
+                                        font.pointSize: 14
+                                        text: "3rd party librarys:"
+                                    }
+                                    Text {
+                                        id: qtLicense
+                                        font.pointSize: 12
+                                        onLinkActivated: Qt.openUrlExternally(link)
+                                        wrapMode: Text.WordWrap
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        text: "Qt is licensed under the <a href=\"https://www.gnu.org/licenses/lgpl-3.0\">LGPL 3.0</a> (<a href=\"https://www.qt.io/\">qt.io</a>)"
+                                    }
+                                    Text {
+                                        id: materialIconLicense
+                                        font.pointSize: 12
+                                        onLinkActivated: Qt.openUrlExternally(link)
+                                        wrapMode: Text.WordWrap
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        text: "Material Design Icons is licensed under the <a href=\"http://scripts.sil.org/OFL\">SIL Open Font License 1.1</a> (<a href=\"https://materialdesignicons.com/\">materialdesignicons.com</a>)"
+                                    }
+                                }
+                            }
+
+                        }
+
+                        Image {
+                            source: "paypal_donate.gif"
+
+                            AbstractButton {
+                                anchors.fill: parent
+                                onClicked: Qt.openUrlExternally("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7ZDGNW99QTKJC")
                             }
                         }
                     }

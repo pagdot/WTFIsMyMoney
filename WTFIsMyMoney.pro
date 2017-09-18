@@ -10,7 +10,7 @@ SOURCES += src/main.cpp
 RESOURCES += src/qml/qml.qrc \
     icons/icons.qrc
 
-VERSION = 0.1
+VERSION = 1.0
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
