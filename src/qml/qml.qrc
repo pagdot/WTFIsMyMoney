@@ -13,5 +13,6 @@
         <file>FileSave.qml</file>
         <file>Icon.qml</file>
         <file>Page_settings.qml</file>
+        <file>MonthPicker.qml</file>
     </qresource>
 </RCC>

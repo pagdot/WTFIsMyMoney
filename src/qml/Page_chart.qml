@@ -27,6 +27,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
 import QtCharts 2.0
+import QtQml 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
 
@@ -81,10 +82,10 @@ Page {
         }
         avg = sum / monthMoney.length
         mostExpensiveMonthName.text = Qt.locale().monthName(max.month.getMonth(), Locale.LongFormat)
-        mostExpensiveMonthMoney.text = max.money + " €"
+        mostExpensiveMonthMoney.text = String(max.money).replace(".", Qt.locale().decimalPoint) + " €"
         leastExpensiveMonthName.text = Qt.locale().monthName(min.month.getMonth(), Locale.LongFormat)
-        leastExpensiveMonthMoney.text = min.money + " €"
-        averageMonth.text = avg + " €"
+        leastExpensiveMonthMoney.text = String(min.money).replace(".", Qt.locale().decimalPoint) + " €"
+        averageMonth.text = String(avg.toFixed(2)).replace(".", Qt.locale().decimalPoint) + " €"
         list.model = monthMoney
     }
 
@@ -156,40 +157,52 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             Button {
                 id: bt_startDate
-                text: Qt.locale().monthName(start.getMonth(), Locale.ShortFormat) + ", " + start.getDate() + " " + start.getFullYear()
+                text: Qt.locale().monthName(start.getMonth(), Locale.ShortFormat) + ", " + start.getFullYear()
 
                 onClicked: {
+                    datePickerStart.selectedDate = start
                     datePickerStart.open()
                 }
 
             }
             Button {
                 id: bt_endDate
-                text: Qt.locale().monthName(end.getMonth(), Locale.ShortFormat) + ", " + end.getDate() + " " + end.getFullYear()
+                text: Qt.locale().monthName(end.getMonth(), Locale.ShortFormat) + ", " + end.getFullYear()
 
 
                 onClicked: {
+                    datePickerEnd.selectedDate = end
                     datePickerEnd.open()
                 }
 
             }
 
-            DatePicker {
+            MonthPicker {
                 id: datePickerStart
                 parent: page
                 objectName: "start"
-                selectedDate: start
-                onClosed: start = selectedDate
+                onAccepted: {
+                    page.start = selectedDate
+                    if (page.start > page.end) {
+                        page.end = Db.lastDayOfMonth(page.start)
+                    }
+                }
                 x: (page.width - width) / 2
                 y: (page.height - height) / 2
             }
 
-            DatePicker {
+            MonthPicker {
                 id: datePickerEnd
                 parent: page
                 objectName: "end"
-                selectedDate: end
-                onClosed: end = selectedDate
+                onAccepted: {
+                    page.end = Db.lastDayOfMonth(selectedDate)
+                    if (page.start > page.end) {
+                        var tmp = new Date(page.end)
+                        tmp.setDate(1)
+                        page.start = tmp
+                    }
+                }
                 x: (page.width - width) / 2
                 y: (page.height - height) / 2
             }

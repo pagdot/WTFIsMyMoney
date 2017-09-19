@@ -46,7 +46,13 @@ android: {
         android/res/values/libs.xml \
         android/build.gradle \
         android/gradle/wrapper/gradle-wrapper.properties \
-        android/gradlew.bat
+        android/gradlew.bat \
+        android/res/values/libs.xml \
+        android/res/mipmap-hdpi/ic_launcher.png \
+        android/res/mipmap-mdpi/ic_launcher.png \
+        android/res/mipmap-xhdpi/ic_launcher.png \
+        android/res/mipmap-xxhdpi/ic_launcher.png \
+        android/res/mipmap-xxxhdpi/ic_launcher.png
 
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
@@ -55,11 +61,3 @@ windows: {
     HEADERS += inc/fileio.h
     SOURCES += src/fileio.cpp
 }
-
-DISTFILES += \
-    android/res/values/libs.xml \
-    android/res/mipmap-hdpi/ic_launcher.png \
-    android/res/mipmap-mdpi/ic_launcher.png \
-    android/res/mipmap-xhdpi/ic_launcher.png \
-    android/res/mipmap-xxhdpi/ic_launcher.png \
-    android/res/mipmap-xxxhdpi/ic_launcher.png
