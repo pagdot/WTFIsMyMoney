@@ -29,9 +29,9 @@ var defaultCategories = [
         name: "Essen & Trinken",
         icon: "silverware",
         sub: [
-            {name:"Essen (eigenes)", icon: "food"},
-            {name:"Essen (extern)", icon: "store"},
-            {name:"Trinken (eigenes)", icon: "store"},
+            {name:"Essen (eigenes)", icon: "shopping"},
+            {name:"Essen (extern)", icon: "food"},
+            {name:"Trinken (eigenes)", icon: "beer"},
             {name:"Trinken (extern)", icon: "martini"}
         ],
     },

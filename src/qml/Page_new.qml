@@ -546,7 +546,6 @@ Page {
                 }
 
                 footer: AbstractButton {
-                    //TODO highlight element somehow
                     implicitHeight: 56
                     width: subList.width
                     onClicked: {
