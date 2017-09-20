@@ -334,7 +334,7 @@ Page {
                             repeater.model = values
                         }
 
-                        title: Qt.locale().monthName(modelData.month.getMonth(), Locale.LongFormat)
+                        title: Qt.locale().monthName(modelData.month.getMonth(), Locale.LongFormat) + (chart.type === "subcategory" ? " - " + chart.category : "")
 
                         ColumnLayout {
                             id: legendBox
@@ -345,8 +345,9 @@ Page {
 
                             Repeater {
                                 id: repeater
-                                Rectangle {
+                                AbstractButton {
                                     implicitHeight: 32
+                                    Layout.fillWidth: true
 
                                     Rectangle {
                                         id: rect
@@ -369,6 +370,20 @@ Page {
                                         font.pointSize: 14
 
                                     }
+
+                                    onClicked: {
+                                        if (chart.type === "category") {
+                                            chart.category = modelData.name
+                                            chart.type = "subcategory"
+                                        } else if (chart.type == "subcategory") {
+                                            chart.category = "";
+                                            chart.type = "category"
+                                        } else {
+                                            return;
+                                        }
+
+                                        dialog.updateChart()
+                                    }
                                 }
                             }
                         }
@@ -381,7 +396,6 @@ Page {
 
                             property var shades: [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
                             height: width
-                            //anchors.top: legendBox.bottom
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
