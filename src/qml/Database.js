@@ -29,7 +29,7 @@ var defaultCategories = [
         name: "Essen & Trinken",
         icon: "silverware",
         sub: [
-            {name:"Essen (eigenes)", icon: "shopping"},
+            {name:"Essen (eigenes)", icon: "basket"},
             {name:"Essen (extern)", icon: "food"},
             {name:"Trinken (eigenes)", icon: "beer"},
             {name:"Trinken (extern)", icon: "martini"}
@@ -41,7 +41,16 @@ var defaultCategories = [
         sub: [
             {name:"Wohnen", icon: "home"},
             {name:"Gewand", icon: "tshirt_crew"},
-            {name:"Freizeit", icon: "readability"}
+        ],
+    },
+    {
+        name: "Freizeit",
+        icon: "sofa",
+        sub: [
+            {name:"Sport", icon: "home"},
+            {name:"Spiele", icon: "gamepad_variant"},
+            {name:"Shopping", icon: "shopping"},
+            {name:"Urlaub", icon: "beach"}
         ],
     },
     {

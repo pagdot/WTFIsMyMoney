@@ -5,52 +5,51 @@
 <script>
 var start = new Date("2017-05-01")
 var end = new Date("2017-10-30")
-var count = 100
+var count = 200
 var maxMoney = 30
-var categories = [{
-  name: "Essen & Trinken",
-  icon: "silverware",
-  sub: [{
-    name: "Essen (eigenes)",
-    icon: "food"
-  }, {
-    name: "Essen (extern)",
-    icon: "store"
-  }, {
-    name: "Trinken (eigenes)",
-    icon: "store"
-  }, {
-    name: "Trinken (extern)",
-    icon: "martini"
-  }],
-}, {
-  name: "Leben & Wohnen",
-  icon: "home",
-  sub: [{
-    name: "Wohnen",
-    icon: "home"
-  }, {
-    name: "Gewand",
-    icon: "tshirt_crew"
-  }, {
-    name: "Freizeit",
-    icon: "readability"
-  }],
-}, {
-  name: "Transport",
-  icon: "car",
-  sub: [{
-    name: "Öffentlich",
-    icon: "bus"
-  }, {
-    name: "Auto",
-    icon: "car"
-  }],
-}, {
-  name: "Anderes",
-  icon: "plus",
-  sub: [],
-}]
+var categories = [
+    {
+        name: "Essen & Trinken",
+        icon: "silverware",
+        sub: [
+            {name:"Essen (eigenes)", icon: "basket"},
+            {name:"Essen (extern)", icon: "food"},
+            {name:"Trinken (eigenes)", icon: "beer"},
+            {name:"Trinken (extern)", icon: "martini"}
+        ],
+    },
+    {
+        name: "Leben & Wohnen",
+        icon: "home",
+        sub: [
+            {name:"Wohnen", icon: "home"},
+            {name:"Gewand", icon: "tshirt_crew"},
+        ],
+    },
+    {
+        name: "Freizeit",
+        icon: "sofa",
+        sub: [
+            {name:"Sport", icon: "home"},
+            {name:"Spiele", icon: "gamepad_variant"},
+            {name:"Shopping", icon: "shopping"},
+            {name:"Urlaub", icon: "beach"}
+        ],
+    },
+    {
+        name: "Transport",
+        icon: "car",
+        sub: [
+            {name:"Öffentlich", icon: "bus"},
+            {name:"Auto", icon: "car"}
+        ],
+    },
+    {
+        name: "Anderes",
+        icon: "plus",
+        sub: [],
+    }
+]
 var csv = "date,money,subcategory,category,notes,icon,tags,extra\n"
 
 for (var i = 0; i < count; i++) {
