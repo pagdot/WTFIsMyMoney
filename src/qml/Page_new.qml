@@ -723,11 +723,10 @@ Page {
                                 if (categories[i].name === main_category.name) {
                                     categories[i].sub.push({icon: newSubIcon.iconName, name: newSubName.text})
                                     main_category = categories[i]
+                                    sub_category = categories[i].sub[categories[i].sub.length - 1]
+                                    subLayout.opened = false
+                                    break
                                 }
-                                if ((!sub_category) || (sub_category.name !== modelData.name)) {
-                                    sub_category = modelData
-                                }
-                                subLayout.opened = false
                             }
 
                         }
