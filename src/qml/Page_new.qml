@@ -708,11 +708,11 @@ Page {
                             TextField {
                                 id: newSubName
                                 ToolTip.text: "Name"
-                                property string currentText;
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignVCenter
                                 inputMethodHints: Qt.ImhNoPredictiveText
                                 onTextEdited: dialogNewSub.name = text
+                                validator: RegExpValidator {regExp: /[^,]*/}
                             }
                         }
 
