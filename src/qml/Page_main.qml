@@ -132,8 +132,10 @@ Page {
 
         Menu {
             id: menu
-            x: bt_menu.x + bt_menu.width - menu.width + bt_menu.anchors.margins / 2
-            y: bt_menu.y - bt_menu.anchors.margins/2
+            parent: page_main
+            margins: 16
+            x: bt_menu.x
+            y: bt_menu.y
 
             MenuItem {
                 text: "Einstellungen"
@@ -355,11 +357,13 @@ Page {
 
             Popup {
                 id: contextMenu
+                parent: page_main
 
                 property var model;
                 padding: 0
                 leftPadding: 10
                 rightPadding: 10
+                margins: 16
 
                 RowLayout {
 
