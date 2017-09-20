@@ -35,7 +35,7 @@ Item {
     property bool selectMultiple: false
     property bool selectFolder: false
     property string content: ""
-    property string mime: "text/*"
+    property string mime: "*/*"
 
     signal accepted()
     signal rejected()
