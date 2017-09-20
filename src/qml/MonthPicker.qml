@@ -36,8 +36,8 @@ Dialog {
     standardButtons: Dialog.Ok | Dialog.Cancel
 
     onOpened: {
-        yearTumbler.currentIndex = selectedDate.getFullYear() - yearTumbler.start
-        monthTumbler.currentIndex = selectedDate.getMonth()
+        yearTumbler.contentItem.positionViewAtIndex(selectedDate.getFullYear() - yearTumbler.start, ListView.Center)
+        monthTumbler.contentItem.positionViewAtIndex(selectedDate.getMonth(), ListView.Center)
     }
 
     RowLayout {
@@ -65,6 +65,7 @@ Dialog {
             contentItem: ListView {
                 model: parent.model
                 delegate: parent.delegate
+                anchors.fill: parent
 
                 snapMode: ListView.SnapToItem
                 highlightRangeMode: ListView.StrictlyEnforceRange
@@ -97,8 +98,7 @@ Dialog {
             id: monthTumbler
             model: 12
             visibleItemCount: 5
-            wrap: false
-            height: parent.height
+            Layout.fillHeight: true
 
             delegate: Text {
                 id: monthLabel
