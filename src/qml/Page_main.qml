@@ -37,6 +37,7 @@ Page {
 
     property bool init: false
     property int entryCount: 0
+    property int entryViewCount: 20
 
     onInitChanged: updateEntries()
 
@@ -52,7 +53,7 @@ Page {
     function updateEntries() {
         if (init){
             var date = new Date()
-            list.model = Db.getEntries(20)
+            list.model = Db.getEntries(entryViewCount)
             month.text = Qt.locale().monthName(date.getMonth(), Locale.LongFormat) + ":  "
             week.text = "Woche " + getWeek(date) + ":  "
             var start = new Date(date);
@@ -283,7 +284,7 @@ Page {
             spacing: 0
             clip: true
 
-            delegate: Item {
+            delegate: MouseArea {
                 width: list.width
                 height: 72
 
@@ -330,6 +331,13 @@ Page {
                     font.pointSize: 16
                     color: Material.color(Material.Grey, Material.Shade500)
                 }
+
+                onPressAndHold: {
+                    contextMenu.model = modelData
+                    contextMenu.x = x + mouse.x - contextMenu.width / 2
+                    contextMenu.y = y + mouse.y - contextMenu.height - 30 - list.contentY
+                    contextMenu.open()
+                }
             }
             footer: Button {
                 text: "lade weitere"
@@ -338,19 +346,10 @@ Page {
                 flat: true
                 visible: entryCount > list.count
                 onClicked: {
-                    list.model = Db.getEntries(list.count + 20)
-                }
-            }
-
-
-            MouseArea {
-                anchors.fill: parent
-                onPressAndHold: {
-                    var nr = list.indexAt(mouse.x, mouse.y)
-                    contextMenu.model = list.model[nr]
-                    contextMenu.x = x + mouse.x - contextMenu.width / 2
-                    contextMenu.y = y + mouse.y - contextMenu.height - 30
-                    contextMenu.open()
+                    var tmpIndex = list.count
+                    page_main.entryViewCount = page_main.entryViewCount + 20
+                    updateEntries();
+                    list.positionViewAtIndex(tmpIndex, ListView.End)
                 }
             }
 
