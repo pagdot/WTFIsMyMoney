@@ -242,6 +242,7 @@ function getMoneyPerMonth(start, end) {
     }
     return array
 }
+
 function getAll() {
     var subcategories = [];
     var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes, E.extra, E.tags, S.icon\n" +
@@ -423,10 +424,10 @@ function updateEntry(nr, main, sub, date, money, note, extra, tags) {
     }
 
     sql("REPLACE INTO entries (nr, category, datestamp, money, notes, extra, tags)\n" +
-        "SELECT ?, S.nr, ?, ?, ? FROM (\n" +
+        "SELECT ?, S.nr, ?, ?, ?, ?, ? FROM (\n" +
         "   SELECT S.nr FROM subcategories S \n" +
         "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +
-        ") S;", [nr, dateToISOString(date), parseInt(money * 100), note, main, sub, extra, tags]);
+        ") S;", [nr, dateToISOString(date), parseInt(money * 100), note, extra, tags, main, sub]);
 }
 
 function pad(number) {
