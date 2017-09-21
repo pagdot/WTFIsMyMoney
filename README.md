@@ -3,7 +3,10 @@ WTFIsMyMoney
 **WTFIsMyMoney** is an app to track your expenses during your daily life.
 
 #### Screenshot
-![Screenshot Android](http://url/screenshot-appname-android.png "screenshot Android")
+![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/main.png "main window")
+![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/new.png "new-entry window")
+![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/stats-1.png "statistic window")
+![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/stats-2.png "statistic window")
 
 #### App Stores
 [![Get it on Google Play](https://github.com/paul70078/WTFIsMyMoney/blob/master/google-play-badge.png)]()
