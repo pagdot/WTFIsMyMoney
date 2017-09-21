@@ -2,17 +2,19 @@ WTFIsMyMoney
 ============
 **WTFIsMyMoney** is an app to track your expenses during your daily life.
 
-#### Screenshot
+## Features
+ 
++ modern UI
++ simple and fast to use
++ import and export to/from csv
++ statistics
++ more features comming (see [TODO(https://github.com/paul70078/WTFIsMyMoney/blob/master/TODO.md)]
+
+## Screenshot
 ![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/main.png "main window")
 ![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/new.png "new-entry window")
 ![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/stats-1.png "statistic window")
 ![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/stats-2.png "statistic window")
-
-#### App Stores
-[![Get it on Google Play](https://github.com/paul70078/WTFIsMyMoney/blob/master/google-play-badge.png)]()
-
-#### QR Market Links
-![QR-Code Android]()
 
 ## Third party libraries
 * [QT OpenSource](https://www.qt.io/)
@@ -37,6 +39,3 @@ For more informations see LICENSES\LGPL-3.0.txt
 Material Design Icons is licensed under the SIL Open Font License 1.1
 
 For more informations see LICENSES\OFL-1.1.txt
-
-### Google Play Button
-Google Play and the Google Play logo are trademarks of Google Inc.
