@@ -28,7 +28,7 @@ import FileIO 1.0
 
 Item {
     id: control
-    property string title: "Öffnen"
+    property string title: qsTr("Öffnen")
     property url folder: ""
     property url fileUrl: ""
     property var nameFilters: ["*.csv"]

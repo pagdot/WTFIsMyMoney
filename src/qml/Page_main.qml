@@ -27,7 +27,6 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
 import QtQuick.Layouts 1.3
-//import QtGraphicalEffects 1.0
 import QtQuick.LocalStorage 2.0
 
 import "database.js" as Db
@@ -55,7 +54,7 @@ Page {
             var date = new Date()
             list.model = Db.getEntries(entryViewCount)
             month.text = Qt.locale().monthName(date.getMonth(), Locale.LongFormat) + ":  "
-            week.text = "Woche " + getWeek(date) + ":  "
+            week.text = qsTr("Woche") + " " + getWeek(date) + ":  "
             var start = new Date(date);
             start.setDate(start.getDate() - start.getDay() + 1)
             var end = new Date(start)
@@ -138,14 +137,14 @@ Page {
             y: bt_menu.y
 
             MenuItem {
-                text: "Einstellungen"
+                text: qsTr("Einstellungen")
                 onTriggered: {
                     view_stack.push(page_settings)
                 }
             }
 
             MenuItem {
-                text: "Über"
+                text: qsTr("Über")
                 onTriggered: about.open()
 
                 Dialog {
@@ -153,7 +152,7 @@ Page {
                     parent: page_main
                     margins: 40
                     width: page_main.width - 2*margins
-                    title: "Über"
+                    title: qsTr("Über")
                     standardButtons: DialogButtonBox.Ok
 
                     ColumnLayout {
@@ -163,13 +162,13 @@ Page {
                         GridLayout {
                             columns: 2
 
-                            Label{text: "Version: "}
+                            Label{text: qsTr("Version") + ": "}
                             Label{text: Qt.application.version}
 
-                            Label{text: "Author: "}
+                            Label{text: qsTr("Author") + ": "}
                             Label{text: "Paul Götzinger"}
 
-                            Label{text: "Kontakt: "}
+                            Label{text: qsTr("Kontakt") + ": "}
                             Label{text: "<a href=\"mailto:paul70079@gmail.com\">paul70079@gmail.com</a>"; onLinkActivated: Qt.openUrlExternally(link)}
                         }
 
@@ -177,7 +176,7 @@ Page {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             Text {
-                                text: "Lizenz"
+                                text: qsTr("Lizenz")
                                 font.pointSize: 16
                             }
                             ScrollView {
@@ -240,7 +239,7 @@ Page {
                         }
 
                         Image {
-                            source: "paypal_donate.gif"
+                            source: qsTr("paypal_donate_de.gif")
 
                             AbstractButton {
                                 anchors.fill: parent
@@ -311,7 +310,7 @@ Page {
                     spacing: 0
 
                     Text {
-                        text: (new String(modelData.money)).replace(".", ",") + " €"
+                        text: (new String(modelData.money)).replace(".", Qt.locale().decimalPoint) + " €"
                         font.pointSize: 16
                         Layout.alignment: Qt.AlignBottom
                     }
@@ -342,7 +341,7 @@ Page {
                 }
             }
             footer: Button {
-                text: "lade weitere"
+                text: qsTr("lade weitere")
                 width: list.width
                 height: 72
                 flat: true
@@ -369,7 +368,7 @@ Page {
 
                     Button {
                         id: editEntry
-                        text: "Bearbeiten"
+                        text: qsTr("Bearbeiten")
                         flat: true
                         contentItem: Text {
                             text: parent.text
@@ -388,7 +387,7 @@ Page {
                     }
                     Button {
                         id: deleteEntry
-                        text: "Löschen"
+                        text: qsTr("Löschen")
                         flat: true
 
                         onClicked: {
@@ -407,7 +406,7 @@ Page {
 
                         Dialog {
                             id: deleteDialog
-                            title: "Löschen bestätigen"
+                            title: qsTr("Löschen bestätigen")
                             parent: page_main
                             x: (page_main.width - width) /2
                             y: (page_main.height - height) /2
@@ -483,7 +482,7 @@ Page {
 
         Button {
             anchors.fill: parent
-            text: "Statistik"
+            text: qsTr("Statistik")
             Material.elevation: 300
 
 

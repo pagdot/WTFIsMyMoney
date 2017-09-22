@@ -102,7 +102,7 @@ Page {
         }
 
         Text {
-            text: "Einstellungen"
+            text: qsTr("Einstellungen")
             anchors.left: parent.left
             anchors.leftMargin: 72
             anchors.baseline: parent.bottom
@@ -121,11 +121,11 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         ColumnLayout {
             Label {
-                text: "Daten:"
+                text: qsTr("Daten") + ":"
             }
 
             Button {
-                text: "Importieren"
+                text: qsTr("Importieren")
                 onClicked: {
                     fileOpen.open();
                 }
@@ -142,7 +142,7 @@ Page {
             }
 
             Button {
-                text: "Exportieren"
+                text: qsTr("Exportieren")
                 onClicked: {
                     fileSave.content = createCSV(Db.getAll());
                     fileSave.open();
@@ -159,12 +159,12 @@ Page {
             }
 
             Button {
-                text: "Daten löschen"
+                text: qsTr("Daten löschen")
                 onClicked: deleteDialog.open()
 
                 Dialog {
                     id: deleteDialog
-                    title: "Löschen bestätigen"
+                    title: qsTr("Löschen bestätigen")
                     parent: page_settings
                     x: (page_main.width - width) /2
                     y: (page_main.height - height) /2

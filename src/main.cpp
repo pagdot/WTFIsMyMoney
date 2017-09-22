@@ -25,6 +25,8 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QtGlobal>
+#include <QTranslator>
+#include <QLibraryInfo>
 
 #ifdef Q_OS_WIN
 #include "fileio.h"
@@ -38,6 +40,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
+
+    QTranslator myappTranslator;
+    myappTranslator.load(":/wtfismymoney_" + QLocale::system().name().left(2));
+    app.installTranslator(&myappTranslator);
 
 #ifdef Q_OS_WIN
     qmlRegisterType<FileIO, 1>("FileIO", 1, 0, "FileIO");

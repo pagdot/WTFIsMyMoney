@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>materialdesignicons-webfont.ttf</file>
-        <file>paypal_donate.gif</file>
+        <file>paypal_donate_de.gif</file>
+        <file>paypal_donate_en.gif</file>
     </qresource>
 </RCC>

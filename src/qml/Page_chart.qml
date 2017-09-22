@@ -35,7 +35,7 @@ import "database.js" as Db
 
 Page {
     id: page
-    title: "Statistik"
+    title: qsTr("Statistik")
 
     property date start: new Date()
     property date end: new Date()
@@ -218,7 +218,7 @@ Page {
             Label {
                 id: mostExpensiveMonthLabel;
                 font.pointSize: 16
-                text: "Teuerstes Monat:"
+                text: qsTr("Teuerstes Monat") + ":"
             }
             Label {
                 id: mostExpensiveMonthName
@@ -231,7 +231,7 @@ Page {
             Label {
                 id: leastExpensiveMonthLabel;
                 font.pointSize: 16
-                text: "Günstigster Monat:"
+                text: qsTr("Günstigster Monat") + ":"
             }
             Label {
                 id: leastExpensiveMonthName
@@ -244,7 +244,7 @@ Page {
             Label {
                 id: averageMonthLabel;
                 font.pointSize: 16
-                text: "Durchschnitt:"
+                text: qsTr("Durchschnitt") + ":"
             }
             Label {
                 id: averageMonth
@@ -281,7 +281,7 @@ Page {
 
                     Text {
                         id: money
-                        text: (new String(modelData.money)).replace(".", ",") + " €"
+                        text: (new String(modelData.money)).replace(".", Qt.locale().decimalPoint) + " €"
                         anchors.top: parent.top
                         anchors.left: parent.left
                         font.pointSize: 24
@@ -366,7 +366,7 @@ Page {
 
                                         verticalAlignment: Text.AlignVCenter
 
-                                        text: modelData.name + " " + (new String(modelData.money)).replace(".", ",") + " €"
+                                        text: modelData.name + " " + (new String(modelData.money)).replace(".", Qt.locale().decimalPoint) + " €"
                                         font.pointSize: 14
 
                                     }

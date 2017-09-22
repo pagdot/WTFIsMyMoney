@@ -8,7 +8,8 @@ INCLUDEPATH += inc
 SOURCES += src/main.cpp
 
 RESOURCES += src/qml/qml.qrc \
-    icons/icons.qrc
+    icons/icons.qrc \
+    translations/translations.qrc
 
 VERSION = 1.0
 
@@ -33,6 +34,9 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+TRANSLATIONS = translations/wtfismymoney_en.ts\
+    translations/wtfismymoney_de.ts
 
 android: {
     QT += androidextras

@@ -26,43 +26,43 @@ var localStorage;
 
 var defaultCategories = [
     {
-        name: "Essen & Trinken",
+        name: qsTr("Essen & Trinken"),
         icon: "silverware",
         sub: [
-            {name:"Essen (eigenes)", icon: "basket"},
-            {name:"Essen (extern)", icon: "food"},
-            {name:"Trinken (eigenes)", icon: "beer"},
-            {name:"Trinken (extern)", icon: "martini"}
+            {name:qsTr("Essen (eigenes)"), icon: "basket"},
+            {name:qsTr("Essen (extern)"), icon: "food"},
+            {name:qsTr("Trinken (eigenes)"), icon: "beer"},
+            {name:qsTr("Trinken (extern)"), icon: "martini"}
         ],
     },
     {
-        name: "Leben & Wohnen",
+        name: qsTr("Leben & Wohnen"),
         icon: "home",
         sub: [
-            {name:"Wohnen", icon: "home"},
-            {name:"Gewand", icon: "tshirt_crew"},
+            {name:qsTr("Wohnen"), icon: "home"},
+            {name:qsTr("Gewand"), icon: "tshirt_crew"},
         ],
     },
     {
-        name: "Freizeit",
+        name: qsTr("Freizeit"),
         icon: "sofa",
         sub: [
-            {name:"Sport", icon: "home"},
-            {name:"Spiele", icon: "gamepad_variant"},
-            {name:"Shopping", icon: "shopping"},
-            {name:"Urlaub", icon: "beach"}
+            {name:qsTr("Sport"), icon: "home"},
+            {name:qsTr("Spiele"), icon: "gamepad_variant"},
+            {name:qsTr("Shopping"), icon: "shopping"},
+            {name:qsTr("Urlaub"), icon: "beach"}
         ],
     },
     {
-        name: "Transport",
+        name: qsTr("Transport"),
         icon: "car",
         sub: [
-            {name:"Öffentlich", icon: "bus"},
-            {name:"Auto", icon: "car"}
+            {name:qsTr("Öffentlich"), icon: "bus"},
+            {name:qsTr("Auto"), icon: "car"}
         ],
     },
     {
-        name: "Anderes",
+        name: qsTr("Anderes"),
         icon: "plus",
         sub: [],
     }

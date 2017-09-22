@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>wtfismymoney_de.qm</file>
+        <file>wtfismymoney_en.qm</file>
+    </qresource>
+</RCC>

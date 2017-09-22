@@ -33,7 +33,7 @@ import QtQuick.Controls.Material.impl 2.2
 import "database.js" as Db
 
 Page {
-    title: "Neu"
+    title: qsTr("Neu")
     id: page
     objectName: "create_new"
 
@@ -188,7 +188,7 @@ Page {
 
             Label {
                 id: moneyLabel
-                text: "Geld:"
+                text: qsTr("Geld") + ":"
             }
 
             Button {
@@ -229,7 +229,7 @@ Page {
                         font.pointSize: 13
                         anchors.verticalCenter: parent.verticalCenter
 
-                        text: money ? money.toFixed(2).replace(".",",") + " €" : ""
+                        text: money ? money.toFixed(2).replace(".", Qt.locale().decimalPoint) + " €" : ""
                     }
                 }
 
@@ -270,7 +270,7 @@ Page {
                     anchors.top: parent.top
                     anchors.left: parent.left
                     width: 60
-                    text: focus ? money.toFixed(2).replace('.', ',') : money.toFixed(2).replace('.', ',') + " €"
+                    text: focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €"
                     validator: RegExpValidator{ regExp: /\d*[\.,]{0,2}\d*/}
                     onTextEdited: {
                         var tmp = text.replace(/(\d*)[\.,]*(\d{0,2})\d*/ ,"$1.$2")
@@ -331,7 +331,7 @@ Page {
 
             Label {
                 id: mainLabel
-                text: "Kategorie:"
+                text: qsTr("Kategorie") + ":"
             }
 
             Button {
@@ -379,7 +379,7 @@ Page {
                         anchors.verticalCenter: parent.verticalCenter
                         opacity: enabled ? 1 : 0.26
 
-                        text: main_category ? main_category.name : "Kategorie"
+                        text: main_category ? main_category.name : qsTr("Kategorie")
                     }
                 }
 
@@ -445,7 +445,7 @@ Page {
 
             Label {
                 id: subLabel
-                text: "Unterkategorie:"
+                text: qsTr("Unterkategorie") + ":"
             }
 
             Button {
@@ -493,7 +493,7 @@ Page {
                         anchors.verticalCenter: parent.verticalCenter
                         opacity: enabled ? 1 : 0.26
 
-                        text: sub_category ? sub_category.name : "Unterkategorie"
+                        text: sub_category ? sub_category.name : qsTr("Unterkategorie")
                     }
                 }
 
@@ -569,7 +569,7 @@ Page {
                     }
 
                     Text {
-                        text: "Neu"
+                        text: qsTr("Neu")
                         anchors.fill: parent
                         anchors.leftMargin: 72
                         verticalAlignment: Text.AlignVCenter
@@ -579,7 +579,7 @@ Page {
                     Dialog {
                         id: dialogNewSub
                         parent: page
-                        title: "Neue Unterkategorie"
+                        title: qsTr("Neue Unterkategorie")
                         x: (page.width - width) / 2
                         y: (page.height - height) / 2
                         property string name;
@@ -648,7 +648,7 @@ Page {
                                         TextField {
                                             id: iconFilter
                                             Layout.fillWidth: true
-                                            placeholderText: "Filter Icons"
+                                            placeholderText: qsTr("Filter Icons")
                                             inputMethodHints: Qt.ImhNoPredictiveText
 
                                             onTextEdited: {
@@ -707,7 +707,7 @@ Page {
 
                             TextField {
                                 id: newSubName
-                                ToolTip.text: "Name"
+                                ToolTip.text: qsTr("Name")
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignVCenter
                                 inputMethodHints: Qt.ImhNoPredictiveText
@@ -743,7 +743,7 @@ Page {
 
             Label {
                 id: dateLabel
-                text: "Datum:"
+                text: qsTr("Datum") + ":"
             }
 
             Button {
@@ -812,7 +812,7 @@ Page {
 
         Button {
             id: buttonDone
-            text: "Fertig"
+            text: qsTr("Fertig")
             Layout.alignment: Qt.AlignHCenter
             enabled: (money > 0.0) && (main_category ? true : false) && (sub_category ? true : false)
             flat: true
@@ -830,7 +830,7 @@ Page {
 
     Dialog {
         id: dialog
-        title: "Abbrechen"
+        title: qsTr("Abbrechen")
         parent: page
         standardButtons: Dialog.Ok | Dialog.Cancel
         Material.elevation: 24
