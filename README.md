@@ -16,6 +16,9 @@ WTFIsMyMoney
 ![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/stats-1.png "statistic window")
 ![Screenshot Android](https://github.com/paul70078/WTFIsMyMoney/blob/master/screenshots/stats-2.png "statistic window")
 
+## Download
+All versions are available in the [Releases](https://github.com/paul70078/WTFIsMyMoney/releases) as APK and source code
+
 ## Third party libraries
 * [QT OpenSource](https://www.qt.io/)
 * [Material Design Icons](https://materialdesignicons.com/)
