@@ -654,7 +654,7 @@ Page {
                                             onTextEdited: {
                                                 var model = [];
                                                 for (var i in icon.icons) {
-                                                    if (i.includes(text) || (text === "")) {
+                                                    if (i.includes(text.toLocaleLowerCase()) || (text === "")) {
                                                         model.push({name: i, icon: icon.icons[i]})
                                                     }
                                                 }
