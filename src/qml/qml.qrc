@@ -4,7 +4,7 @@
         <file>qtquickcontrols2.conf</file>
         <file>Page_new.qml</file>
         <file>DatePicker.qml</file>
-        <file>database.js</file>
+        <file>Database.js</file>
         <file>Page_main.qml</file>
         <file>Page_chart.qml</file>
         <file>+android/FileOpen.qml</file>
