@@ -31,7 +31,7 @@ import QtQml 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
 
-import "database.js" as Db
+import "Database.js" as Db
 
 Page {
     id: page

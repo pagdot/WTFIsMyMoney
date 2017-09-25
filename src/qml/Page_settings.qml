@@ -28,7 +28,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
 import QtQuick.Controls.Material 2.2
 
-import "database.js" as Db
+import "Database.js" as Db
 
 
 Page {

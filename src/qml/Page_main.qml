@@ -29,7 +29,7 @@ import QtQuick.Controls.Material.impl 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
 
-import "database.js" as Db
+import "Database.js" as Db
 
 Page {
     id: page_main
@@ -239,7 +239,7 @@ Page {
                         }
 
                         Image {
-                            source: qsTr("paypal_donate_de.gif")
+                            source: Qt.resolvedUrl(qsTr("paypal_donate_de.gif"))
 
                             AbstractButton {
                                 anchors.fill: parent
