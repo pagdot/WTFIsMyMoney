@@ -11,7 +11,7 @@ RESOURCES += src/qml/qml.qrc \
     icons/icons.qrc \
     translations/translations.qrc
 
-VERSION = 1.0
+VERSION = 1.1
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
