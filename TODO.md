@@ -17,3 +17,4 @@ TODO
 + Use only one DB object by passing it forward
 + Implement making changes in the database structure possible (e.g. new collumns)
 + Whats new/changelog popup after update
++ QR Support for QR codes on bills
