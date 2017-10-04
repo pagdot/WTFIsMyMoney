@@ -470,9 +470,9 @@ function sql(query, parameter) {
 }
 
 function dateToISOString(date) {
-    return date.getUTCFullYear() +
-        '-' + pad(date.getUTCMonth() + 1) +
-        '-' + pad(date.getUTCDate())
+    return date.getFullYear() +
+        '-' + pad(date.getMonth() + 1) +
+        '-' + pad(date.getDate())
 }
 
 function copy(object) {
