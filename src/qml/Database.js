@@ -109,6 +109,14 @@ function init(_localStorage) {
     }
 }
 
+function isInit() {
+    if (localStorage) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function clearDb() {
     sql("DELETE FROM categories")
     sql("DELETE FROM subcategories")

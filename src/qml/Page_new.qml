@@ -26,16 +26,15 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.LocalStorage 2.0
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
-
-import "Database.js" as Db
 
 Page {
     title: qsTr("Neu")
     id: page
     objectName: "create_new"
+
+    property var db;
 
     property var categories: []
     property var main_category;
@@ -49,12 +48,12 @@ Page {
         main_category = ""
         sub_category = ""
         categories = []
-        var tmp = Db.getCategories();
+        var tmp = db.getCategories();
         for (var i in tmp) {
             categories.push({
                 name: tmp[i].name,
                 icon: tmp[i].icon,
-                sub: Db.getSubcategoriesOrderedPerUse(tmp[i].name)
+                sub: db.getSubcategoriesOrderedPerUse(tmp[i].name)
             });
         }
         money = 0.0
@@ -73,12 +72,12 @@ Page {
         }
 
         categories = []
-        var tmp = Db.getCategories();
+        var tmp = db.getCategories();
         for (var i in tmp) {
             categories.push({
                 name: tmp[i].name,
                 icon: tmp[i].icon,
-                sub: Db.getSubcategoriesOrderedPerUse(tmp[i].name)
+                sub: db.getSubcategoriesOrderedPerUse(tmp[i].name)
             });
         }
 
@@ -819,9 +818,9 @@ Page {
 
             onClicked: {
                 if (newEntry) {
-                    Db.storeEntry(main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
+                    db.storeEntry(main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
                 } else {
-                    Db.updateEntry(nr, main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
+                    db.updateEntry(nr, main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
                 }
                 view_stack.pop()
             }
@@ -839,9 +838,5 @@ Page {
         y: (parent.height - height) / 2
 
         onAccepted: view_stack.pop()
-    }
-
-    Component.onCompleted: {
-        Db.init(LocalStorage)
     }
 }

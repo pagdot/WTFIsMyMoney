@@ -25,13 +25,11 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.LocalStorage 2.0
 import QtQuick.Controls.Material 2.2
 
-import "Database.js" as Db
-
-
 Page {
+
+    property var db;
 
     function createCSV(data) {
         var csv = "date,money,subcategory,category,notes,icon,tags,extra\r\n";
@@ -136,7 +134,7 @@ Page {
 
                     onAccepted: {
                         var data = parseCSV(fileOpen.content)
-                        Db.importEntries(data)
+                        db.importEntries(data)
                     }
                 }
             }
@@ -144,7 +142,7 @@ Page {
             Button {
                 text: qsTr("Exportieren")
                 onClicked: {
-                    fileSave.content = createCSV(Db.getAll());
+                    fileSave.content = createCSV(db.getAll());
                     fileSave.open();
                 }
 
@@ -171,14 +169,10 @@ Page {
                     standardButtons: Dialog.Ok | Dialog.Cancel
 
                     onAccepted: {
-                        Db.clearDb()
+                        db.cleardb()
                     }
                 }
             }
         }
-    }
-
-    Component.onCompleted: {
-        Db.init(LocalStorage)
     }
 }

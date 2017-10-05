@@ -29,7 +29,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
 import QtQml 2.2
 
-import "Database.js" as Db
+import "Database.js" as Database
 
 ApplicationWindow {
     visible: true
@@ -55,25 +55,31 @@ ApplicationWindow {
 
     Page_main{
         id: page_main
+        db: Database
     }
 
     Page_new{
         id: page_new
         visible: false
+        db: Database
     }
 
     Page_settings{
         id: page_settings
         visible: false
+        db: Database
     }
 
     Page_chart{
         id: page_chart
         visible: false
+        db: Database
     }
 
     Component.onCompleted: {
         Qt.application.displayName = "WTFIsMyMoney"
+        Database.init(LocalStorage)
+        page_main.updateEntries();
     }
 
     onClosing: {

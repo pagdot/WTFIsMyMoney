@@ -31,8 +31,6 @@ import QtQml 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
 
-import "Database.js" as Db
-
 Page {
     id: page
     title: qsTr("Statistik")
@@ -41,6 +39,8 @@ Page {
     property date end: new Date()
 
     property bool init: false
+
+    property var db;
 
     onStartChanged: update();
     onEndChanged: update();
@@ -62,11 +62,11 @@ Page {
     }
 
     function update() {
-        if (!init) {
+        if (!db.isInit()) {
             return
         }
 
-        var monthMoney = Db.getMoneyPerMonth(start, end)
+        var monthMoney = db.getMoneyPerMonth(start, end)
         var max;
         var min;
         var avg
@@ -184,7 +184,7 @@ Page {
                 onAccepted: {
                     page.start = selectedDate
                     if (page.start > page.end) {
-                        page.end = Db.lastDayOfMonth(page.start)
+                        page.end = db.lastDayOfMonth(page.start)
                     }
                 }
                 x: (page.width - width) / 2
@@ -196,7 +196,7 @@ Page {
                 parent: page
                 objectName: "end"
                 onAccepted: {
-                    page.end = Db.lastDayOfMonth(selectedDate)
+                    page.end = db.lastDayOfMonth(selectedDate)
                     if (page.start > page.end) {
                         var tmp = new Date(page.end)
                         tmp.setDate(1)
@@ -310,7 +310,7 @@ Page {
 
                         function openDialog(month) {
                             start = new Date(month)
-                            end = Db.lastDayOfMonth(month)
+                            end = db.lastDayOfMonth(month)
                             chart.type = "category"
                             updateChart()
                             open()
@@ -319,9 +319,9 @@ Page {
                         function updateChart() {
                             var values;
                             if (chart.type === "category") {
-                                values = Db.getMoneyPerCategory(start, end)
+                                values = db.getMoneyPerCategory(start, end)
                             } else if (chart.type === "subcategory") {
-                                values = Db.getMoneyPerSubcategory(chart.category, start, end)
+                                values = db.getMoneyPerSubcategory(chart.category, start, end)
                             } else {
                                 return
                             }
@@ -431,10 +431,5 @@ Page {
             }
 
         }
-    }
-
-    Component.onCompleted: {
-        Db.init(LocalStorage)
-        init = true
     }
 }

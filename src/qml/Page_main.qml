@@ -27,18 +27,12 @@ import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.LocalStorage 2.0
-
-import "Database.js" as Db
 
 Page {
     id: page_main
-
-    property bool init: false
     property int entryCount: 0
     property int entryViewCount: 20
-
-    onInitChanged: updateEntries()
+    property var db;
 
     function getWeek(date) {
         var onejan = new Date(date.getFullYear(), 0, 1);
@@ -50,23 +44,23 @@ Page {
     }
 
     function updateEntries() {
-        if (init){
+        if (db.isInit()){
             var date = new Date()
-            list.model = Db.getEntries(entryViewCount)
+            list.model = db.getEntries(entryViewCount)
             month.text = Qt.locale().monthName(date.getMonth(), Locale.LongFormat) + ":  "
             week.text = qsTr("Woche") + " " + getWeek(date) + ":  "
             var start = new Date(date);
             start.setDate(start.getDate() - start.getDay() + 1)
             var end = new Date(start)
             end.setDate(end.getDate() + 6)
-            week.text += Db.getSum(start, end) + " €"
+            week.text += db.getSum(start, end) + " €"
             start = new Date(date)
             start.setDate(1)
             end = new Date(date)
             end.setMonth(end.getMonth() + 1)
             end.setDate(0)
-            month.text += Db.getSum(start, end) + " €"
-            entryCount = Db.getEntryCount()
+            month.text += db.getSum(start, end) + " €"
+            entryCount = db.getEntryCount()
         }
     }
 
@@ -413,7 +407,7 @@ Page {
                             standardButtons: Dialog.Ok | Dialog.Cancel
 
                             onAccepted: {
-                                Db.deleteEntry(contextMenu.model.nr)
+                                db.deleteEntry(contextMenu.model.nr)
                                 updateEntries()
                             }
                         }
@@ -509,10 +503,5 @@ Page {
                 focus = false
             }
         }
-    }
-
-    Component.onCompleted: {
-        Db.init(LocalStorage)
-        init = true
     }
 }
