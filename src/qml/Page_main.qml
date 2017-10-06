@@ -330,7 +330,7 @@ Page {
                 onPressAndHold: {
                     contextMenu.model = modelData
                     contextMenu.x = x + mouse.x - contextMenu.width / 2
-                    contextMenu.y = y + mouse.y - contextMenu.height - 30 - list.contentY
+                    contextMenu.y = y + mouse.y - list.contentY + list.y - 30
                     contextMenu.open()
                 }
             }
@@ -504,4 +504,6 @@ Page {
             }
         }
     }
+
+
 }
