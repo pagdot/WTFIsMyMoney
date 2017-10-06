@@ -33,6 +33,7 @@
 #endif
 
 #ifdef Q_OS_ANDROID
+#include <QZXing>
 #include "androidfile.h"
 #endif
 
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_ANDROID
     qmlRegisterType<AndroidFile, 1>("AndroidFile", 1, 0, "AndroidFile");
+    QZXing::registerQMLTypes();
 #endif
 
     QQmlApplicationEngine engine;

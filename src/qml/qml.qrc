@@ -14,5 +14,7 @@
         <file>Icon.qml</file>
         <file>Page_settings.qml</file>
         <file>MonthPicker.qml</file>
+        <file>Page_qr.qml</file>
+        <file>+android/Page_qr.qml</file>
     </qresource>
 </RCC>

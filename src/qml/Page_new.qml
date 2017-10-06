@@ -107,7 +107,9 @@ Page {
     }
 
     function cancel() {
-        if (main_category && mainLayout.opened) {
+        if (loader.active) {
+            loader.close()
+        } else if (main_category && mainLayout.opened) {
             mainLayout.opened = false
         } else if(sub_category && subLayout.opened) {
             subLayout.opened = false
@@ -264,6 +266,64 @@ Page {
                     }
                 }
 
+                Button {
+                    anchors.centerIn: dial
+                    flat: true
+                    width: parent.width/2
+                    height: parent.height/2
+
+                    text: icon.icons["qrcode"]
+                    font.family: icon.family
+                    font.pointSize: 200
+                    padding: 0
+
+                    contentItem: Text {
+                        anchors.margins: 0
+                        anchors.fill: parent
+                        text: parent.text
+                        font: parent.font
+                        fontSizeMode: Text.Fit
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    onClicked: {
+                        loader.sourceComponent= qr
+                    }
+
+                    background: Rectangle {
+                        visible: false
+                    }
+                    Loader {
+                        id: loader
+                        parent: page
+
+                        anchors.fill: parent
+
+                        function close() {
+                            sourceComponent = undefined
+                        }
+
+                        Component {
+                            id: qr
+                            Page_qr {
+                                anchors.fill: parent
+
+                                onCancel: loader.close()
+                                onError: {
+                                    console.log("Invalid tag")
+                                    loader.close()
+                                }
+                                onComplete: {
+                                    page.money = money
+                                    page.datum = new Date(date)
+                                    loader.close()
+                                }
+                            }
+                        }
+                    }
+
+                }
                 TextField {
                     focus: false
                     anchors.top: parent.top

@@ -43,6 +43,11 @@ android: {
     SOURCES += src/androidfile.cpp
     HEADERS += inc/androidfile.h
 
+    CONFIG += qzxing_qml
+    CONFIG += qzxing_multimedia
+
+    include(lib/QZXing/QZXing.pri)
+
     DISTFILES += \
         android/AndroidManifest.xml \
         android/gradle/wrapper/gradle-wrapper.jar \
