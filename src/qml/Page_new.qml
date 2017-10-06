@@ -107,7 +107,7 @@ Page {
     }
 
     function cancel() {
-        if (loader.active) {
+        if (loader.status != Loader.Null) {
             loader.close()
         } else if (main_category && mainLayout.opened) {
             mainLayout.opened = false
