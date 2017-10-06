@@ -1,5 +1,5 @@
 /* Page_qr.qml -- QR Reader Page (placeholder)
- * Provides import and export of data and removing all data
+ * Placeholder for QR-Code reader
  *
  * Copyright (C) 2017 Paul Goetzinger <paul70079@gmail.com>
  *

@@ -22,6 +22,7 @@ All versions are available in the [Releases](https://github.com/paul70078/WTFIsM
 ## Third party libraries
 * [QT OpenSource](https://www.qt.io/)
 * [Material Design Icons](https://materialdesignicons.com/)
+* [QZXING](https://github.com/ftylitak/qzxing)
 
 ## Permissions
 **NONE**
@@ -42,3 +43,8 @@ For more informations see [LICENSES\LGPL-3.0.txt](https://github.com/paul70078/W
 Material Design Icons is licensed under the SIL Open Font License 1.1
 
 For more informations see [LICENSES\OFL-1.1.txt](https://github.com/paul70078/WTFIsMyMoney/blob/master/LICENSES/OFL-1.1.txt)
+
+### QZXING
+QZXING is licensed under the Apache License 2.0
+
+For more informations see [LICENSES\Apache-2.0.txt](https://github.com/paul70078/WTFIsMyMoney/blob/master/LICENSES/Apache-2.0.txt)

@@ -1,5 +1,5 @@
 /* Page_qr.qml -- QR Reader Page
- * Provides import and export of data and removing all data
+ * Opens a QR-Code reader to read QR-Codes on austrian bills
  *
  * Copyright (C) 2017 Paul Goetzinger <paul70079@gmail.com>
  *
