@@ -63,20 +63,13 @@ Page {
         autoOrientation: true
         fillMode: VideoOutput.Stretch
         filters: [ zxingFilter ]
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                camera.focus.customFocusPoint = Qt.point(mouse.x / width,  mouse.y / height);
-                camera.focus.focusMode = CameraFocus.FocusMacro;
-                camera.focus.focusPointMode = CameraFocus.FocusPointCustom;
-            }
-        }
+
         Rectangle {
             id: captureZone
             color: "white"
             opacity: 0.2
-            width: Math.min(parent.width, parent.height) * 0.5
-            height: width
+            width: parent.width / 2
+            height: parent.height / 2
             anchors.centerIn: parent
         }
     }
@@ -110,7 +103,6 @@ Page {
                 money += parseFloat(data[8].replace(",", "."))
                 money += parseFloat(data[9].replace(",", "."))
 
-                console.log("date: " + date + " money: "+ money)
                 complete(money, date)
             }
 
