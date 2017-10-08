@@ -81,10 +81,9 @@ function getDB() {
     return db;
 }
 
-function init(_localStorage) {
+function init(_localStorage, version) {
     localStorage = _localStorage;
     var db = getDB();
-
 
     try {
         db.transaction(function(tx) {
@@ -107,6 +106,37 @@ function init(_localStorage) {
     } catch(err) {
         createEntryTable();
     }
+    try {
+        db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM info');
+        })
+    } catch(err) {
+        sql("CREATE TABLE IF NOT EXISTS info (\n" +
+            "   key TEXT PRIMARY KEY, \n" +
+            "   value TEXT\n" +
+            ");");
+    }
+
+    if (getVersion() === version) {
+        return false
+    }
+    setVersion(version)
+    return true
+}
+
+function getVersion() {
+    var rows = sql("SELECT value FROM info WHERE key = 'version'")
+    if (rows.length == 0) {
+        return false
+    }
+    return rows[0].value
+}
+
+function setVersion(version) {
+    sql(
+                "INSERT OR REPLACE INTO info (key, value)\n" +
+                "SELECT 'version', ?", [version]
+        )
 }
 
 function isInit() {

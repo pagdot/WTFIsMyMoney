@@ -78,7 +78,10 @@ ApplicationWindow {
 
     Component.onCompleted: {
         Qt.application.displayName = "WTFIsMyMoney"
-        Database.init(LocalStorage)
+        if (Database.init(LocalStorage, Qt.application.version)) {
+            page_main.changelog.open()
+        }
+
         page_main.updateEntries();
     }
 
