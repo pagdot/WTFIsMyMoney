@@ -33,6 +33,7 @@ Page {
     property int entryCount: 0
     property int entryViewCount: 20
     property var db;
+    property alias changelog: mChangelog
 
     function getWeek(date) {
         var onejan = new Date(date.getFullYear(), 0, 1);
@@ -514,10 +515,9 @@ Page {
 
 
     Dialog {
-        id: changelog
+        id: mChangelog
         parent: page_main
         margins: 40
-        width: page_main.width - 2*margins
         title: qsTr("Neuerungen")
         standardButtons: DialogButtonBox.Ok
 
