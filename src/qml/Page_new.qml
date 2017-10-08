@@ -271,6 +271,7 @@ Page {
                     flat: true
                     width: parent.width/2
                     height: parent.height/2
+                    visible: Qt.platform.os === "android"
 
                     text: icon.icons["qrcode"]
                     font.family: icon.family
@@ -324,6 +325,7 @@ Page {
                     }
 
                 }
+
                 TextField {
                     focus: false
                     anchors.top: parent.top
