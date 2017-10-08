@@ -518,38 +518,53 @@ Page {
         id: mChangelog
         parent: page_main
         margins: 40
+        width: parent.width - 2*margins
         title: qsTr("Neuerungen")
         standardButtons: DialogButtonBox.Ok
 
-        Text {
+        ScrollView {
             anchors.fill: parent
-            wrapMode: Text.WordWrap
-            text: qsTr(
-                        "<h1>1.2</h1></br>" +
-                        "<h2>Neue Funktionen</h2>" +
-                        "<ul>" +
-                            "<li>Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden</li>" +
-                            "<li>Neuerungen werden in einem Pop-Up angezeigt</li>" +
-                            "<li>Neuerungen werden automatisch nach einem Update angezeigt</li>" +
-                        "</ul>" +
-                        "<h2>Fehlerbehebungen</h2>" +
-                        "<ul><li>Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert</li></ul>" +
-                        "<h2>Bekannte Fehler</h2>" +
-                        "<ul><li>Import von einer anderen Sprache funktioniert nicht</li></ul>" +
-                        "<h1>1.1</h1>" +
-                        "<h2>Neue Funktionen</h2>" +
-                        "<ul>" +
-                            "<li>Übersetzungen werden unterstützt</li>" +
-                            "<li>Englische Übersetzung wurde hinzugefügt</li>" +
-                        "</ul>" +
-                        "<h2>Fehlerbehebungen</h2>" +
-                        "<ul>" +
-                            "<li>Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben</li>" +
-                            "<li>Groß-Kleinschreibung von Dateinamen wurde korrigiert</li>" +
-                        "</ul>" +
-                        "<h2>Bekannte Fehler</h2>" +
-                        "<ul><li>Import von einer anderen Sprache funktioniert nicht</li></ul>"
-                       )
+            clip: true
+            contentWidth: width
+            ScrollBar.horizontal.policy: Qt.ScrollBarAlwaysOff
+
+            Column {
+                width: parent.width
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.StyledText
+                    font.pointSize: 12
+                    text: qsTr(
+                                "<h1>1.2</h1>" +
+                                "<h2>Neue Funktionen</h2>" +
+                                "<ul>" +
+                                    "<li>Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden</li>" +
+                                    "<li>Neuerungen werden in einem Pop-Up angezeigt</li>" +
+                                    "<li>Neuerungen werden automatisch nach einem Update angezeigt</li>" +
+                                "</ul>" +
+                                "<h2>Fehlerbehebungen</h2>" +
+                                "<ul><li>Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert</li></ul>" +
+                                "<h2>Bekannte Fehler</h2>" +
+                                "<ul><li>Import von einer anderen Sprache funktioniert nicht</li></ul>" +
+                                "<h1>1.1</h1>" +
+                                "<h2>Neue Funktionen</h2>" +
+                                "<ul>" +
+                                    "<li>Übersetzungen werden unterstützt</li>" +
+                                    "<li>Englische Übersetzung wurde hinzugefügt</li>" +
+                                "</ul>" +
+                                "<h2>Fehlerbehebungen</h2>" +
+                                "<ul>" +
+                                    "<li>Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben</li>" +
+                                    "<li>Groß-Kleinschreibung von Dateinamen wurde korrigiert</li>" +
+                                "</ul>" +
+                                "<h2>Bekannte Fehler</h2>" +
+                                "<ul><li>Import von einer anderen Sprache funktioniert nicht</li></ul>"
+                               )
+                }
+            }
         }
 
         footer: DialogButtonBox {
