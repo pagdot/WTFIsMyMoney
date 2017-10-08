@@ -840,7 +840,7 @@ Page {
                         font.pointSize: 13
                         anchors.verticalCenter: parent.verticalCenter
 
-                        text: Qt.locale().monthName(datum.getMonth(), Locale.ShortFormat) + datum.getDate() + ", " + datum.getFullYear()
+                        text: Qt.locale().monthName(datum.getMonth(), Locale.ShortFormat) + " " + datum.getDate() + ", " + datum.getFullYear()
                     }
                 }
 
