@@ -144,7 +144,7 @@
     </message>
     <message>
         <location filename="../src/qml/Page_main.qml" line="142"/>
-        <location filename="../src/qml/Page_main.qml" line="521"/>
+        <location filename="../src/qml/Page_main.qml" line="522"/>
         <source>Neuerungen</source>
         <translation>Neuerungen</translation>
     </message>
@@ -205,16 +205,20 @@
         <translation>Statistik</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_main.qml" line="527"/>
+        <location filename="../src/qml/Page_main.qml" line="540"/>
+        <source>&lt;h1&gt;1.2&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</source>
+        <translation>&lt;h1&gt;1.2&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</translation>
+    </message>
+    <message>
         <source>&lt;h1&gt;1.2&lt;/h1&gt;&lt;/br&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation>&lt;h1&gt;1.2&lt;/h1&gt;&lt;/br&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</translation>
+        <translation type="vanished">&lt;h1&gt;1.2&lt;/h1&gt;&lt;/br&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
 </context>
 <context>
     <name>Page_new</name>
     <message>
         <location filename="../src/qml/Page_new.qml" line="33"/>
-        <location filename="../src/qml/Page_new.qml" line="631"/>
+        <location filename="../src/qml/Page_new.qml" line="633"/>
         <source>Neu</source>
         <translation>Neu</translation>
     </message>
@@ -224,44 +228,44 @@
         <translation>Geld</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="393"/>
-        <location filename="../src/qml/Page_new.qml" line="441"/>
+        <location filename="../src/qml/Page_new.qml" line="395"/>
+        <location filename="../src/qml/Page_new.qml" line="443"/>
         <source>Kategorie</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="507"/>
-        <location filename="../src/qml/Page_new.qml" line="555"/>
+        <location filename="../src/qml/Page_new.qml" line="509"/>
+        <location filename="../src/qml/Page_new.qml" line="557"/>
         <source>Unterkategorie</source>
         <translation>Unterkategorie</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="641"/>
+        <location filename="../src/qml/Page_new.qml" line="643"/>
         <source>Neue Unterkategorie</source>
         <translation>Neue Unterkategorie</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="710"/>
+        <location filename="../src/qml/Page_new.qml" line="712"/>
         <source>Filter Icons</source>
         <translation>Filter Icons</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="769"/>
+        <location filename="../src/qml/Page_new.qml" line="771"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="805"/>
+        <location filename="../src/qml/Page_new.qml" line="807"/>
         <source>Datum</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="874"/>
+        <location filename="../src/qml/Page_new.qml" line="876"/>
         <source>Fertig</source>
         <translation>Fertig</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="892"/>
+        <location filename="../src/qml/Page_new.qml" line="894"/>
         <source>Abbrechen</source>
         <translation>Abbrechen</translation>
     </message>

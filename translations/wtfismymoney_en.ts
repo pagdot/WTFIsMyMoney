@@ -144,7 +144,7 @@
     </message>
     <message>
         <location filename="../src/qml/Page_main.qml" line="142"/>
-        <location filename="../src/qml/Page_main.qml" line="521"/>
+        <location filename="../src/qml/Page_main.qml" line="522"/>
         <source>Neuerungen</source>
         <translation>Changelog</translation>
     </message>
@@ -205,9 +205,14 @@
         <translation>Statistics</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_main.qml" line="527"/>
+        <location filename="../src/qml/Page_main.qml" line="540"/>
+        <source>&lt;h1&gt;1.2&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</source>
+        <translation>&lt;h1&gt;1.2&lt;/h1&gt;&lt;h2&gt;New Features&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Date and costs of new entries can now be read from a QR-Code on austrian records&lt;/li&gt;&lt;li&gt;Added changelog dialog&lt;/li&gt;&lt;li&gt;View changelog-dialog after update&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fixed Bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;When changing date from default in a new entry or modify the date of an existing entry it chooses the day before&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Known bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;(sub-)category names from another language aren&apos;t translated on import. May causes errors when importing or changing language&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;New features&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Translation support&lt;/li&gt;&lt;li&gt;English translation&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fixed Bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;when creating a new subcategory: filter in icon-select-dialog searches only with lower case letters&lt;/li&gt;&lt;li&gt;fixed upper/lower-case in filenames and file references
+&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Known bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;(sub-)category names from another language aren&apos;t translated on import. May causes errors when importing or changing language&lt;/li&gt;&lt;/ul&gt;</translation>
+    </message>
+    <message>
         <source>&lt;h1&gt;1.2&lt;/h1&gt;&lt;/br&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation>&lt;h1&gt;1.2&lt;/h1&gt;&lt;/br&gt;&lt;h2&gt;New Features&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Date and costs of new entries can now be read from a QR-Code on austrian records&lt;/li&gt;&lt;li&gt;Added changelog dialog&lt;/li&gt;&lt;li&gt;View changelog-dialog after update&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fixed Bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;When changing date from default in a new entry or modify the date of an existing entry it chooses the day before&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Known bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;(sub-)category names from another language aren&apos;t translated on import. May causes errors when importing or changing language&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;New features&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Translation support&lt;/li&gt;&lt;li&gt;English translation&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fixed Bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;when creating a new subcategory: filter in icon-select-dialog searches only with lower case letters&lt;/li&gt;&lt;li&gt;fixed upper/lower-case in filenames and file references
+        <translation type="vanished">&lt;h1&gt;1.2&lt;/h1&gt;&lt;/br&gt;&lt;h2&gt;New Features&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Date and costs of new entries can now be read from a QR-Code on austrian records&lt;/li&gt;&lt;li&gt;Added changelog dialog&lt;/li&gt;&lt;li&gt;View changelog-dialog after update&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fixed Bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;When changing date from default in a new entry or modify the date of an existing entry it chooses the day before&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Known bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;(sub-)category names from another language aren&apos;t translated on import. May causes errors when importing or changing language&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;New features&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Translation support&lt;/li&gt;&lt;li&gt;English translation&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fixed Bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;when creating a new subcategory: filter in icon-select-dialog searches only with lower case letters&lt;/li&gt;&lt;li&gt;fixed upper/lower-case in filenames and file references
 &lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Known bugs&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;(sub-)category names from another language aren&apos;t translated on import. May causes errors when importing or changing language&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
 </context>
@@ -215,7 +220,7 @@
     <name>Page_new</name>
     <message>
         <location filename="../src/qml/Page_new.qml" line="33"/>
-        <location filename="../src/qml/Page_new.qml" line="631"/>
+        <location filename="../src/qml/Page_new.qml" line="633"/>
         <source>Neu</source>
         <translation>New</translation>
     </message>
@@ -225,44 +230,44 @@
         <translation>Money</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="393"/>
-        <location filename="../src/qml/Page_new.qml" line="441"/>
+        <location filename="../src/qml/Page_new.qml" line="395"/>
+        <location filename="../src/qml/Page_new.qml" line="443"/>
         <source>Kategorie</source>
         <translation>Category</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="507"/>
-        <location filename="../src/qml/Page_new.qml" line="555"/>
+        <location filename="../src/qml/Page_new.qml" line="509"/>
+        <location filename="../src/qml/Page_new.qml" line="557"/>
         <source>Unterkategorie</source>
         <translation>Subcategory</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="641"/>
+        <location filename="../src/qml/Page_new.qml" line="643"/>
         <source>Neue Unterkategorie</source>
         <translation>New subcategory</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="710"/>
+        <location filename="../src/qml/Page_new.qml" line="712"/>
         <source>Filter Icons</source>
         <translation>Filter icons</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="769"/>
+        <location filename="../src/qml/Page_new.qml" line="771"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="805"/>
+        <location filename="../src/qml/Page_new.qml" line="807"/>
         <source>Datum</source>
         <translation>Date</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="874"/>
+        <location filename="../src/qml/Page_new.qml" line="876"/>
         <source>Fertig</source>
         <translation>Finish</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="892"/>
+        <location filename="../src/qml/Page_new.qml" line="894"/>
         <source>Abbrechen</source>
         <translation>Cancel</translation>
     </message>
