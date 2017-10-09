@@ -43,11 +43,15 @@ Page {
     property date datum;
     property real money;
     property int nr;
+    property var tags: []
+    property var availableTags: []
 
     function reset() {
         main_category = ""
         sub_category = ""
         categories = []
+        tags = []
+        availableTags = ["abc", "def", "ghi", "jkl"];
         var tmp = db.getCategories();
         for (var i in tmp) {
             categories.push({
@@ -506,13 +510,12 @@ Page {
 
             Flow {
                 id: chosenTagFlow
-                property var items: ["abc", "def"];
                 spacing: 10
                 Layout.fillWidth: true
 
                 Repeater {
                     id: chosenRepeater
-                    model: parent.items.length
+                    model: tags.length
 
                     delegate: Rectangle {
                         id: rect
@@ -535,7 +538,7 @@ Page {
                                 font.family: icon.family
                                 color: "black"
                                 font.pointSize: 13
-                                text: chosenTagFlow.items[modelData]
+                                text: tags[modelData]
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 verticalAlignment: Text.AlignVCenter //TODO vertical center text
@@ -556,11 +559,14 @@ Page {
                                 implicitWidth: 24
 
                                 onClicked: {
-                                    var chosen = chosenTagFlow.items
+                                    var chosen = tags
+                                    var available = availableTags
 
+                                    available.push(chosen[modelData])
                                     chosen.splice(modelData, 1)
 
-                                    chosenTagFlow.items = chosen;
+                                    availableTags = available
+                                    tags = tags
                                 }
 
                                 contentItem: Text {
@@ -578,9 +584,10 @@ Page {
 
                 Item {
                     height: 32
-                    implicitWidth: tagFilter.textWidth > 10 ? tagFilter.textWidth : 10
+                    implicitWidth: tagFilter.textWidth > 30 ? tagFilter.textWidth : 30
                     TextInput {
                         id: tagFilter
+                        clip: true
                         color: "black"
                         opacity: 0.87
                         font.pointSize: 16
@@ -590,9 +597,35 @@ Page {
 
                         onFontChanged: if (font != undefined) metrics.font = font
                         property real textWidth: metrics.boundingRect(text).width
+                        onFocusChanged: if (focus) tagList.open()
 
                         FontMetrics {
                             id: metrics
+                        }
+                    }
+
+                    Menu {
+                        id: tagList
+                        Repeater {
+                            model: availableTags.length
+
+                            delegate: MenuItem {
+                                text: availableTags[modelData]
+                                onTriggered: {
+                                    var chosen = tags
+                                    var available = availableTags
+
+                                    chosen.push(available[modelData])
+                                    available.slice(modelData, 1)
+
+                                    tags = chosen
+                                    availableTags = available
+                                }
+                            }
+                        }
+
+                        onClosed: {
+                            tagFilter.focus = false
                         }
                     }
                 }
