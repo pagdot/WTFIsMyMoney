@@ -62,7 +62,6 @@ Page {
         mainList.model = categories
         moneyLayout.opened = true
         mainLayout.opened = false
-        subLayout.opened = false
         dateLayout.opened = false
     }
 
@@ -181,6 +180,7 @@ Page {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.leftMargin: 16
+        anchors.rightMargin: 16
         spacing: 20
 
         ColumnLayout {
@@ -401,9 +401,8 @@ Page {
                 visible: !mainLayout.opened
 
                 onClicked: {
-                    subLayout.opened = false
-                    moneyLayout.opened = false
                     mainLayout.opened = true
+                    moneyLayout.opened = false
                 }
 
                 contentItem: RowLayout {
@@ -465,7 +464,6 @@ Page {
                     onClicked: {
                         if ((!main_category) || (main_category.name !== modelData.name)) {
                             main_category = modelData
-                            subLayout.opened = true
                         }
                         mainLayout.opened = false
                     }
@@ -497,301 +495,105 @@ Page {
         }
 
         ColumnLayout {
-            id: subLayout
-            enabled: main_category ? !mainLayout.opened : false
+            id: tagLayout
             Layout.fillWidth: true
-            Layout.fillHeight: subList.visible
-
-            property bool opened;
+            Layout.fillHeight: !mainLayout.opened
 
             Label {
-                id: subLabel
-                text: qsTr("Unterkategorie") + ":"
+                id: tagsLabel
+                text: qsTr("Tags") + ":"
             }
 
-            Button {
-                id: subChip
-                implicitHeight: 32
-                visible: !subLayout.opened
-
-                onClicked: {
-                    mainLayout.opened = false
-                    moneyLayout.opened = false
-                    subLayout.opened = true
-                }
-
-                contentItem: RowLayout {
-                    spacing: 0
-                    anchors.fill: parent
-
-                    Item {
-                        height: parent.height
-                        width: height
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            anchors.centerIn: parent
-                            font.family: icon.family
-                            color: enabled ? "white" : "black"
-                            font.pointSize: 13
-                            text: sub_category ? icon.icons[sub_category.icon] : "?"
-                            opacity: enabled ? 1 : 0.26
-                            z: 1
-                        }
-
-                        Rectangle {
-                            anchors.fill: parent
-                            radius: height/2
-                            color: Material.accent
-                            opacity: enabled ? 1 : 0
-                        }
-                    }
-
-                    Text {
-                        padding: 8
-                        rightPadding: 12
-                        font.pointSize: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        opacity: enabled ? 1 : 0.26
-
-                        text: sub_category ? sub_category.name : qsTr("Unterkategorie")
-                    }
-                }
-
-                background: Rectangle {
-                    anchors.fill: parent
-                    radius: height/2
-                    color: Material.color(Material.Grey, Material.Shade200)
-                }
-            }
-
-            ListView {
-                id: subList
+            Flow {
+                id: chosenTagFlow
+                property var items: ["abc", "def"];
+                spacing: 10
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-                model: main_category ? main_category.sub : []
-                visible: subLayout.opened
-                clip: true
 
-                delegate: AbstractButton {
-                    implicitHeight: 56
-                    width: subList.width
-                    onClicked: {
-                        if ((!sub_category) || (sub_category.name !== modelData.name)) {
-                            sub_category = modelData
-                        }
-                        subLayout.opened = false
-                    }
+                Repeater {
+                    id: chosenRepeater
+                    model: parent.items.length
 
-                    Text {
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.margins: 8
-                        anchors.leftMargin: 16
-                        font.pixelSize: 32
-                        fontSizeMode: Text.VerticalFit
-                        font.family: icon.family
-                        color: Material.accent
-                        text: icon.icons[modelData.icon]
-                        verticalAlignment: Text.AlignVCenter
-                    }
-
-                    Text {
-                        text: modelData.name
-                        anchors.fill: parent
-                        anchors.leftMargin: 72
-                        verticalAlignment: Text.AlignVCenter
-                        font.pointSize: 16
-                    }
-                }
-
-                footer: AbstractButton {
-                    implicitHeight: 56
-                    width: subList.width
-                    onClicked: {
-                        newSubIcon.iconName = "android"
-                        newSubName.text = ""
-                        dialogNewSub.open()
-                    }
-
-                    Text {
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.margins: 8
-                        anchors.leftMargin: 16
-                        font.pixelSize: 32
-                        fontSizeMode: Text.VerticalFit
-                        font.family: icon.family
-                        color: Material.accent
-                        text: icon.icons.plus
-                        verticalAlignment: Text.AlignVCenter
-                    }
-
-                    Text {
-                        text: qsTr("Neu")
-                        anchors.fill: parent
-                        anchors.leftMargin: 72
-                        verticalAlignment: Text.AlignVCenter
-                        font.pointSize: 16
-                    }
-
-                    Dialog {
-                        id: dialogNewSub
-                        parent: page
-                        title: qsTr("Neue Unterkategorie")
-                        x: (page.width - width) / 2
-                        y: (page.height - height) / 2
-                        property string name;
+                    delegate: Rectangle {
+                        id: rect
+                        implicitHeight: 32
+                        radius: height/2
+                        color: Material.color(Material.Grey, Material.Shade200)
 
                         RowLayout {
+                            spacing: 4
                             anchors.left: parent.left
-                            anchors.right: parent.right
-                            spacing: 10
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 4
+                            implicitWidth: chipText.metrics.width + spacing + chipClose.width
+                            onImplicitWidthChanged: parent.implicitWidth = anchors.leftMargin + implicitWidth + anchors.rightMargin
 
-                            Button {
-                                id: newSubIcon
-                                flat: true
-                                property string iconName: "android"
-                                text: icon.icons[iconName]
+                            Text {
+                                id: chipText
                                 font.family: icon.family
+                                color: "black"
                                 font.pointSize: 13
-                                padding: 0
-                                implicitWidth: 32
-                                implicitHeight: 32
-                                Layout.alignment: Qt.AlignVCenter
+                                text: chosenTagFlow.items[modelData]
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                verticalAlignment: Text.AlignVCenter //TODO vertical center text
+                                property alias metrics: mMetrics
+                                opacity: 87
+
+                                onFontChanged: if (font != undefined) metrics.font = font
+
+                                FontMetrics {
+                                    id: mMetrics
+                                    property real width: boundingRect(parent.text).width
+                                }
+                            }
+
+                            AbstractButton {
+                                id: chipClose
+                                implicitHeight: 24
+                                implicitWidth: 24
 
                                 onClicked: {
-                                    var model = [];
-                                    for (var i in icon.icons) {
-                                        model.push({name: i, icon: icon.icons[i]})
-                                    }
-                                    iconRepeater.model = model
-                                    iconPicker.selected = iconName
-                                    iconPicker.open()
-                                }
+                                    var chosen = chosenTagFlow.items
 
+                                    chosen.splice(modelData, 1)
+
+                                    chosenTagFlow.items = chosen;
+                                }
 
                                 contentItem: Text {
-                                    anchors.fill: parent
-                                    text: parent.text
-                                    font: parent.font
-                                    opacity: enabled || parent.highlighted || parent.checked ? 1 : 0.3
-                                    color: "white"
-                                    horizontalAlignment: Text.AlignHCenter
+                                    font.family: icon.family
+                                    fontSizeMode: Text.VerticalFit
+                                    text: icon.icons["close_circle"]
                                     verticalAlignment: Text.AlignVCenter
-                                    elide: Text.ElideRight
+                                    font.pointSize: 100
+                                    opacity: 0.54
                                 }
-
-                                background: Rectangle {
-                                    anchors.fill: parent
-                                    radius: width/2
-                                    color: Material.accent
-                                }
-
-                                Dialog {
-                                    id: iconPicker
-                                    parent: page
-                                    width: parent.width - 2 * margins
-                                    height: parent.height - 2 * margins
-                                    margins: 20
-                                    x: (page.width - width) / 2
-                                    y: (page.height - height) / 2
-
-                                    property string selected: "android"
-
-                                    standardButtons: Dialog.Ok | Dialog.Cancel
-
-                                    ColumnLayout {
-                                        anchors.fill: parent
-
-                                        TextField {
-                                            id: iconFilter
-                                            Layout.fillWidth: true
-                                            placeholderText: qsTr("Filter Icons")
-                                            inputMethodHints: Qt.ImhNoPredictiveText
-
-                                            onTextEdited: {
-                                                var model = [];
-                                                for (var i in icon.icons) {
-                                                    if (i.includes(text.toLocaleLowerCase()) || (text === "")) {
-                                                        model.push({name: i, icon: icon.icons[i]})
-                                                    }
-                                                }
-                                                iconRepeater.model = model
-                                            }
-                                        }
-
-                                        GridView {
-                                            id: iconRepeater
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            cellHeight: 32
-                                            cellWidth: 32
-                                            clip: true
-
-                                            delegate: AbstractButton {
-                                                property bool chosen: iconPicker.selected === modelData.name
-                                                width: iconRepeater.cellWidth
-                                                height: iconRepeater.cellWidth
-
-                                                Label {
-                                                    anchors.fill: parent
-                                                    text: modelData ? modelData.icon : ""
-                                                    font.family: icon.family
-                                                    font.pointSize: 13
-                                                    color: chosen ? Material.background : Material.accent
-                                                    horizontalAlignment: Text.AlignHCenter
-                                                    verticalAlignment: Text.AlignVCenter
-                                                    elide: Text.ElideRight
-                                                }
-
-                                                Rectangle {
-                                                    visible: chosen
-                                                    anchors.fill: parent
-                                                    radius: Math.max(width, height)
-                                                    color: Material.accent
-                                                    z: -1
-                                                }
-
-                                                onClicked: iconPicker.selected = modelData.name
-
-                                            }
-
-                                        }
-                                    }
-
-                                    onAccepted: newSubIcon.iconName = selected
-                                }
-                            }
-
-                            TextField {
-                                id: newSubName
-                                ToolTip.text: qsTr("Name")
-                                Layout.fillWidth: true
-                                Layout.alignment: Qt.AlignVCenter
-                                inputMethodHints: Qt.ImhNoPredictiveText
-                                onTextEdited: dialogNewSub.name = text
-                                validator: RegExpValidator {regExp: /[^,]*/}
                             }
                         }
+                    }
+                }
 
-                        standardButtons: name === "" ? Dialog.Cancel : Dialog.Ok | Dialog.Cancel
+                Item {
+                    height: 32
+                    implicitWidth: tagFilter.textWidth > 10 ? tagFilter.textWidth : 10
+                    TextInput {
+                        id: tagFilter
+                        color: "black"
+                        opacity: 0.87
+                        font.pointSize: 16
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
 
-                        onAccepted: {
-                            for (var i in categories) {
-                                if (categories[i].name === main_category.name) {
-                                    categories[i].sub.push({icon: newSubIcon.iconName, name: newSubName.text})
-                                    main_category = categories[i]
-                                    sub_category = categories[i].sub[categories[i].sub.length - 1]
-                                    subLayout.opened = false
-                                    break
-                                }
-                            }
+                        onFontChanged: if (font != undefined) metrics.font = font
+                        property real textWidth: metrics.boundingRect(text).width
 
+                        FontMetrics {
+                            id: metrics
                         }
-
                     }
                 }
             }
