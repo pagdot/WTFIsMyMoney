@@ -38,17 +38,17 @@ Page {
 
     property var categories: []
     property var main_category;
-    property var sub_category;
     property bool newEntry: true
     property date datum;
     property real money;
     property int nr;
     property var tags: []
     property var availableTags: []
+    property bool globalTags: true
+    property bool localTags: true
 
     function reset() {
         main_category = ""
-        sub_category = ""
         categories = []
         tags = []
         availableTags = ["abc", "def", "ghi", "jkl"];
@@ -91,12 +91,12 @@ Page {
             }
         }
 
-        for (var i in main_category.sub) {
-            if (item.subcategory === main_category.sub[i].name) {
-                sub_category = main_category.sub[i]
-                break
-            }
-        }
+//        for (var i in main_category.sub) {
+//            if (item.subcategory === main_category.sub[i].name) {
+//                sub_category = main_category.sub[i]
+//                break
+//            }
+//        }
 
         money = item.money
         datum = item.datestamp
@@ -114,13 +114,19 @@ Page {
             loader.close()
         } else if (main_category && mainLayout.opened) {
             mainLayout.opened = false
-        } else if(sub_category && subLayout.opened) {
-            subLayout.opened = false
         } else if (datePicker.visible) {
             datePicker.close()
         } else {
             dialog.open()
         }
+    }
+
+    function generateModel(size) {
+        var tmp = []
+        for (var i = 0; i < size; i++) {
+            tmp.push(i)
+        }
+        return tmp
     }
 
     Icon {
@@ -502,18 +508,25 @@ Page {
             id: tagLayout
             Layout.fillWidth: true
             Layout.fillHeight: !mainLayout.opened
+            enabled: main_category !== ""
 
             Label {
                 id: tagsLabel
                 text: qsTr("Tags") + ":"
             }
 
-            Flow {
-                id: chosenTagFlow
-                spacing: 10
+            AbstractButton {
                 Layout.fillWidth: true
+                Layout.minimumHeight: 32
+                property alias menu: mTagMenu
+                enabled: !mTagMenu.visible
 
-                Repeater {
+                Flow {
+                    id: chosenTagFlow
+                    spacing: 10
+                    anchors.fill: parent
+
+                    Repeater {
                     id: chosenRepeater
                     model: tags.length
 
@@ -581,53 +594,144 @@ Page {
                         }
                     }
                 }
+                }
 
-                Item {
-                    height: 32
-                    implicitWidth: tagFilter.textWidth > 30 ? tagFilter.textWidth : 30
-                    TextInput {
-                        id: tagFilter
-                        clip: true
-                        color: "black"
-                        opacity: 0.87
-                        font.pointSize: 16
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
+                Popup {
+                    id: mTagMenu
+                    margins: 16
+                    y: parent.height
 
-                        onFontChanged: if (font != undefined) metrics.font = font
-                        property real textWidth: metrics.boundingRect(text).width
-                        onFocusChanged: if (focus) tagList.open()
-
-                        FontMetrics {
-                            id: metrics
+                    onVisibleChanged: {
+                        if(visible) {
+                            filter.contentItem.focus = true
+                            contentItem.forceActiveFocus()
                         }
                     }
 
-                    Menu {
-                        id: tagList
-                        Repeater {
-                            model: availableTags.length
+                    contentItem: FocusScope {
+                        anchors.fill: parent
+                        implicitHeight: layout.implicitHeight
 
-                            delegate: MenuItem {
-                                text: availableTags[modelData]
-                                onTriggered: {
-                                    var chosen = tags
-                                    var available = availableTags
+                        ColumnLayout {
+                            id: layout
+                            anchors.fill: parent
+                            spacing: list.spacing
+                            implicitHeight: filter.implicitHeight + spacing + list.implicitHeight
 
-                                    chosen.push(available[modelData])
-                                    available.slice(modelData, 1)
+                            property var filteredTags: filterTags(availableTags, filter.contentItem.text)
 
-                                    tags = chosen
-                                    availableTags = available
+                            function filterTags(tags, filter) {
+                                var filtered = []
+                                for (var i in tags) {
+                                    if (tags[i].toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                                        filtered.push({index: parseInt(i), tag: tags[i]})
+                                    }
+                                }
+                                return filtered
+                            }
+
+                            ItemDelegate {
+                                id: filter
+                                clip: true
+                                font.italic: true
+                                Layout.fillWidth: true
+                                contentItem: TextInput {
+                                    text: ""
+                                    font: parent.font
+                                    inputMethodHints: Qt.ImhNoPredictiveText
+                                }
+                            }
+
+                            ListView {
+                                id: list
+                                Layout.fillWidth: true
+                                clip: true
+                                implicitWidth: Math.max(contentItem.implicitWidth, footerItem.implicitWidth)
+                                implicitHeight: contentHeight
+
+                                model: layout.filteredTags.length
+
+                                onCountChanged: {
+                                    if ((!count) || (!footerItem)) {
+                                        return
+                                    }
+
+                                    if ((count == 0) && (footerItem.y != 0)) {
+                                        footerPositioning = ListView.OverlayFooter
+                                        footerPositioning = ListView.InlineFooter
+                                    }
+                                }
+
+                                delegate: ItemDelegate {
+                                    width: parent.width
+                                    text: availableTags[layout.filteredTags[modelData].index]
+                                    onClicked: {
+                                        var chosen = tags
+                                        var available = availableTags
+
+                                        chosen.push(available[layout.filteredTags[modelData].index])
+                                        available.splice(layout.filteredTags[modelData].index, 1)
+
+                                        tags = chosen
+                                        availableTags = available
+                                    }
+                                }
+
+                                footer: Item {
+                                    implicitHeight: visible ? ((localItem.visible ? localItem.height : 0) + (globalItem.visible ? globalItem.height : 0)) : 0
+                                    width: parent.width
+                                    implicitWidth: localItem.visible ? (globalItem.visible ? Math.max(localItem.implicitWidth, globalItem.implicitWidth) : localItem.implicitWidth) : globalItem.visible ? globalItem.implicitWidth : 0
+                                    visible: (filter.contentItem.text !== "") && (!arrayContains(layout.filteredTags, filter.contentItem.text))  && (!arrayContains(tags, filter.contentItem.text))
+
+                                    function arrayContains(array, element) {
+                                        console.log(JSON.stringify(array) + " : " + element)
+                                        for (var i in array) {
+                                            if ((array[i].tag === element) || (array[i] === element)) {
+                                                return true
+                                            }
+                                        }
+                                        return false
+                                    }
+
+                                    ItemDelegate {
+                                        id: localItem
+                                        visible: localTags
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.top: parent.top
+
+                                        text: qsTr("Hinzufügen")
+
+                                        onClicked: {
+                                            var chosen = tags
+                                            chosen.push(available[layout.filteredTags[modelData].index])
+                                            tags = chosen
+                                        }
+                                    }
+
+                                    ItemDelegate {
+                                        id: globalItem
+                                        visible: globalTags
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.bottom: parent.bottom
+
+                                        text: qsTr("Global Hinzufügen")
+
+                                        onClicked: {
+                                            var chosen = tags
+                                            chosen.push(available[layout.filteredTags[modelData].index])
+                                            tags = chosen
+                                        }
+                                    }
                                 }
                             }
                         }
-
-                        onClosed: {
-                            tagFilter.focus = false
-                        }
                     }
+                }
+
+                onClicked: {
+                    menu.open()
                 }
             }
         }
@@ -710,7 +814,7 @@ Page {
             id: buttonDone
             text: qsTr("Fertig")
             Layout.alignment: Qt.AlignHCenter
-            enabled: (money > 0.0) && (main_category ? true : false) && (sub_category ? true : false)
+            enabled: (money > 0.0) && (main_category ? true : false)
             flat: true
 
             onClicked: {
