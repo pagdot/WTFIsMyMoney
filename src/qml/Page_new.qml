@@ -37,7 +37,7 @@ Page {
     property var db;
 
     property var categories: []
-    property var main_category;
+    property var main_category: categories[mainCombo.currentIndex];
     property bool newEntry: true
     property date datum;
     property real money;
@@ -48,25 +48,21 @@ Page {
     property bool localTags: true
 
     function reset() {
-        main_category = ""
-        categories = []
+        var tmp_categories = []
         tags = []
         availableTags = ["abc", "def", "ghi", "jkl"];
         var tmp = db.getCategories();
         for (var i in tmp) {
-            categories.push({
+            tmp_categories.push({
                 name: tmp[i].name,
                 icon: tmp[i].icon,
                 sub: db.getSubcategoriesOrderedPerUse(tmp[i].name)
             });
         }
         money = 0.0
+        categories = tmp_categories
         newEntry = true;
         datum = new Date()
-        mainList.model = categories
-        moneyLayout.opened = true
-        mainLayout.opened = false
-        dateLayout.opened = false
     }
 
     function load(item) {
@@ -74,10 +70,10 @@ Page {
             return
         }
 
-        categories = []
+        var tmp_categories = []
         var tmp = db.getCategories();
         for (var i in tmp) {
-            categories.push({
+            tmp_categories.push({
                 name: tmp[i].name,
                 icon: tmp[i].icon,
                 sub: db.getSubcategoriesOrderedPerUse(tmp[i].name)
@@ -100,10 +96,7 @@ Page {
 
         money = item.money
         datum = item.datestamp
-
-        mainLayout.opened = false;
-        subLayout.opened = false;
-        moneyLayout.opened = false;
+        categories =  tmp_categories
 
         nr = item.nr
         newEntry = false
@@ -112,8 +105,6 @@ Page {
     function cancel() {
         if (loader.status != Loader.Null) {
             loader.close()
-        } else if (main_category && mainLayout.opened) {
-            mainLayout.opened = false
         } else if (datePicker.visible) {
             datePicker.close()
         } else {
@@ -195,66 +186,26 @@ Page {
 
         ColumnLayout {
             id: moneyLayout
-            property bool opened: false
+            Layout.fillWidth: true
 
             Label {
                 id: moneyLabel
                 text: qsTr("Geld") + ":"
             }
 
-            Button {
-                id: moneyChip
-                implicitHeight: 32
-                visible: (!moneyLayout.opened) && moneyLayout.enabled
-
-                onClicked: {
-                    moneyLayout.opened = true
-                    mainLayout.opened = false
-                    subLayout.opened = false
-                }
-
-                contentItem: RowLayout {
-                    spacing: 0
-                    anchors.fill: parent
-
-
-                    Rectangle {
-                        height: parent.height
-                        width: height
-                        radius: height/2
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: Material.accent
-
-                        Text {
-                            anchors.centerIn: parent
-                            font.family: icon.family
-                            color: "white"
-                            font.pointSize: 13
-                            text: money ? icon.icons.currency_eur : ""
-                        }
-                    }
-
-                    Text {
-                        padding: 8
-                        rightPadding: 12
-                        font.pointSize: 13
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        text: money ? money.toFixed(2).replace(".", Qt.locale().decimalPoint) + " €" : ""
-                    }
-                }
-
-                background: Rectangle {
-                    anchors.fill: parent
-                    radius: height/2
-                    color: Material.color(Material.Grey, Material.Shade200)
-                }
-            }
-
             Item {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-                visible: moneyLayout.opened
+//                Layout.fillHeight: true
+                implicitHeight: dial.implicitHeight
+                onWidthChanged: console.log("w: " + width)
+                onImplicitHeightChanged: console.log("ih: " + implicitHeight)
+                onHeightChanged: console.log("h: " + parent.height)
+
+                Component.onCompleted: {
+                    console.log("w: " + width)
+                    console.log("ih: " + implicitHeight)
+                    console.log("h: " + parent.height)
+                }
 
                 Dial {
                     id: dial
@@ -268,6 +219,7 @@ Page {
                     value: money
                     snapMode: Dial.SnapAlways
                     stepSize: 0.5
+                    implicitHeight: parent.width - moneyInput.width - Math.max(bt_plus.width, bt_minus.width)
 
                     onValueChanged: {
                         if (pressed) {
@@ -279,8 +231,8 @@ Page {
                 Button {
                     anchors.centerIn: dial
                     flat: true
-                    width: parent.width/2
-                    height: parent.height/2
+                    width: dial.width/2
+                    height: dial.height/2
                     visible: Qt.platform.os === "android"
 
                     text: icon.icons["qrcode"]
@@ -337,6 +289,7 @@ Page {
                 }
 
                 TextField {
+                    id: moneyInput
                     focus: false
                     anchors.top: parent.top
                     anchors.left: parent.left
@@ -395,8 +348,6 @@ Page {
         ColumnLayout {
             id: mainLayout
             Layout.fillWidth: true
-            Layout.fillHeight: mainList.visible
-            enabled: money > 0.0 ? true : false
 
             property bool opened: false;
 
@@ -405,100 +356,57 @@ Page {
                 text: qsTr("Kategorie") + ":"
             }
 
-            Button {
-                id: mainChip
-                implicitHeight: 32
-                visible: !mainLayout.opened
-
-                onClicked: {
-                    mainLayout.opened = true
-                    moneyLayout.opened = false
-                }
-
-                contentItem: RowLayout {
-                    spacing: 0
-                    anchors.fill: parent
-
-                    Item {
-                        height: parent.height
-                        width: height
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            anchors.centerIn: parent
-                            font.family: icon.family
-                            color: enabled ? "white" : "black"
-                            font.pointSize: 13
-                            text: main_category ? icon.icons[main_category.icon] : "?"
-                            opacity: enabled ? 1 : 0.26
-                            z: 1
-                        }
-
-                        Rectangle {
-                            anchors.fill: parent
-                            radius: height/2
-                            color: Material.accent
-                            opacity: enabled ? 1 : 0
-                        }
-                    }
-
-                    Text {
-                        padding: 8
-                        rightPadding: 12
-                        font.pointSize: 13
-                        anchors.verticalCenter: parent.verticalCenter
-                        opacity: enabled ? 1 : 0.26
-
-                        text: main_category ? main_category.name : qsTr("Kategorie")
-                    }
-                }
-
-                background: Rectangle {
-                    anchors.fill: parent
-                    radius: height/2
-                    color: Material.color(Material.Grey, Material.Shade200)
-                }
-            }
-
-            ListView {
-                id: mainList
-                visible: mainLayout.opened && mainLayout.enabled
+            ComboBox {
+                id: mainCombo
                 model: categories
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
 
-                delegate: AbstractButton {
-                    implicitHeight: 56
-                    width: mainList.width
-                    onClicked: {
-                        if ((!main_category) || (main_category.name !== modelData.name)) {
-                            main_category = modelData
-                        }
-                        mainLayout.opened = false
-                    }
+                displayText: model[currentIndex] ? model[currentIndex].name : ""
 
-                    Text {
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
+                contentItem: Text {
+                    leftPadding: 12 + iconLabel.width + 12
+                    rightPadding: parent.indicator.width + parent.spacing
+
+                    text: parent.displayText
+                    font: parent.font
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+
+                    Label {
+                        id: iconLabel
                         anchors.left: parent.left
-                        anchors.margins: 8
                         anchors.leftMargin: 16
-                        font.pixelSize: 32
-                        fontSizeMode: Text.VerticalFit
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pointSize: parent.font.pointSize
                         font.family: icon.family
-                        color: Material.accent
+                        color: "white"
+                        text: mainCombo.model[mainCombo.currentIndex] ? icon.icons[mainCombo.model[mainCombo.currentIndex].icon] : ""
+                        background: Rectangle{height: parent.height + 5; width: height; radius: height/2; color: Material.accent; anchors.centerIn: parent}
+                    }
+                }
+
+                delegate: ItemDelegate {
+                    id: control
+                    Label {
+                        id: iconLabel
+                        anchors.left: parent.left
+                        anchors.leftMargin: 16
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pointSize: parent.font.pointSize
+                        font.family: icon.family
+                        color: "white"
                         text: icon.icons[modelData.icon]
-                        verticalAlignment: Text.AlignVCenter
+                        background: Rectangle{height: parent.height + 5; width: height; radius: height/2; color: Material.accent; anchors.centerIn: parent}
                     }
 
-                    Text {
-                        text: modelData.name
-                        anchors.fill: parent
-                        anchors.leftMargin: 72
-                        verticalAlignment: Text.AlignVCenter
-                        font.pointSize: 16
-                    }
+
+                    leftPadding: 16 + iconLabel.width + 8
+                    rightPadding: 16
+                    width: parent.width
+                    text: modelData.name
+                    font.weight: mainCombo.currentIndex === index ? Font.DemiBold : Font.Normal
+                    highlighted: mainCombo.highlightedIndex === index
+                    hoverEnabled: mainCombo.hoverEnabled
                 }
             }
 
@@ -507,8 +415,7 @@ Page {
         ColumnLayout {
             id: tagLayout
             Layout.fillWidth: true
-            Layout.fillHeight: !mainLayout.opened
-            enabled: main_category !== ""
+//            Layout.fillHeight: true
 
             Label {
                 id: tagsLabel
@@ -518,6 +425,7 @@ Page {
             AbstractButton {
                 Layout.fillWidth: true
                 Layout.minimumHeight: 32
+                Layout.fillHeight: true
                 property alias menu: mTagMenu
                 enabled: !mTagMenu.visible
 
@@ -530,11 +438,15 @@ Page {
                     id: chosenRepeater
                     model: tags.length
 
-                    delegate: Rectangle {
+                    delegate: AbstractButton {
                         id: rect
                         implicitHeight: 32
-                        radius: height/2
-                        color: Material.color(Material.Grey, Material.Shade200)
+
+                        background: Rectangle {
+                            anchors.fill: parent
+                            radius: height/2
+                            color: Material.color(Material.Grey, Material.Shade200)
+                        }
 
                         RowLayout {
                             spacing: 4
@@ -554,7 +466,7 @@ Page {
                                 text: tags[modelData]
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
-                                verticalAlignment: Text.AlignVCenter //TODO vertical center text
+                                verticalAlignment: Text.AlignVCenter
                                 property alias metrics: mMetrics
                                 opacity: 87
 
@@ -684,7 +596,6 @@ Page {
                                     visible: (filter.contentItem.text !== "") && (!arrayContains(layout.filteredTags, filter.contentItem.text))  && (!arrayContains(tags, filter.contentItem.text))
 
                                     function arrayContains(array, element) {
-                                        console.log(JSON.stringify(array) + " : " + element)
                                         for (var i in array) {
                                             if ((array[i].tag === element) || (array[i] === element)) {
                                                 return true
@@ -704,7 +615,7 @@ Page {
 
                                         onClicked: {
                                             var chosen = tags
-                                            chosen.push(available[layout.filteredTags[modelData].index])
+                                            chosen.push(filter.contentItem.text)
                                             tags = chosen
                                         }
                                     }
@@ -716,11 +627,12 @@ Page {
                                         anchors.right: parent.right
                                         anchors.bottom: parent.bottom
 
-                                        text: qsTr("Global Hinzufügen")
+                                        text: localTags ? qsTr("Global Hinzufügen") : qsTr("Hinzufügen")
 
                                         onClicked: {
                                             var chosen = tags
-                                            chosen.push(available[layout.filteredTags[modelData].index])
+                                            chosen.push(filter.contentItem.text)
+                                            //TODO push to global tag array
                                             tags = chosen
                                         }
                                     }
@@ -814,7 +726,6 @@ Page {
             id: buttonDone
             text: qsTr("Fertig")
             Layout.alignment: Qt.AlignHCenter
-            enabled: (money > 0.0) && (main_category ? true : false)
             flat: true
 
             onClicked: {
