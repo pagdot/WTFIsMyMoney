@@ -26,45 +26,24 @@ var localStorage;
 
 var defaultCategories = [
     {
-        name: qsTr("Essen & Trinken"),
-        icon: "silverware",
-        sub: [
-            {name:qsTr("Essen (eigenes)"), icon: "basket"},
-            {name:qsTr("Essen (extern)"), icon: "food"},
-            {name:qsTr("Trinken (eigenes)"), icon: "beer"},
-            {name:qsTr("Trinken (extern)"), icon: "martini"}
-        ],
+        name: "food_drinks",
+        icon: "silverware"
     },
     {
-        name: qsTr("Leben & Wohnen"),
-        icon: "home",
-        sub: [
-            {name:qsTr("Wohnen"), icon: "home"},
-            {name:qsTr("Gewand"), icon: "tshirt_crew"},
-        ],
+        name: "life_home",
+        icon: "home"
     },
     {
-        name: qsTr("Freizeit"),
-        icon: "sofa",
-        sub: [
-            {name:qsTr("Sport"), icon: "home"},
-            {name:qsTr("Spiele"), icon: "gamepad_variant"},
-            {name:qsTr("Shopping"), icon: "shopping"},
-            {name:qsTr("Urlaub"), icon: "beach"}
-        ],
+        name: "hobbies",
+        icon: "sofa"
     },
     {
-        name: qsTr("Transport"),
-        icon: "car",
-        sub: [
-            {name:qsTr("Öffentlich"), icon: "bus"},
-            {name:qsTr("Auto"), icon: "car"}
-        ],
+        name: "transport",
+        icon: "car"
     },
     {
-        name: qsTr("Anderes"),
-        icon: "plus",
-        sub: [],
+        name: "other",
+        icon: "plus"
     }
 ]
 
@@ -94,10 +73,17 @@ function init(_localStorage, version) {
     }
     try {
         db.transaction(function(tx) {
-            tx.executeSql('SELECT * FROM subcategories');
+            tx.executeSql('SELECT * FROM tags');
         })
     } catch(err) {
-        createSubcategories();
+        createTagTable();
+    }
+    try {
+        db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM entryTags');
+        })
+    } catch(err) {
+        createEntryTagTable();
     }
     try {
         db.transaction(function(tx) {
@@ -149,16 +135,19 @@ function isInit() {
 
 function clearDb() {
     sql("DELETE FROM categories")
-    sql("DELETE FROM subcategories")
+    sql("DELETE FROM tags")
+    sql("DELETE FROM entryTags")
     sql("DELETE FROM entries")
 
     createCategories()
-    createSubcategories()
+    createTagTable()
+    createEntryTagTable()
     createEntryTable()
 }
 
 function importEntries(entries) {
     for (var i in entries) {
+        //update import
         storeEntry(entries[i].category, entries[i].subcategory, entries[i].date, entries[i].money, entries[i].note, entries[i].icon, entries[i].extra, entries[i].tags)
     }
 }
@@ -172,51 +161,32 @@ function getCategories() {
     return categories;
 }
 
-function getSubcategoriesOrderedPerUse(category) {
-    var subcategories = [];
-    var rows = sql("SELECT S.*, COUNT(E.nr) as cnt FROM subcategories S, (\n" +
-                   "    SELECT * FROM entries\n" +
-                   "    ORDER BY nr DESC\n" +
-                   "    LIMIT 20\n" +
-                   ") E\n" +
-                   "INNER JOIN categories C ON\n" +
-                   "(S.catNr = C.nr) AND (C.name = ?)\n" +
-                   "WHERE E.category = S.nr\n" +
-                   "GROUP BY E.category\n" +
-                   "ORDER BY cnt DESC", category)
-    for (var i in rows) {
-        subcategories.push(rows[i])
+function createTag(name, category) {
+    if (!category) {
+        category = ""
     }
 
-    rows = sql("SELECT S.* FROM subcategories S\n" +
-               "INNER JOIN categories C ON\n" +
-               "(S.catNr = C.nr) AND (C.name = ?)", category)
-    for (var i in rows) {
-        var found = false;
-        for (var j in subcategories) {
-            if (subcategories[j].name === rows[i].name) {
-                found = true
-            }
-        }
-        if (!found) {
-            subcategories.push(rows[i])
-        }
-    }
-    return subcategories
+    sql("INSERT INTO tags (name, category) VALUES (?, ?)", [name, category])
 }
 
-function getSubcategories(category) {
-    var subcategories = [];
-    var rows = sql("SELECT S.* FROM subcategories S\n" +
-                   "INNER JOIN categories C ON\n" +
-                   "(S.catNr = C.nr) AND (C.name = ?)", category)
-    for (var i in rows) {
-        subcategories.push(rows[i])
-    }
-    return subcategories
+function getTags() {
+    return sql("SELECT * FROM tags")
+}
+
+function createTagEntryLink(entryId, tagId) {
+    sql("INSERT INTO entryTags (entryId, tagId) VALUES (?, ?)", [entryId, tagId])
+}
+
+function deleteEntryTagLink(entryId, tagId) {
+    //todo
+}
+
+function getTagUsage(tagId) {
+    //todo get tags with usage
 }
 
 function getEntries(count) {
+    //todo get tags per entry
     var rows;
     if (count) {
         rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes, S.icon\n" +
@@ -248,25 +218,11 @@ function getEntries(count) {
 }
 
 function getMoneyPerCategory(start, end) {
-    var subcategories = [];
     var rows = sql("SELECT C.icon, C.name, SUM(money) AS money\n" +
-                   "FROM entries E, subcategories S, categories C\n" +
-                   "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
+                   "FROM entries E, categories C\n" +
+                   "WHERE (E.category = C.nr)\n" +
                    "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
                    "GROUP BY C.name", [dateToISOString(start), dateToISOString(end)])
-    for (var i in rows) {
-        rows[i].money = rows[i].money / 100
-    }
-    return rows
-}
-
-function getMoneyPerSubcategory(category, start, end) {
-    var subcategories = [];
-    var rows = sql("SELECT S.name, SUM(money) AS money, S.icon\n" +
-                   "FROM entries E, subcategories S, categories C\n" +
-                   "WHERE (E.category = S.nr) AND (S.catNr = C.nr) AND (C.name = ?)\n" +
-                   "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
-                   "GROUP BY S.name", [category, dateToISOString(start), dateToISOString(end)])
     for (var i in rows) {
         rows[i].money = rows[i].money / 100
     }
@@ -291,6 +247,7 @@ function getMoneyPerMonth(start, end) {
 }
 
 function getAll() {
+    //todo update to tags
     var subcategories = [];
     var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes, E.extra, E.tags, S.icon\n" +
                    "FROM entries E, subcategories S, categories C\n" +
@@ -327,6 +284,7 @@ function getEntryCount() {
 }
 
 function storeEntry(main, sub, date, money, note, icon, extra, tags) {
+    //todo update to tags
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
@@ -373,41 +331,31 @@ function storeEntry(main, sub, date, money, note, icon, extra, tags) {
     return ret === false ? false : true;
 }
 
-function addSubcategory(name, category, icon) {
-    if ((!icon) || (icon === "")) {
-        icon = "android"
-    }
-
-    sql("INSERT INTO subcategories (name, catNr, icon)\n" +
-        "SELECT ?, nr, ? FROM categories\n" +
-        "WHERE name = ?;", [name, icon, category]);
-}
-
 function createCategories() {
     sql("CREATE TABLE IF NOT EXISTS categories (\n" +
-        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, icon TEXT NOT NULL\n" +
+        "   name TEXT PRIMARY KEY, icon TEXT NOT NULL\n" +
         ");");
     for (var c in defaultCategories) {
         sql("INSERT INTO categories (name, icon) VALUES (?, ?)", [defaultCategories[c].name, defaultCategories[c].icon])
     }
 }
 
-function createSubcategories() {
-    sql("CREATE TABLE IF NOT EXISTS subcategories (\n" +
-        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, catNr INT NOT NULL, icon TEXT NOT NULL\n" +
+function createTagTable() {
+    sql("CREATE TABLE IF NOT EXISTS tags (\n" +
+        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, category TEXT\n" +
         ");");
-    for (var c in defaultCategories) {
-        for (var s in defaultCategories[c].sub) {
-            addSubcategory(defaultCategories[c].sub[s].name, defaultCategories[c].name, defaultCategories[c].sub[s].icon);
-        }
-    }
+}
+
+function createEntryTagTable() {
+    sql("CREATE TABLE IF NOT EXISTS entryTags (\n" +
+        "   entryId INT NOT NULL, tagId INT NOT NULL\n" +
+        ");");
 }
 
 function createEntryTable() {
     sql("CREATE TABLE IF NOT EXISTS entries (\n" +
         "   nr INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, \n" +
-        "   datestamp DATE NOT NULL, money INT, notes TEXT, \n" +
-        "   tags TEXT, extra TEXT\n" +
+        "   datestamp DATE NOT NULL, money INT, notes TEXT, extra TEXT\n" +
         "   lastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n" +
         ");");
 }
@@ -417,7 +365,8 @@ function reset() {
     try {
         db.transaction(function(tx) {
             tx.executeSql("DROP TABLE categories;");
-            tx.executeSql("DROP TABLE subcategories;");
+            tx.executeSql("DROP TABLE tags;");
+            tx.executeSql("DROP TABLE entryTags;");
             tx.executeSql("DROP TABLE entries;");
         });
     } catch(err) {
@@ -427,11 +376,13 @@ function reset() {
 }
 
 function deleteEntry(nr) {
+    //destroy entry tag links
     sql("DELETE FROM entries\n" +
         "WHERE (nr = ?)", [nr])
 }
 
 function updateEntry(nr, main, sub, date, money, note, extra, tags) {
+    //update to tags
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
