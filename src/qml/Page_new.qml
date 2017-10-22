@@ -42,6 +42,14 @@ Page {
     property date datum;
     property real money;
     property int nr;
+
+    //use tag object with:
+    //  + name
+    //  + category (empty if global)
+    //  + usage
+    //  + id
+    //tag db integration
+    //saving/laoding tags
     property var tags: []
     property var availableTags: []
     property bool globalTags: true
@@ -50,13 +58,24 @@ Page {
     function reset() {
         var tmp_categories = []
         tags = []
-        availableTags = ["abc", "def", "ghi", "jkl"];
+        //load available tags
+        availableTags = [
+                    {id: 0, name: "abc", catgeory: "", usage: 100},
+                    {id: 1, name: "def", catgeory: "", usage: 99},
+                    {id: 2, name: "ghi", catgeory: "", usage: 98},
+                    {id: 3, name: "jkl", catgeory: "", usage: 97},
+                    {id: 4, name: "mno", catgeory: "", usage: 96},
+                    {id: 5, name: "pqrst", catgeory: "", usage: 95},
+                    {id: 6, name: "uvw", catgeory: "", usage: 94},
+                ];
+        availableTags = availableTags.sort(function(a, b) {
+            return b.usage-a.usage;
+        })
         var tmp = db.getCategories();
         for (var i in tmp) {
             tmp_categories.push({
                 name: tmp[i].name,
                 icon: tmp[i].icon,
-                sub: db.getSubcategoriesOrderedPerUse(tmp[i].name)
             });
         }
         money = 0.0
@@ -197,15 +216,6 @@ Page {
                 Layout.fillWidth: true
 //                Layout.fillHeight: true
                 implicitHeight: dial.implicitHeight
-                onWidthChanged: console.log("w: " + width)
-                onImplicitHeightChanged: console.log("ih: " + implicitHeight)
-                onHeightChanged: console.log("h: " + parent.height)
-
-                Component.onCompleted: {
-                    console.log("w: " + width)
-                    console.log("ih: " + implicitHeight)
-                    console.log("h: " + parent.height)
-                }
 
                 Dial {
                     id: dial
@@ -360,7 +370,7 @@ Page {
                 id: mainCombo
                 model: categories
 
-                displayText: model[currentIndex] ? model[currentIndex].name : ""
+                displayText: model[currentIndex] ? qsTr(model[currentIndex].name) : ""
 
                 contentItem: Text {
                     leftPadding: 12 + iconLabel.width + 12
@@ -456,14 +466,14 @@ Page {
                             anchors.leftMargin: 12
                             anchors.rightMargin: 4
                             implicitWidth: chipText.metrics.width + spacing + chipClose.width
-                            onImplicitWidthChanged: parent.implicitWidth = anchors.leftMargin + implicitWidth + anchors.rightMargin
+                            onImplicitWidthChanged: parent. implicitWidth = anchors.leftMargin + implicitWidth + anchors.rightMargin
 
                             Text {
                                 id: chipText
                                 font.family: icon.family
                                 color: "black"
                                 font.pointSize: 13
-                                text: tags[modelData]
+                                text: tags[modelData].name
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 verticalAlignment: Text.AlignVCenter
@@ -490,7 +500,10 @@ Page {
                                     available.push(chosen[modelData])
                                     chosen.splice(modelData, 1)
 
-                                    availableTags = available
+
+                                    availableTags = available.sort(function(a, b) {
+                                        return b.usage-a.usage;
+                                    })
                                     tags = tags
                                 }
 
@@ -535,7 +548,7 @@ Page {
                             function filterTags(tags, filter) {
                                 var filtered = []
                                 for (var i in tags) {
-                                    if (tags[i].toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                                    if (tags[i].name.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
                                         filtered.push({index: parseInt(i), tag: tags[i]})
                                     }
                                 }
@@ -576,7 +589,7 @@ Page {
 
                                 delegate: ItemDelegate {
                                     width: parent.width
-                                    text: availableTags[layout.filteredTags[modelData].index]
+                                    text: availableTags[layout.filteredTags[modelData].index].name
                                     onClicked: {
                                         var chosen = tags
                                         var available = availableTags
