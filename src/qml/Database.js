@@ -173,42 +173,51 @@ function getTags() {
     return sql("SELECT * FROM tags")
 }
 
+function getTagsWithUsage() {
+    var tags = getTags();
+    for (var i in tags) {
+        tags[i].usage = getTagUsage(tags[i].nr)
+    }
+    return tags;
+}
+
 function createTagEntryLink(entryId, tagId) {
-    sql("INSERT INTO entryTags (entryId, tagId) VALUES (?, ?)", [entryId, tagId])
+    sql("INSERT INTO entryTags (entryId, tagId) VALUES (?, ?)", [entryId, tagId]);
 }
 
 function deleteEntryTagLink(entryId, tagId) {
-    //todo
+    sql("DELETE FROM entryTags\n" +
+        "WHERE (entryID = ?) AND (tagID = ?)", [entryId, tagId])
 }
 
 function getTagUsage(tagId) {
-    //todo get tags with usage
+    var rows = sql("SELECT COUNT(*) AS cnt FROM entryTags\n" +
+                   "WHERE (tagID = ?)", [tagId]);
+    return rows[0].cnt
 }
 
 function getEntries(count) {
-    //todo get tags per entry
     var rows;
     if (count) {
-        rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes, S.icon\n" +
-                    "FROM entries E, categories C, subcategories S\n" +
-                    "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
+        rows = sql( "SELECT E.nr, C.name AS category, E.datestamp, E.money, E.notes, C.icon\n" +
+                    "FROM entries E, categories C\n" +
+                    "WHERE (E.category = C.name)\n" +
                     "ORDER BY E.datestamp DESC\n" +
-                    "LIMIT ?", [count])
+                    "LIMIT ?", [count]);
     } else {
-        rows = sql( "SELECT E.nr, C.name AS category, S.name AS subcategory, E.datestamp, E.money, E.notes, S.icon\n" +
-                    "FROM entries E, categories C, subcategories S\n" +
-                    "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
-                    "ORDER BY E.datestamp DESC")
+        rows = sql( "SELECT E.nr, C.name AS category, E.datestamp, E.money, E.notes, C.icon\n" +
+                    "FROM entries E, categories C\n" +
+                    "WHERE (E.category = C.name)\n" +
+                    "ORDER BY E.datestamp DESC");
     }
     for (var i in rows) {
+        rows[i].tags = sql("SELECT T.name\n" +
+                           "FROM tags T, entryTags ET\n" +
+                           "WHERE (ET.entryID = ?) AND (T.nr = ET.tagID)",
+                           [rows[i].nr]);
+
         if (rows[i].notes === null) {
             rows[i].notes = "";
-        }
-        if (rows[i].extra === null) {
-            rows[i].extra = "";
-        }
-        if (rows[i].tags === null) {
-            rows[i].tags = "";
         }
         rows[i].datestamp = new Date(rows[i].datestamp)
         rows[i].money = rows[i].money / 100
@@ -220,7 +229,7 @@ function getEntries(count) {
 function getMoneyPerCategory(start, end) {
     var rows = sql("SELECT C.icon, C.name, SUM(money) AS money\n" +
                    "FROM entries E, categories C\n" +
-                   "WHERE (E.category = C.nr)\n" +
+                   "WHERE (E.category = C.name)\n" +
                    "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
                    "GROUP BY C.name", [dateToISOString(start), dateToISOString(end)])
     for (var i in rows) {
@@ -246,30 +255,6 @@ function getMoneyPerMonth(start, end) {
     return array
 }
 
-function getAll() {
-    //todo update to tags
-    var subcategories = [];
-    var rows = sql("SELECT E.datestamp, E.money, S.name AS subcategory, C.name AS category, E.notes, E.extra, E.tags, S.icon\n" +
-                   "FROM entries E, subcategories S, categories C\n" +
-                   "WHERE (E.category = S.nr) AND (S.catNr = C.nr)\n" +
-                   "ORDER BY E.datestamp ASC\n")
-
-    for (var i in rows) {
-        if (rows[i].notes === null) {
-            rows[i].notes = "";
-        }
-        if (rows[i].extra === null) {
-            rows[i].extra = "";
-        }
-        if (rows[i].tags === null) {
-            rows[i].tags = "";
-        }
-
-        rows[i].money = rows[i].money / 100
-    }
-    return rows
-}
-
 function getSum(start, end) {
     var rows = sql("SELECT SUM(E.money) AS money\n" +
                    "FROM entries E\n" +
@@ -283,8 +268,7 @@ function getEntryCount() {
     return rows[0].cnt
 }
 
-function storeEntry(main, sub, date, money, note, icon, extra, tags) {
-    //todo update to tags
+function storeEntry(main, date, money, note, icon, tags) {
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
@@ -297,38 +281,31 @@ function storeEntry(main, sub, date, money, note, icon, extra, tags) {
         return false
     }
 
-    if (extra) {
-        extra = JSON.stringify(extra)
-    } else {
-        extra = "";
-    }
+    var ret = sql("INSERT INTO entries (category, datestamp, money, notes)\n" +
+                  "SELECT ?, ?, ?, ?",
+                  [main, dateToISOString(date), parseInt(money * 100), note]);
+    var entryId = sql("SELECT nr FROM entries ORDER BY nr DESC LIMIT 1")[0].nr
 
-    if (tags) {
-        tags = JSON.stringify(tags)
-    } else {
-        tags = ""
-    }
+    var _tags=getTags();
 
-    cats = getSubcategories(main)
-    found = false
-    for (var i in cats) {
-        if(cats[i].name === sub) {
-            found = true
+    console.log(JSON.stringify(tags))
+
+    for (var tag in tags) {
+        var found = false;
+        for (var _tag in _tags) {
+            if ((_tags[_tag].name === tags[tag].name) && (_tags[_tag].category === tags[tag].category)) {
+                found = true;
+                createTagEntryLink(entryId, _tags[_tag].nr)
+            }
+        }
+        if (found == false) {
+            createTag(tags[tag].name, tags[tag].category);
+            var tagId = sql("SELECT nr FROM tags ORDER BY nr DESC LIMIT 1")[0].nr;
+            createTagEntryLink(entryId, tagId);
         }
     }
-    if (!found) {
-        var ret = addSubcategory(sub, main, icon)
-        if (ret === false) {
-            return false
-        }
-    }
 
-    var ret = sql("INSERT INTO entries (category, datestamp, money, notes, extra, tags)\n" +
-                  "SELECT S.nr, ?, ?, ?, ?, ? FROM (\n" +
-                  "   SELECT S.nr FROM subcategories S \n" +
-                  "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +
-                  ") S;", [dateToISOString(date), parseInt(money * 100), note, extra, tags, main, sub]);
-    return ret === false ? false : true;
+    return true;
 }
 
 function createCategories() {
@@ -376,12 +353,13 @@ function reset() {
 }
 
 function deleteEntry(nr) {
-    //destroy entry tag links
+    sql("DELETE FROM entryTags\n" +
+        "WHERE (entryID = ?)", [nr]);
     sql("DELETE FROM entries\n" +
-        "WHERE (nr = ?)", [nr])
+        "WHERE (nr = ?)", [nr]);
 }
 
-function updateEntry(nr, main, sub, date, money, note, extra, tags) {
+function updateEntry(nr, main, sub, date, money, note, tags) {
     //update to tags
     var cats = getCategories()
     var found = false;
@@ -421,11 +399,33 @@ function updateEntry(nr, main, sub, date, money, note, extra, tags) {
         }
     }
 
-    sql("REPLACE INTO entries (nr, category, datestamp, money, notes, extra, tags)\n" +
-        "SELECT ?, S.nr, ?, ?, ?, ?, ? FROM (\n" +
-        "   SELECT S.nr FROM subcategories S \n" +
-        "   INNER JOIN categories C ON (S.catNr = C.nr) AND (C.name = ?) WHERE S.name = ?\n" +
-        ") S;", [nr, dateToISOString(date), parseInt(money * 100), note, extra, tags, main, sub]);
+    var _tags = sql("SELECT T.* FROM tags T\n" +
+                    "INNER JOIN entryTags ET ON\n" +
+                    "   (T.nr = ET.tagID) AND (ET.entryID = ?)", [nr]);
+
+    for (var i in tags) {
+        var found = false;
+        for (var j in _tags) {
+            if (tags[i].nr === _tags[j].nr) {
+                found = true;
+                _tags.splice(j, 1);
+                break;
+            }
+        }
+        if (!found) {
+            createTag(tags[tag].name, tags[tag].category);
+            var tagId = sql("SELECT nr FROM tags ORDER BY nr DESC LIMIT 1")[0].nr;
+            createTagEntryLink(entryId, tagId);
+        }
+    }
+
+    for (var i in _tags) {
+        deleteEntryTagLink(nr, _tags[i].nr)
+    }
+
+    sql("REPLACE INTO entries (nr, category, datestamp, money, notes)\n" +
+        "SELECT ?, ?, ?, ?, ?",
+        [nr, dateToISOString(date), parseInt(money * 100), note, extra, tags, main, sub]);
 }
 
 function pad(number) {
