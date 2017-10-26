@@ -51,24 +51,31 @@ Page {
     //tag db integration
     //saving/laoding tags
     property var tags: []
+    property var allTags: []
     property var availableTags: []
     property bool globalTags: true
     property bool localTags: true
+
+    onMain_categoryChanged: {
+        tags = [];
+        availableTags = filterTagsCategory(allTags, main_category);
+    }
 
     function reset() {
         var tmp_categories = []
         tags = []
         //load available tags
-        availableTags = [
-                    {id: 0, name: "abc", catgeory: "", usage: 100},
-                    {id: 1, name: "def", catgeory: "", usage: 99},
-                    {id: 2, name: "ghi", catgeory: "", usage: 98},
-                    {id: 3, name: "jkl", catgeory: "", usage: 97},
-                    {id: 4, name: "mno", catgeory: "", usage: 96},
-                    {id: 5, name: "pqrst", catgeory: "", usage: 95},
-                    {id: 6, name: "uvw", catgeory: "", usage: 94},
-                ];
-        availableTags = availableTags.sort(function(a, b) {
+//        allTags = [
+//                    {id: 0, name: "abc", category: "", usage: 100},
+//                    {id: 1, name: "def", category: "", usage: 99},
+//                    {id: 2, name: "ghi", category: "", usage: 98},
+//                    {id: 3, name: "jkl", category: "", usage: 97},
+//                    {id: 4, name: "mno", category: "", usage: 96},
+//                    {id: 5, name: "pqrst", category: "", usage: 95},
+//                    {id: 6, name: "uvw", category: "", usage: 94},
+//                ];
+        allTags = db.getTagsWithUsage()
+        allTags = allTags.sort(function(a, b) {
             return b.usage-a.usage;
         })
         var tmp = db.getCategories();
@@ -78,6 +85,7 @@ Page {
                 icon: tmp[i].icon,
             });
         }
+        availableTags = filterTagsCategory(allTags, main_category)
         money = 0.0
         categories = tmp_categories
         newEntry = true;
@@ -137,6 +145,16 @@ Page {
             tmp.push(i)
         }
         return tmp
+    }
+
+    function filterTagsCategory(tags, category) {
+        var newTags = [];
+        for (var i in tags) {
+            if ((tags[i].category === category) || (tags[i].category === "")) {
+                newTags.push(tags[i]);
+            }
+        }
+        return newTags;
     }
 
     Icon {
@@ -369,6 +387,7 @@ Page {
             ComboBox {
                 id: mainCombo
                 model: categories
+                flat: true
 
                 displayText: model[currentIndex] ? qsTr(model[currentIndex].name) : ""
 
@@ -531,6 +550,7 @@ Page {
                             filter.contentItem.focus = true
                             contentItem.forceActiveFocus()
                         }
+                        filter.contentItem.text = "";
                     }
 
                     contentItem: FocusScope {
@@ -542,6 +562,7 @@ Page {
                             anchors.fill: parent
                             spacing: list.spacing
                             implicitHeight: filter.implicitHeight + spacing + list.implicitHeight
+                            implicitWidth: Math.max(filter.implicitWidth, list.implicitWidth)
 
                             property var filteredTags: filterTags(availableTags, filter.contentItem.text)
 
@@ -571,13 +592,12 @@ Page {
                                 id: list
                                 Layout.fillWidth: true
                                 clip: true
-                                implicitWidth: Math.max(contentItem.implicitWidth, footerItem.implicitWidth)
                                 implicitHeight: contentHeight
 
                                 model: layout.filteredTags.length
 
                                 onCountChanged: {
-                                    if ((!count) || (!footerItem)) {
+                                    if ((typeof count === 'undefined') || (!footerItem)) {
                                         return
                                     }
 
@@ -588,8 +608,16 @@ Page {
                                 }
 
                                 delegate: ItemDelegate {
-                                    width: parent.width
+                                    anchors.left: parent.left; anchors.right: parent.right;
+                                    implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
                                     text: availableTags[layout.filteredTags[modelData].index].name
+
+                                    onWidthChanged: {
+                                        if (ListView.view.implicitWidth < implicitWidth) {
+                                            ListView.view.implicitWidth = implicitWidth;
+                                        }
+                                    }
+
                                     onClicked: {
                                         var chosen = tags
                                         var available = availableTags
@@ -603,10 +631,16 @@ Page {
                                 }
 
                                 footer: Item {
+                                    anchors.left: parent.left; anchors.right: parent.right;
                                     implicitHeight: visible ? ((localItem.visible ? localItem.height : 0) + (globalItem.visible ? globalItem.height : 0)) : 0
-                                    width: parent.width
                                     implicitWidth: localItem.visible ? (globalItem.visible ? Math.max(localItem.implicitWidth, globalItem.implicitWidth) : localItem.implicitWidth) : globalItem.visible ? globalItem.implicitWidth : 0
                                     visible: (filter.contentItem.text !== "") && (!arrayContains(layout.filteredTags, filter.contentItem.text))  && (!arrayContains(tags, filter.contentItem.text))
+
+                                    onImplicitWidthChanged: {
+                                        if (ListView.view.implicitWidth < implicitWidth) {
+                                            ListView.view.implicitWidth = implicitWidth;
+                                        }
+                                    }
 
                                     function arrayContains(array, element) {
                                         for (var i in array) {
@@ -623,13 +657,15 @@ Page {
                                         anchors.left: parent.left
                                         anchors.right: parent.right
                                         anchors.top: parent.top
+                                        implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
 
                                         text: qsTr("Hinzufügen")
 
                                         onClicked: {
                                             var chosen = tags
-                                            chosen.push(filter.contentItem.text)
+                                            chosen.push({name: filter.contentItem.text, category: main_category, usage: 0})
                                             tags = chosen
+                                            filter.contentItem.text = "";
                                         }
                                     }
 
@@ -639,14 +675,15 @@ Page {
                                         anchors.left: parent.left
                                         anchors.right: parent.right
                                         anchors.bottom: parent.bottom
+                                        implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
 
                                         text: localTags ? qsTr("Global Hinzufügen") : qsTr("Hinzufügen")
 
                                         onClicked: {
                                             var chosen = tags
-                                            chosen.push(filter.contentItem.text)
-                                            //TODO push to global tag array
+                                            chosen.push({name: filter.contentItem.text, category: "", usage: 0})
                                             tags = chosen
+                                            filter.contentItem.text = "";
                                         }
                                     }
                                 }
@@ -743,9 +780,9 @@ Page {
 
             onClicked: {
                 if (newEntry) {
-                    db.storeEntry(main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
+                    db.storeEntry(main_category.name, datum, money, "", main_category.icon, tags)
                 } else {
-                    db.updateEntry(nr, main_category.name, sub_category.name, datum, money, "", sub_category.icon, {}, [])
+                    db.updateEntry(nr, main_category.name, datum, money, "", main_category.icon, tags)
                 }
                 view_stack.pop()
             }
