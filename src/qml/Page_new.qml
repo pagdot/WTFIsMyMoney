@@ -58,22 +58,15 @@ Page {
 
     onMain_categoryChanged: {
         tags = [];
-        availableTags = filterTagsCategory(allTags, main_category);
+        if (main_category) {
+            availableTags = filterTagsCategory(allTags, main_category.name);
+        }
     }
 
     function reset() {
         var tmp_categories = []
         tags = []
-        //load available tags
-//        allTags = [
-//                    {id: 0, name: "abc", category: "", usage: 100},
-//                    {id: 1, name: "def", category: "", usage: 99},
-//                    {id: 2, name: "ghi", category: "", usage: 98},
-//                    {id: 3, name: "jkl", category: "", usage: 97},
-//                    {id: 4, name: "mno", category: "", usage: 96},
-//                    {id: 5, name: "pqrst", category: "", usage: 95},
-//                    {id: 6, name: "uvw", category: "", usage: 94},
-//                ];
+        mainCombo.currentIndex = 0;
         allTags = db.getTagsWithUsage()
         allTags = allTags.sort(function(a, b) {
             return b.usage-a.usage;
@@ -85,9 +78,9 @@ Page {
                 icon: tmp[i].icon,
             });
         }
-        availableTags = filterTagsCategory(allTags, main_category)
         money = 0.0
         categories = tmp_categories
+        availableTags = filterTagsCategory(allTags, main_category.name)
         newEntry = true;
         datum = new Date()
     }
@@ -97,33 +90,41 @@ Page {
             return
         }
 
+        var tmpTags = []
+        allTags = db.getTagsWithUsage()
+        allTags = allTags.sort(function(a, b) {
+            return b.usage-a.usage;
+        })
         var tmp_categories = []
         var tmp = db.getCategories();
         for (var i in tmp) {
             tmp_categories.push({
                 name: tmp[i].name,
                 icon: tmp[i].icon,
-                sub: db.getSubcategoriesOrderedPerUse(tmp[i].name)
             });
         }
-
         for (var i in categories) {
             if (item.category === categories[i].name) {
-                main_category = categories[i]
+                mainCombo.currentIndex = parseInt(i)
                 break
             }
         }
-
-//        for (var i in main_category.sub) {
-//            if (item.subcategory === main_category.sub[i].name) {
-//                sub_category = main_category.sub[i]
-//                break
-//            }
-//        }
+        availableTags = filterTagsCategory(allTags, main_category.name)
+        for (var i in item.tags) {
+            for (var j in availableTags) {
+                if (item.tags[i].name === availableTags[j].name) {
+                    var tmp = availableTags;
+                    tmpTags.push(availableTags[j])
+                    tmp.splice(j, 1);
+                    availableTags = tmp;
+                }
+            }
+        }
 
         money = item.money
         datum = item.datestamp
         categories =  tmp_categories
+        tags = tmpTags;
 
         nr = item.nr
         newEntry = false
@@ -663,7 +664,9 @@ Page {
 
                                         onClicked: {
                                             var chosen = tags
-                                            chosen.push({name: filter.contentItem.text, category: main_category, usage: 0})
+                                            var tag = {name: filter.contentItem.text, category: main_category.name, usage: 0};
+                                            chosen.push(tag)
+                                            allTags.push(tag)
                                             tags = chosen
                                             filter.contentItem.text = "";
                                         }
@@ -681,7 +684,9 @@ Page {
 
                                         onClicked: {
                                             var chosen = tags
-                                            chosen.push({name: filter.contentItem.text, category: "", usage: 0})
+                                            var tag = {name: filter.contentItem.text, category: "", usage: 0}
+                                            chosen.push(tag)
+                                            allTags.push(tag)
                                             tags = chosen
                                             filter.contentItem.text = "";
                                         }
@@ -780,9 +785,9 @@ Page {
 
             onClicked: {
                 if (newEntry) {
-                    db.storeEntry(main_category.name, datum, money, "", main_category.icon, tags)
+                    db.storeEntry(main_category.name, datum, money, "", tags)
                 } else {
-                    db.updateEntry(nr, main_category.name, datum, money, "", main_category.icon, tags)
+                    db.updateEntry(nr, main_category.name, datum, money, "", tags)
                 }
                 view_stack.pop()
             }

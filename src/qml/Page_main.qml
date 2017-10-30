@@ -318,7 +318,7 @@ Page {
                     }
 
                     Text {
-                        text: modelData.category + ": " + modelData.subcategory
+                        text: modelData.category
                         font.pointSize: 16
                         Layout.alignment: Qt.AlignTop
                         color: Material.color(Material.Grey, Material.Shade500)

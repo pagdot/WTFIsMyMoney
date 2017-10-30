@@ -170,7 +170,14 @@ function createTag(name, category) {
 }
 
 function getTags() {
-    return sql("SELECT * FROM tags")
+    var rows = sql("SELECT * FROM tags");
+    for (var i in rows) {
+        if (rows[i].category === null) {
+            rows[i].category = "";
+        }
+    }
+
+    return rows;
 }
 
 function getTagsWithUsage() {
@@ -268,7 +275,7 @@ function getEntryCount() {
     return rows[0].cnt
 }
 
-function storeEntry(main, date, money, note, icon, tags) {
+function storeEntry(main, date, money, note, tags) {
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
@@ -359,7 +366,7 @@ function deleteEntry(nr) {
         "WHERE (nr = ?)", [nr]);
 }
 
-function updateEntry(nr, main, sub, date, money, note, tags) {
+function updateEntry(nr, main, date, money, note, tags) {
     //update to tags
     var cats = getCategories()
     var found = false;
@@ -371,32 +378,6 @@ function updateEntry(nr, main, sub, date, money, note, tags) {
     if (!found) {
         console.log("Unknown category \"" +  main + "\"")
         return false
-    }
-
-    if (extra) {
-        extra = JSON.stringify(extra)
-    } else {
-        extra = "";
-    }
-
-    if (tags) {
-        tags = JSON.stringify(tags)
-    } else {
-        tags = ""
-    }
-
-    cats = getSubcategories(main)
-    found = false
-    for (var i in cats) {
-        if(cats[i].name === sub) {
-            found = true
-        }
-    }
-    if (!found) {
-        var ret = addSubcategory(sub, main)
-        if (ret === false) {
-            return false
-        }
     }
 
     var _tags = sql("SELECT T.* FROM tags T\n" +
@@ -413,9 +394,9 @@ function updateEntry(nr, main, sub, date, money, note, tags) {
             }
         }
         if (!found) {
-            createTag(tags[tag].name, tags[tag].category);
+            createTag(tags[i].name, tags[i].category);
             var tagId = sql("SELECT nr FROM tags ORDER BY nr DESC LIMIT 1")[0].nr;
-            createTagEntryLink(entryId, tagId);
+            createTagEntryLink(nr, tagId);
         }
     }
 
@@ -425,7 +406,7 @@ function updateEntry(nr, main, sub, date, money, note, tags) {
 
     sql("REPLACE INTO entries (nr, category, datestamp, money, notes)\n" +
         "SELECT ?, ?, ?, ?, ?",
-        [nr, dateToISOString(date), parseInt(money * 100), note, extra, tags, main, sub]);
+        [nr, main, dateToISOString(date), parseInt(money * 100), note]);
 }
 
 function pad(number) {
