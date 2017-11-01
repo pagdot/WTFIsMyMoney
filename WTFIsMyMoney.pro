@@ -70,3 +70,6 @@ windows: {
     HEADERS += inc/fileio.h
     SOURCES += src/fileio.cpp
 }
+
+HEADERS += \
+    inc/translations.h

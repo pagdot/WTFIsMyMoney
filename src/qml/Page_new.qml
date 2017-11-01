@@ -213,37 +213,37 @@ Page {
         }
     }
 
-    ColumnLayout {
+    Item {
         anchors.top: bar.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.leftMargin: 16
         anchors.rightMargin: 16
-        spacing: 20
-
-        ColumnLayout {
-            id: moneyLayout
-            Layout.fillWidth: true
 
             Label {
                 id: moneyLabel
                 text: qsTr("Geld") + ":"
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.left: parent.left
             }
 
             Item {
-                Layout.fillWidth: true
-//                Layout.fillHeight: true
-                implicitHeight: dial.implicitHeight
+                id: moneyItem
+                anchors.top: moneyLabel.bottom
+                anchors.topMargin: 5
+                anchors.bottom: mainLabel.top
+                anchors.bottomMargin: 20
+                anchors.left: parent.left
+                anchors.right: parent.right
+                //implicitHeight: dial.implicitHeight
 
                 Dial {
                     id: dial
                     from: 0
                     to: 30
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    anchors.fill: parent
                     anchors.margins: 0
                     value: money
                     snapMode: Dial.SnapAlways
@@ -372,16 +372,12 @@ Page {
                     onClicked: money = money >= 5 ? money - 5 : 0
                 }
             }
-        }
-
-        ColumnLayout {
-            id: mainLayout
-            Layout.fillWidth: true
-
-            property bool opened: false;
 
             Label {
                 id: mainLabel
+                anchors.bottom: mainCombo.top
+                anchors.bottomMargin: 5
+                anchors.left: parent.left
                 text: qsTr("Kategorie") + ":"
             }
 
@@ -389,8 +385,11 @@ Page {
                 id: mainCombo
                 model: categories
                 flat: true
+                anchors.bottom: tagsLabel.top
+                anchors.bottomMargin: 20
+                anchors.left: parent.left
 
-                displayText: model[currentIndex] ? qsTr(model[currentIndex].name) : ""
+                displayText: model[currentIndex] ? qsTranslate("TranslationContext", model[currentIndex].name) : ""
 
                 contentItem: Text {
                     leftPadding: 12 + iconLabel.width + 12
@@ -433,29 +432,28 @@ Page {
                     leftPadding: 16 + iconLabel.width + 8
                     rightPadding: 16
                     width: parent.width
-                    text: modelData.name
+                    text: qsTranslate("TranslationContext", modelData.name)
                     font.weight: mainCombo.currentIndex === index ? Font.DemiBold : Font.Normal
                     highlighted: mainCombo.highlightedIndex === index
                     hoverEnabled: mainCombo.hoverEnabled
                 }
             }
 
-        }
-
-        ColumnLayout {
-            id: tagLayout
-            Layout.fillWidth: true
-//            Layout.fillHeight: true
-
             Label {
                 id: tagsLabel
+                anchors.bottom: tagsItem.top
+                anchors.bottomMargin: 5
+                anchors.left: parent.left
                 text: qsTr("Tags") + ":"
             }
 
             AbstractButton {
-                Layout.fillWidth: true
-                Layout.minimumHeight: 32
-                Layout.fillHeight: true
+                id: tagsItem
+                anchors.bottom: dateLabel.top
+                anchors.bottomMargin: 20
+                anchors.left: parent.left
+                anchors.right: parent.right
+                implicitHeight: Math.max(32, chosenTagFlow.implicitHeight)
                 property alias menu: mTagMenu
                 enabled: !mTagMenu.visible
 
@@ -701,24 +699,26 @@ Page {
                     menu.open()
                 }
             }
-        }
-
-        ColumnLayout {
-            id: dateLayout
-
-            property bool opened;
 
             Label {
                 id: dateLabel
+                anchors.bottom: dateChip.top
+                anchors.bottomMargin: 5
+                anchors.left: parent.left
                 text: qsTr("Datum") + ":"
             }
 
             Button {
                 id: dateChip
+                anchors.bottom: buttonDone.top
+                anchors.bottomMargin: 20
+                anchors.left: parent.left
                 implicitHeight: 32
 
                 onClicked: {
-                    dateLayout.opened = true
+                    if (!datePicker.visible) {
+                        datePicker.open()
+                    }
                 }
 
                 contentItem: RowLayout {
@@ -758,11 +758,6 @@ Page {
                     color: Material.color(Material.Grey, Material.Shade200)
                 }
             }
-            onOpenedChanged: {
-                if (opened) {
-                    datePicker.open()
-                }
-            }
 
             DatePicker{
                 id: datePicker
@@ -775,12 +770,13 @@ Page {
                 x: (page.width - width) / 2
                 y: (page.height - height) / 2
             }
-        }
 
         Button {
             id: buttonDone
+            anchors.bottomMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
             text: qsTr("Fertig")
-            Layout.alignment: Qt.AlignHCenter
             flat: true
 
             onClicked: {

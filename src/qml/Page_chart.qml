@@ -317,14 +317,7 @@ Page {
                         }
 
                         function updateChart() {
-                            var values;
-                            if (chart.type === "category") {
-                                values = db.getMoneyPerCategory(start, end)
-                            } else if (chart.type === "subcategory") {
-                                values = db.getMoneyPerSubcategory(chart.category, start, end)
-                            } else {
-                                return
-                            }
+                            var values = db.getMoneyPerCategory(start, end)
 
                             pieSeries.clear()
 
@@ -334,7 +327,7 @@ Page {
                             repeater.model = values
                         }
 
-                        title: Qt.locale().monthName(modelData.month.getMonth(), Locale.LongFormat) + (chart.type === "subcategory" ? " - " + chart.category : "")
+                        title: Qt.locale().monthName(modelData.month.getMonth(), Locale.LongFormat)
 
                         ColumnLayout {
                             id: legendBox
@@ -366,23 +359,9 @@ Page {
 
                                         verticalAlignment: Text.AlignVCenter
 
-                                        text: modelData.name + " " + (new String(modelData.money)).replace(".", Qt.locale().decimalPoint) + " €"
+                                        text: qsTranslate("TranslationContext", modelData.name) + " " + (new String(modelData.money)).replace(".", Qt.locale().decimalPoint) + " €"
                                         font.pointSize: 14
 
-                                    }
-
-                                    onClicked: {
-                                        if (chart.type === "category") {
-                                            chart.category = modelData.name
-                                            chart.type = "subcategory"
-                                        } else if (chart.type == "subcategory") {
-                                            chart.category = "";
-                                            chart.type = "category"
-                                        } else {
-                                            return;
-                                        }
-
-                                        dialog.updateChart()
                                     }
                                 }
                             }
@@ -408,20 +387,6 @@ Page {
                                     slice.color = Material.color(Material.Green, chart.shades[count - 1])
                                 }
                                 size: 1
-
-                                onClicked: {
-                                    if (chart.type === "category") {
-                                        chart.category = slice.label
-                                        chart.type = "subcategory"
-                                    } else if (chart.type == "subcategory") {
-                                        chart.category = "";
-                                        chart.type = "category"
-                                    } else {
-                                        return;
-                                    }
-
-                                    dialog.updateChart()
-                                }
                             }
                         }
 

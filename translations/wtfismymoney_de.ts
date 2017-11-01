@@ -4,89 +4,92 @@
 <context>
     <name>Database</name>
     <message>
-        <location filename="../src/qml/Database.js" line="29"/>
         <source>Essen &amp; Trinken</source>
-        <translation>Essen &amp; Trinken</translation>
+        <translation type="vanished">Essen &amp; Trinken</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="32"/>
         <source>Essen (eigenes)</source>
-        <translation>Essen (eigenes)</translation>
+        <translation type="vanished">Essen (eigenes)</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="33"/>
         <source>Essen (extern)</source>
-        <translation>Essen (extern)</translation>
+        <translation type="vanished">Essen (extern)</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="34"/>
         <source>Trinken (eigenes)</source>
-        <translation>Trinken (eigenes)</translation>
+        <translation type="vanished">Trinken (eigenes)</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="35"/>
         <source>Trinken (extern)</source>
-        <translation>Trinken (extern)</translation>
+        <translation type="vanished">Trinken (extern)</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="39"/>
         <source>Leben &amp; Wohnen</source>
-        <translation>Leben &amp; Wohnen</translation>
+        <translation type="vanished">Leben &amp; Wohnen</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="42"/>
         <source>Wohnen</source>
-        <translation>Wohnen</translation>
+        <translation type="vanished">Wohnen</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="43"/>
         <source>Gewand</source>
-        <translation>Gewand</translation>
+        <translation type="vanished">Gewand</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="47"/>
         <source>Freizeit</source>
-        <translation>Freizeit</translation>
+        <translation type="vanished">Freizeit</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="50"/>
         <source>Sport</source>
-        <translation>Sport</translation>
+        <translation type="vanished">Sport</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="51"/>
         <source>Spiele</source>
-        <translation>Spiele</translation>
+        <translation type="vanished">Spiele</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="52"/>
         <source>Shopping</source>
-        <translation>Shopping</translation>
+        <translation type="vanished">Shopping</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="53"/>
         <source>Urlaub</source>
-        <translation>Urlaub</translation>
+        <translation type="vanished">Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="57"/>
         <source>Transport</source>
-        <translation>Transport</translation>
+        <translation type="vanished">Transport</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="60"/>
         <source>Ã–ffentlich</source>
-        <translation>Öffentlich</translation>
+        <translation type="vanished">Öffentlich</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="61"/>
         <source>Auto</source>
-        <translation>Auto</translation>
+        <translation type="vanished">Auto</translation>
     </message>
     <message>
-        <location filename="../src/qml/Database.js" line="65"/>
         <source>Anderes</source>
-        <translation>Anderes</translation>
+        <translation type="vanished">Anderes</translation>
+    </message>
+    <message>
+        <source>food_drinks</source>
+        <translation type="vanished">Essen &amp; Trinken</translation>
+    </message>
+    <message>
+        <source>life_home</source>
+        <translation type="vanished">Leben &amp; Wohnen</translation>
+    </message>
+    <message>
+        <source>hobbies</source>
+        <translation type="vanished">Freizeit</translation>
+    </message>
+    <message>
+        <source>transport</source>
+        <translation type="vanished">Transport</translation>
+    </message>
+    <message>
+        <source>other</source>
+        <translation type="vanished">Anderes</translation>
     </message>
 </context>
 <context>
@@ -218,54 +221,83 @@
     <name>Page_new</name>
     <message>
         <location filename="../src/qml/Page_new.qml" line="33"/>
-        <location filename="../src/qml/Page_new.qml" line="633"/>
         <source>Neu</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="192"/>
+        <source>food_drinks</source>
+        <translation type="vanished">Essen &amp; Trinken</translation>
+    </message>
+    <message>
+        <source>life_home</source>
+        <translation type="vanished">Leben &amp; Wohnen</translation>
+    </message>
+    <message>
+        <source>hobbies</source>
+        <translation type="vanished">Freizeit</translation>
+    </message>
+    <message>
+        <source>transport</source>
+        <translation type="vanished">Transport</translation>
+    </message>
+    <message>
+        <source>other</source>
+        <translation type="vanished">Anderes</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Page_new.qml" line="226"/>
         <source>Geld</source>
         <translation>Geld</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="395"/>
-        <location filename="../src/qml/Page_new.qml" line="443"/>
+        <location filename="../src/qml/Page_new.qml" line="381"/>
         <source>Kategorie</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="509"/>
-        <location filename="../src/qml/Page_new.qml" line="557"/>
+        <location filename="../src/qml/Page_new.qml" line="447"/>
+        <source>Tags</source>
+        <translation>Tags</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Page_new.qml" line="661"/>
+        <location filename="../src/qml/Page_new.qml" line="681"/>
+        <source>Hinzufügen</source>
+        <translation>Hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Page_new.qml" line="681"/>
+        <source>Global Hinzufügen</source>
+        <translation>Global Hinzufügen</translation>
+    </message>
+    <message>
         <source>Unterkategorie</source>
-        <translation>Unterkategorie</translation>
+        <translation type="vanished">Unterkategorie</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="643"/>
         <source>Neue Unterkategorie</source>
-        <translation>Neue Unterkategorie</translation>
+        <translation type="vanished">Neue Unterkategorie</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="712"/>
         <source>Filter Icons</source>
-        <translation>Filter Icons</translation>
+        <translation type="vanished">Filter Icons</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="771"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="vanished">Name</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="807"/>
+        <location filename="../src/qml/Page_new.qml" line="708"/>
         <source>Datum</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="876"/>
+        <location filename="../src/qml/Page_new.qml" line="779"/>
         <source>Fertig</source>
         <translation>Fertig</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_new.qml" line="894"/>
+        <location filename="../src/qml/Page_new.qml" line="795"/>
         <source>Abbrechen</source>
         <translation>Abbrechen</translation>
     </message>
@@ -309,6 +341,34 @@
         <location filename="../src/qml/Page_settings.qml" line="165"/>
         <source>Löschen bestätigen</source>
         <translation>Löschen bestätigen</translation>
+    </message>
+</context>
+<context>
+    <name>TranslationContext</name>
+    <message>
+        <location filename="../inc/translations.h" line="7"/>
+        <source>food_drinks</source>
+        <translation>Essen &amp; Trinken</translation>
+    </message>
+    <message>
+        <location filename="../inc/translations.h" line="8"/>
+        <source>life_home</source>
+        <translation>Leben &amp; Wohnen</translation>
+    </message>
+    <message>
+        <location filename="../inc/translations.h" line="9"/>
+        <source>hobbies</source>
+        <translation>Freizeit</translation>
+    </message>
+    <message>
+        <location filename="../inc/translations.h" line="10"/>
+        <source>transport</source>
+        <translation>Transport</translation>
+    </message>
+    <message>
+        <location filename="../inc/translations.h" line="11"/>
+        <source>other</source>
+        <translation>Anderes</translation>
     </message>
 </context>
 <context>

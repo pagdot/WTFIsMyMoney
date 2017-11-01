@@ -238,6 +238,7 @@ function getMoneyPerCategory(start, end) {
                    "FROM entries E, categories C\n" +
                    "WHERE (E.category = C.name)\n" +
                    "    AND (E.datestamp >= ?) AND (E.datestamp <= ?)\n" +
+                   "    AND (money > 0)\n" +
                    "GROUP BY C.name", [dateToISOString(start), dateToISOString(end)])
     for (var i in rows) {
         rows[i].money = rows[i].money / 100

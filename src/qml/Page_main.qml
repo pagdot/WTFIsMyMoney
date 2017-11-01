@@ -318,7 +318,7 @@ Page {
                     }
 
                     Text {
-                        text: modelData.category
+                        text: qsTranslate("TranslationContext", modelData.category)
                         font.pointSize: 16
                         Layout.alignment: Qt.AlignTop
                         color: Material.color(Material.Grey, Material.Shade500)
@@ -508,7 +508,6 @@ Page {
             onClicked: {
                 var item = view_stack.push(page_chart)
                 item.reset()
-                focus = false
             }
         }
     }
