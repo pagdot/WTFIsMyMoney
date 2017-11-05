@@ -111,6 +111,39 @@
     </message>
 </context>
 <context>
+    <name>OldTranslationContext</name>
+    <message>
+        <location filename="../src/qml/Page_settings.qml" line="102"/>
+        <location filename="../inc/translations.h" line="13"/>
+        <source>food &amp; drinks</source>
+        <translation>Essen &amp; Trinken</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Page_settings.qml" line="105"/>
+        <location filename="../inc/translations.h" line="14"/>
+        <source>life &amp; live</source>
+        <translation>Leben &amp; Wohnen</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Page_settings.qml" line="108"/>
+        <location filename="../inc/translations.h" line="15"/>
+        <source>spare time</source>
+        <translation>Freizeit</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Page_settings.qml" line="111"/>
+        <location filename="../inc/translations.h" line="16"/>
+        <source>transport</source>
+        <translation>Transport</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Page_settings.qml" line="114"/>
+        <location filename="../inc/translations.h" line="17"/>
+        <source>other</source>
+        <translation>Anderes</translation>
+    </message>
+</context>
+<context>
     <name>Page_chart</name>
     <message>
         <location filename="../src/qml/Page_chart.qml" line="36"/>
@@ -147,7 +180,7 @@
     </message>
     <message>
         <location filename="../src/qml/Page_main.qml" line="142"/>
-        <location filename="../src/qml/Page_main.qml" line="522"/>
+        <location filename="../src/qml/Page_main.qml" line="531"/>
         <source>Neuerungen</source>
         <translation>Neuerungen</translation>
     </message>
@@ -183,32 +216,32 @@
         <translation>paypal_donate_de.gif</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_main.qml" line="346"/>
+        <location filename="../src/qml/Page_main.qml" line="356"/>
         <source>lade weitere</source>
         <translation>lade weitere</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_main.qml" line="373"/>
+        <location filename="../src/qml/Page_main.qml" line="383"/>
         <source>Bearbeiten</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_main.qml" line="392"/>
+        <location filename="../src/qml/Page_main.qml" line="402"/>
         <source>Löschen</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_main.qml" line="411"/>
+        <location filename="../src/qml/Page_main.qml" line="421"/>
         <source>Löschen bestätigen</source>
         <translation>Löschen bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_main.qml" line="487"/>
+        <location filename="../src/qml/Page_main.qml" line="497"/>
         <source>Statistik</source>
         <translation>Statistik</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_main.qml" line="540"/>
+        <location filename="../src/qml/Page_main.qml" line="549"/>
         <source>&lt;h1&gt;1.2&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;h1&gt;1.2&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Datum und Kosten kann von QR-Codes auf Österreichischen Belegen gelesen werden&lt;/li&gt;&lt;li&gt;Neuerungen werden in einem Pop-Up angezeigt&lt;/li&gt;&lt;li&gt;Neuerungen werden automatisch nach einem Update angezeigt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Wenn bei einem Eintrag das Datum vom vorgeschlagenem Datum geändert wird, wurde der vorige Tag gespeichert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;&lt;h1&gt;1.1&lt;/h1&gt;&lt;h2&gt;Neue Funktionen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Übersetzungen werden unterstützt&lt;/li&gt;&lt;li&gt;Englische Übersetzung wurde hinzugefügt&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Fehlerbehebungen&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Filter in der Icon suche beim hinzufügen einer neuen Unterkategorie funktioniert auch mit Großbuchstaben&lt;/li&gt;&lt;li&gt;Groß-Kleinschreibung von Dateinamen wurde korrigiert&lt;/li&gt;&lt;/ul&gt;&lt;h2&gt;Bekannte Fehler&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Import von einer anderen Sprache funktioniert nicht&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
@@ -313,32 +346,32 @@
 <context>
     <name>Page_settings</name>
     <message>
-        <location filename="../src/qml/Page_settings.qml" line="103"/>
+        <location filename="../src/qml/Page_settings.qml" line="163"/>
         <source>Einstellungen</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_settings.qml" line="122"/>
+        <location filename="../src/qml/Page_settings.qml" line="182"/>
         <source>Daten</source>
         <translation>Daten</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_settings.qml" line="126"/>
+        <location filename="../src/qml/Page_settings.qml" line="186"/>
         <source>Importieren</source>
         <translation>Importieren</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_settings.qml" line="143"/>
+        <location filename="../src/qml/Page_settings.qml" line="203"/>
         <source>Exportieren</source>
         <translation>Exportieren</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_settings.qml" line="160"/>
+        <location filename="../src/qml/Page_settings.qml" line="220"/>
         <source>Daten löschen</source>
         <translation>Daten löschen</translation>
     </message>
     <message>
-        <location filename="../src/qml/Page_settings.qml" line="165"/>
+        <location filename="../src/qml/Page_settings.qml" line="225"/>
         <source>Löschen bestätigen</source>
         <translation>Löschen bestätigen</translation>
     </message>

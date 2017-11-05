@@ -311,6 +311,14 @@ Page {
                     anchors.rightMargin: 16
                     spacing: 0
 
+                    function getTagString(tags) {
+                        var tagString = "";
+                        for (var i in tags) {
+                            tagString = tagString + tags[i].name + ", ";
+                        }
+                        return tagString
+                    }
+
                     Text {
                         text: (new String(modelData.money)).replace(".", Qt.locale().decimalPoint) + " €"
                         font.pointSize: 16
@@ -318,7 +326,9 @@ Page {
                     }
 
                     Text {
-                        text: qsTranslate("TranslationContext", modelData.category)
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
+                        text: qsTranslate("TranslationContext", modelData.category) + ": " + parent.getTagString(modelData.tags)
                         font.pointSize: 16
                         Layout.alignment: Qt.AlignTop
                         color: Material.color(Material.Grey, Material.Shade500)

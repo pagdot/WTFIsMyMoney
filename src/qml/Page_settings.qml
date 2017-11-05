@@ -32,12 +32,16 @@ Page {
     property var db;
 
     function createCSV(data) {
-        var csv = "date,money,subcategory,category,notes,icon,tags,extra\r\n";
+        var csv = "date,money,category,notes,tags\r\n";
         for (var i in data) {
-            csv += data[i].datestamp + "," + data[i].money + "," +
-                   data[i].subcategory.replace(",", "") + "," +
-                   data[i].category.replace(",", "") + "," + data[i].notes + "," +
-                   data[i].icon + "," + data[i].tags + "," + data[i].extra + "\r\n"
+            var tags = [];
+            for (var j in data[i].tags) {
+                tags.push((data[i].tags[j].category === "" ? "g" : "l") + data[i].tags[j].name.replace("\"", "").replace(",", ""))
+            }
+
+            csv += db.dateToISOString(data[i].datestamp) + "," + data[i].money + "," +
+                   data[i].category + "," + data[i].notes + "," +
+                   '"' + tags.join(",") + '"' + "\r\n"
         }
         return csv;
     }
@@ -49,16 +53,72 @@ Page {
         var lines = csv.split("\n")
         for (var i in lines) {
             if (lines[i] === "") continue
-            var line = lines[i].split(",")
+
+            var line = [];
+            var start = 0;
+            var pos = 0;
+            var state = false;
+
             if (i === "0") {
-                cols = line
+                cols = lines[i].split(",");
             } else {
+                for (pos = 0; pos < lines[i].length; pos++) {
+                    if ((lines[i].charAt(pos) === ",") && (state === false)) {
+                        if (start !== pos) {
+                            line.push(lines[i].slice(start, pos));
+                            start = pos+1;
+                        } else {
+                            line.push("");
+                            start=pos+1;
+                        }
+                    } else if (lines[i].charAt(pos) === "\"") {
+                        state = !state;
+                    }
+                }
+                if (start !== pos) {
+                    line.push(lines[i].slice(start, pos));
+                    start = pos+1;
+                } else {
+                    line.push("");
+                    start=pos+1;
+                }
+
                 var entry = {}
                 for (var j in line) {
                     entry[cols[j]] = line[j]
                 }
-                if (entry.date) entry.date = new Date(entry.date)
-                data.push(entry)
+                if (entry.date) entry.date = new Date(entry.date);
+                if (entry.tags) {
+                    var tmp = entry.tags.replace(/\"/g, "")
+                    if (tmp !== "") {
+                        entry.tags = tmp.split(",");
+                    } else {
+                        entry.tags = [];
+                    }
+                }
+                if (entry.subcategory) {
+                    entry.tags = ["l" + entry.subcategory]
+                    switch (entry.category) {
+                    case qsTranslate("OldTranslationContext", "food & drinks"):
+                        entry.category = "food_drinks";
+                        break;
+                    case qsTranslate("OldTranslationContext", "life & live"):
+                        entry.category = "life_home";
+                        break;
+                    case qsTranslate("OldTranslationContext", "spare time"):
+                        entry.category = "hobbies";
+                        break;
+                    case qsTranslate("OldTranslationContext", "transport"):
+                        entry.category = "transport";
+                        break;
+                    case qsTranslate("OldTranslationContext", "other"):
+                        entry.category = "other";
+                        break;
+                    default:
+                        console.log("Can't find category \"" + entry.category + "\"")
+                    }
+                };
+                data.push(entry);
             }
         }
         return data;
@@ -142,7 +202,7 @@ Page {
             Button {
                 text: qsTr("Exportieren")
                 onClicked: {
-                    fileSave.content = createCSV(db.getAll());
+                    fileSave.content = createCSV(db.getEntries());
                     fileSave.open();
                 }
 

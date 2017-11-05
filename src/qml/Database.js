@@ -147,8 +147,12 @@ function clearDb() {
 
 function importEntries(entries) {
     for (var i in entries) {
-        //update import
-        storeEntry(entries[i].category, entries[i].subcategory, entries[i].date, entries[i].money, entries[i].note, entries[i].icon, entries[i].extra, entries[i].tags)
+        var tags = [];
+        for (var j in entries[i].tags) {
+            tags.push({name: entries[i].tags[j].slice(1), category: (entries[i].tags[j].charAt(0) === "l" ? entries[i].category : "")});
+        }
+
+        storeEntry(entries[i].category, entries[i].date, entries[i].money, entries[i].note, tags);
     }
 }
 
@@ -218,10 +222,14 @@ function getEntries(count) {
                     "ORDER BY E.datestamp DESC");
     }
     for (var i in rows) {
-        rows[i].tags = sql("SELECT T.name\n" +
+        rows[i].tags = sql("SELECT T.name, T.category\n" +
                            "FROM tags T, entryTags ET\n" +
                            "WHERE (ET.entryID = ?) AND (T.nr = ET.tagID)",
                            [rows[i].nr]);
+
+        for (var j in rows[i].tags) {
+            if (rows[i].tags[j].category === null) rows[i].tags[j].category = "";
+        }
 
         if (rows[i].notes === null) {
             rows[i].notes = "";
@@ -295,8 +303,6 @@ function storeEntry(main, date, money, note, tags) {
     var entryId = sql("SELECT nr FROM entries ORDER BY nr DESC LIMIT 1")[0].nr
 
     var _tags=getTags();
-
-    console.log(JSON.stringify(tags))
 
     for (var tag in tags) {
         var found = false;

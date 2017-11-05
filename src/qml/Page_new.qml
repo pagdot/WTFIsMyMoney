@@ -103,13 +103,12 @@ Page {
                 icon: tmp[i].icon,
             });
         }
-        for (var i in categories) {
-            if (item.category === categories[i].name) {
+        for (var i in tmp_categories) {
+            if (item.category === tmp_categories[i].name) {
                 mainCombo.currentIndex = parseInt(i)
                 break
             }
         }
-        availableTags = filterTagsCategory(allTags, main_category.name)
         for (var i in item.tags) {
             for (var j in availableTags) {
                 if (item.tags[i].name === availableTags[j].name) {
@@ -124,6 +123,7 @@ Page {
         money = item.money
         datum = item.datestamp
         categories =  tmp_categories
+        availableTags = filterTagsCategory(allTags, main_category.name)
         tags = tmpTags;
 
         nr = item.nr
@@ -764,7 +764,6 @@ Page {
                 selectedDate: page.datum
                 parent: page
                 onClosed: {
-                    dateLayout.opened = false
                     page.datum = selectedDate
                 }
                 x: (page.width - width) / 2
