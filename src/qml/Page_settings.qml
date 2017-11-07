@@ -229,7 +229,7 @@ Page {
                     standardButtons: Dialog.Ok | Dialog.Cancel
 
                     onAccepted: {
-                        db.cleardb()
+                        db.clearDb()
                     }
                 }
             }
