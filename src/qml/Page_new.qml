@@ -718,6 +718,7 @@ Page {
 
                 onClicked: {
                     if (!datePicker.visible) {
+                        datePicker.selectedDate = page.datum
                         datePicker.open()
                     }
                 }
@@ -762,9 +763,8 @@ Page {
 
             DatePicker{
                 id: datePicker
-                selectedDate: page.datum
                 parent: page
-                onClosed: {
+                onAccepted: {
                     page.datum = selectedDate
                 }
                 x: (page.width - width) / 2

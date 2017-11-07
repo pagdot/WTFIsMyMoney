@@ -47,6 +47,7 @@ Dialog{
     topPadding: 0
 
     onAccepted: selectedDate = stack.tmp_date
+    onOpened: stack.tmp_date = selectedDate
 
     Page {
         id: column
