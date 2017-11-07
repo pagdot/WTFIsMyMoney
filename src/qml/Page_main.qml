@@ -290,6 +290,7 @@ Page {
             delegate: MouseArea {
                 width: list.width
                 height: 72
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                 Text {
                     anchors.top: parent.top
@@ -345,7 +346,13 @@ Page {
                     color: Material.color(Material.Grey, Material.Shade500)
                 }
 
-                onPressAndHold: {
+                onPressAndHold: openMenu(mouse)
+                onClicked: if (mouse.button == Qt.RightButton) {
+                               openMenu(mouse)
+                           }
+
+
+                function openMenu(mouse) {
                     contextMenu.model = modelData
                     contextMenu.x = x + mouse.x - contextMenu.width / 2
                     contextMenu.y = y + mouse.y - list.contentY + list.y - 30
