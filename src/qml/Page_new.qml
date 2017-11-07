@@ -109,6 +109,8 @@ Page {
                 break
             }
         }
+
+        availableTags = filterTagsCategory(allTags, item.category)
         for (var i in item.tags) {
             for (var j in availableTags) {
                 if (item.tags[i].name === availableTags[j].name) {
@@ -123,7 +125,6 @@ Page {
         money = item.money
         datum = item.datestamp
         categories =  tmp_categories
-        availableTags = filterTagsCategory(allTags, main_category.name)
         tags = tmpTags;
 
         nr = item.nr
