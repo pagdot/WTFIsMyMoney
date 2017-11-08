@@ -259,10 +259,12 @@ Page {
                 }
 
                 Button {
-                    anchors.centerIn: dial
+                    id: qr_button
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
                     flat: true
-                    width: dial.width/2
-                    height: dial.height/2
+                    width: moneyInput.width
+                    height: width
                     visible: Qt.platform.os === "android"
 
                     text: icon.icons["qrcode"]
