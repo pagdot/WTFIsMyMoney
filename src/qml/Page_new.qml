@@ -544,6 +544,7 @@ Page {
                     id: mTagMenu
                     margins: 16
                     y: parent.height
+                    implicitHeight: contentHeight
 
                     onVisibleChanged: {
                         if(visible) {
@@ -554,141 +555,139 @@ Page {
                     }
 
                     contentItem: FocusScope {
+                        id: scope
                         anchors.fill: parent
-                        implicitHeight: layout.implicitHeight
+                        implicitHeight: filter.implicitHeight + list.implicitHeight
+                        implicitWidth: Math.max(filter.implicitWidth, list.implicitWidth)
 
-                        ColumnLayout {
-                            id: layout
-                            anchors.fill: parent
-                            spacing: list.spacing
-                            implicitHeight: filter.implicitHeight + spacing + list.implicitHeight
-                            implicitWidth: Math.max(filter.implicitWidth, list.implicitWidth)
+                        property var filteredTags: filterTags(availableTags, filter.contentItem.text)
 
-                            property var filteredTags: filterTags(availableTags, filter.contentItem.text)
-
-                            function filterTags(tags, filter) {
-                                var filtered = []
-                                for (var i in tags) {
-                                    if (tags[i].name.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
-                                        filtered.push({index: parseInt(i), tag: tags[i]})
-                                    }
-                                }
-                                return filtered
-                            }
-
-                            ItemDelegate {
-                                id: filter
-                                clip: true
-                                font.italic: true
-                                Layout.fillWidth: true
-                                contentItem: TextInput {
-                                    text: ""
-                                    font: parent.font
-                                    inputMethodHints: Qt.ImhNoPredictiveText
+                        function filterTags(tags, filter) {
+                            var filtered = []
+                            for (var i in tags) {
+                                if (tags[i].name.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                                    filtered.push({index: parseInt(i), tag: tags[i]})
                                 }
                             }
+                            return filtered
+                        }
 
-                            ListView {
-                                id: list
-                                Layout.fillWidth: true
-                                clip: true
-                                implicitHeight: contentHeight
+                        ItemDelegate {
+                            id: filter
+                            clip: true
+                            font.italic: true
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            contentItem: TextInput {
+                                text: ""
+                                font: parent.font
+                                inputMethodHints: Qt.ImhNoPredictiveText
+                            }
+                        }
 
-                                model: layout.filteredTags.length
+                        ListView {
+                            id: list
+                            clip: true
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: filter.bottom
+                            anchors.bottom: parent.bottom
+                            implicitWidth: contentWidth
+                            implicitHeight: contentHeight
 
-                                onCountChanged: {
-                                    if ((typeof count === 'undefined') || (!footerItem)) {
-                                        return
-                                    }
+                            model: scope.filteredTags.length
 
-                                    if ((count == 0) && (footerItem.y != 0)) {
-                                        footerPositioning = ListView.OverlayFooter
-                                        footerPositioning = ListView.InlineFooter
+                            onCountChanged: {
+                                if ((typeof count === 'undefined') || (!footerItem)) {
+                                    return
+                                }
+
+                                footerPositioning = ListView.OverlayFooter
+                                footerPositioning = ListView.InlineFooter
+                            }
+
+                            delegate: ItemDelegate {
+                                anchors.left: parent.left; anchors.right: parent.right;
+                                implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
+                                text: availableTags[scope.filteredTags[modelData].index].name
+
+                                onWidthChanged: {
+                                    if (ListView.view.implicitWidth < implicitWidth) {
+                                        ListView.view.implicitWidth = implicitWidth;
                                     }
                                 }
 
-                                delegate: ItemDelegate {
-                                    anchors.left: parent.left; anchors.right: parent.right;
-                                    implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
-                                    text: availableTags[layout.filteredTags[modelData].index].name
+                                onClicked: {
+                                    var chosen = tags
+                                    var available = availableTags
 
-                                    onWidthChanged: {
-                                        if (ListView.view.implicitWidth < implicitWidth) {
-                                            ListView.view.implicitWidth = implicitWidth;
+                                    chosen.push(available[scope.filteredTags[modelData].index])
+                                    available.splice(scope.filteredTags[modelData].index, 1)
+
+                                    tags = chosen
+                                    availableTags = available
+                                }
+                            }
+
+                            footer: Item {
+                                anchors.left: parent.left; anchors.right: parent.right;
+                                implicitHeight: visible ? ((localItem.visible ? localItem.height : 0) + (globalItem.visible ? globalItem.height : 0)) : 0
+                                implicitWidth: localItem.visible ? (globalItem.visible ? Math.max(localItem.implicitWidth, globalItem.implicitWidth) : localItem.implicitWidth) : globalItem.visible ? globalItem.implicitWidth : 0
+                                visible: (filter.contentItem.text !== "") && (!arrayContains(scope.filteredTags, filter.contentItem.text))  && (!arrayContains(tags, filter.contentItem.text))
+
+                                onImplicitWidthChanged: {
+                                    if (ListView.view.implicitWidth < implicitWidth) {
+                                        ListView.view.implicitWidth = implicitWidth;
+                                    }
+                                }
+
+                                function arrayContains(array, element) {
+                                    for (var i in array) {
+                                        if ((array[i].tag === element) || (array[i] === element)) {
+                                            return true
                                         }
                                     }
+                                    return false
+                                }
+
+                                ItemDelegate {
+                                    id: localItem
+                                    visible: localTags
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.top: parent.top
+                                    implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
+
+                                    text: qsTr("Hinzufügen")
 
                                     onClicked: {
                                         var chosen = tags
-                                        var available = availableTags
-
-                                        chosen.push(available[layout.filteredTags[modelData].index])
-                                        available.splice(layout.filteredTags[modelData].index, 1)
-
+                                        var tag = {name: filter.contentItem.text, category: main_category.name, usage: 0};
+                                        chosen.push(tag)
+                                        allTags.push(tag)
                                         tags = chosen
-                                        availableTags = available
+                                        filter.contentItem.text = "";
                                     }
                                 }
 
-                                footer: Item {
-                                    anchors.left: parent.left; anchors.right: parent.right;
-                                    implicitHeight: visible ? ((localItem.visible ? localItem.height : 0) + (globalItem.visible ? globalItem.height : 0)) : 0
-                                    implicitWidth: localItem.visible ? (globalItem.visible ? Math.max(localItem.implicitWidth, globalItem.implicitWidth) : localItem.implicitWidth) : globalItem.visible ? globalItem.implicitWidth : 0
-                                    visible: (filter.contentItem.text !== "") && (!arrayContains(layout.filteredTags, filter.contentItem.text))  && (!arrayContains(tags, filter.contentItem.text))
+                                ItemDelegate {
+                                    id: globalItem
+                                    visible: globalTags
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.bottom: parent.bottom
+                                    implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
 
-                                    onImplicitWidthChanged: {
-                                        if (ListView.view.implicitWidth < implicitWidth) {
-                                            ListView.view.implicitWidth = implicitWidth;
-                                        }
-                                    }
+                                    text: localTags ? qsTr("Global Hinzufügen") : qsTr("Hinzufügen")
 
-                                    function arrayContains(array, element) {
-                                        for (var i in array) {
-                                            if ((array[i].tag === element) || (array[i] === element)) {
-                                                return true
-                                            }
-                                        }
-                                        return false
-                                    }
-
-                                    ItemDelegate {
-                                        id: localItem
-                                        visible: localTags
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.top: parent.top
-                                        implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
-
-                                        text: qsTr("Hinzufügen")
-
-                                        onClicked: {
-                                            var chosen = tags
-                                            var tag = {name: filter.contentItem.text, category: main_category.name, usage: 0};
-                                            chosen.push(tag)
-                                            allTags.push(tag)
-                                            tags = chosen
-                                            filter.contentItem.text = "";
-                                        }
-                                    }
-
-                                    ItemDelegate {
-                                        id: globalItem
-                                        visible: globalTags
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.bottom: parent.bottom
-                                        implicitWidth: leftPadding + contentItem.implicitWidth + rightPadding
-
-                                        text: localTags ? qsTr("Global Hinzufügen") : qsTr("Hinzufügen")
-
-                                        onClicked: {
-                                            var chosen = tags
-                                            var tag = {name: filter.contentItem.text, category: "", usage: 0}
-                                            chosen.push(tag)
-                                            allTags.push(tag)
-                                            tags = chosen
-                                            filter.contentItem.text = "";
-                                        }
+                                    onClicked: {
+                                        var chosen = tags
+                                        var tag = {name: filter.contentItem.text, category: "", usage: 0}
+                                        chosen.push(tag)
+                                        allTags.push(tag)
+                                        tags = chosen
+                                        filter.contentItem.text = "";
                                     }
                                 }
                             }
