@@ -54,13 +54,13 @@ Page {
             start.setDate(start.getDate() - start.getDay() + 1)
             var end = new Date(start)
             end.setDate(end.getDate() + 6)
-            week.text += db.getSum(start, end) + " €"
+            week.text += db.getSum(start, end).toString().replace('.', Qt.locale().decimalPoint) + " €"
             start = new Date(date)
             start.setDate(1)
             end = new Date(date)
             end.setMonth(end.getMonth() + 1)
             end.setDate(0)
-            month.text += db.getSum(start, end) + " €"
+            month.text += db.getSum(start, end).toString().replace('.', Qt.locale().decimalPoint) + " €"
             entryCount = db.getEntryCount()
         }
     }
