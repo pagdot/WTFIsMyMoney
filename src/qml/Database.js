@@ -315,7 +315,7 @@ function storeEntry(main, date, money, note, tags) {
 
     var ret = sql("INSERT INTO entries (category, datestamp, money, notes)\n" +
                   "SELECT ?, ?, ?, ?",
-                  [main, dateToISOString(date), parseInt(money * 100), note]);
+                  [main, dateToISOString(date),  parseInt((money * 100).toFixed(0)), note]);
     var entryId = sql("SELECT nr FROM entries ORDER BY nr DESC LIMIT 1")[0].nr
 
     var _tags=getTags();
@@ -429,7 +429,7 @@ function updateEntry(nr, main, date, money, note, tags) {
 
     sql("REPLACE INTO entries (nr, category, datestamp, money, notes)\n" +
         "SELECT ?, ?, ?, ?, ?",
-        [nr, main, dateToISOString(date), parseInt(money * 100), note]);
+        [nr, main, dateToISOString(date), parseInt((money * 100).toFixed(0)), note]);
 }
 
 function getSettings() {
