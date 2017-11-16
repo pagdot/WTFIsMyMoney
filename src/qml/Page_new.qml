@@ -65,6 +65,8 @@ Page {
 
     function reset() {
         var tmp_categories = []
+        var settings = db.getSettings();
+        globalTags = settings.globalTags;
         tags = []
         mainCombo.currentIndex = 0;
         allTags = db.getTagsWithUsage()
@@ -89,6 +91,8 @@ Page {
         if (!item) {
             return
         }
+        var settings = db.getSettings();
+        globalTags = settings.globalTags;
 
         var tmpTags = []
         allTags = db.getTagsWithUsage()
@@ -547,6 +551,7 @@ Page {
                     margins: 16
                     y: parent.height
                     implicitHeight: contentHeight
+                    bottomMargin: 16 + ((Qt.platform.os === "android") && (Qt.inputMethod.visible) ? page.height/2 : 0)
 
                     onVisibleChanged: {
                         if(visible) {

@@ -30,6 +30,7 @@ import QtQuick.Controls.Material 2.2
 Page {
 
     property var db;
+    property var settings;
 
     function createCSV(data) {
         var csv = "date,money,category,notes,tags\r\n";
@@ -128,6 +129,17 @@ Page {
         view_stack.pop()
     }
 
+    function reset() {
+        settings = db.getSettings();
+        cb_enGlobal.checked = settings.globalTags;
+        cb_enLocal.checked = settings.localTags;
+    }
+
+    function updateSetting(key, value) {
+        settings[key] = value;
+        db.storeSettings(settings);
+    }
+
     Icon {
         id: icon
     }
@@ -177,6 +189,41 @@ Page {
         anchors.top: bar.bottom
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
+
+        ColumnLayout {
+            Label {
+                text: qsTr("Tags") + ":"
+            }
+
+            CheckBox {
+                id: cb_enGlobal
+                text: "Aktiviere Globale Tags"
+                onClicked: {
+                    if ((!checked) && (!cb_enLocal.checked)) {
+                        cb_enLocal.checked = true
+                    }
+                }
+                onCheckedChanged: {
+                    updateSetting("globalTags", checked);
+                }
+            }
+
+            CheckBox {
+                id: cb_enLocal
+                text: "Aktiviere Lokale Tags"
+                onClicked: {
+                    if ((!checked) && (!cb_enGlobal.checked)) {
+                        cb_enGlobal.checked = true
+                    }
+                }
+                onCheckedChanged: {
+                    updateSetting("localTags", checked);
+                }
+            }
+
+        }
+
+
         ColumnLayout {
             Label {
                 text: qsTr("Daten") + ":"
@@ -234,5 +281,6 @@ Page {
                 }
             }
         }
+
     }
 }

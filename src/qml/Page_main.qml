@@ -135,6 +135,7 @@ Page {
                 text: qsTr("Einstellungen")
                 onTriggered: {
                     view_stack.push(page_settings)
+                    page_settings.reset();
                 }
             }
 

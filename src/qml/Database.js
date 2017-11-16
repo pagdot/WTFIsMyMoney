@@ -47,6 +47,11 @@ var defaultCategories = [
     }
 ]
 
+var defaultSettings = {
+    localTags: true,
+    globalTags: true,
+}
+
 function getDB() {
     if (!localStorage) {
         return false;
@@ -101,6 +106,17 @@ function init(_localStorage, version) {
             "   key TEXT PRIMARY KEY, \n" +
             "   value TEXT\n" +
             ");");
+    }
+    try {
+        db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM settings');
+        })
+    } catch(err) {
+        sql("CREATE TABLE IF NOT EXISTS settings (\n" +
+            "   key TEXT PRIMARY KEY, \n" +
+            "   value TEXT\n" +
+            ");");
+        storeSettings(defaultSettings);
     }
 
     if (getVersion() === version) {
@@ -414,6 +430,27 @@ function updateEntry(nr, main, date, money, note, tags) {
     sql("REPLACE INTO entries (nr, category, datestamp, money, notes)\n" +
         "SELECT ?, ?, ?, ?, ?",
         [nr, main, dateToISOString(date), parseInt(money * 100), note]);
+}
+
+function getSettings() {
+    var lines = sql("SELECT * FROM settings");
+    var data = {};
+    for (var i in lines) {
+        data[lines[i].key] = lines[i].value;
+    }
+    if (data.globalTags) data.globalTags = data.globalTags === "1";
+    if (data.localTags) data.localTags = data.localTags === "1";
+    return data;
+}
+
+function storeSettings(settings) {
+    var old = getSettings();
+    for (var key in settings) {
+        if (settings[key] !== old[key]) {
+            sql("REPLACE INTO settings (key, value)\n" +
+                "SELECT ?, ?", [key, settings[key]]);
+        }
+    }
 }
 
 function pad(number) {
