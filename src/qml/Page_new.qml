@@ -341,7 +341,7 @@ Page {
                             var first = tmp.substring(0, tmpPos-1).replace(/[\.]/g, "");
                             var second = tmp.substring(tmpPos).replace(/[\.]/g, "");
                             tmp = first + "." + second;
-                            tmpPos = first.length+1;
+                            tmpPos = first.length > 0 ? first.length+1 : 3;
                         }
 
                         var val = parseFloat(tmp)
