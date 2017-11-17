@@ -390,7 +390,6 @@ function deleteEntry(nr) {
 }
 
 function updateEntry(nr, main, date, money, note, tags) {
-    //update to tags
     var cats = getCategories()
     var found = false;
     for (var i in cats) {

@@ -331,26 +331,25 @@ Page {
                     anchors.left: parent.left
                     width: 60
                     text: focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €"
-                    validator: RegExpValidator{ regExp: /\d*[\.,]{0,2}\d*/}
+                    validator: RegExpValidator{ regExp: /[\d\.,]*/}
                     onTextEdited: {
-                        var tmp = text.replace(/(\d*)[\.,]*(\d{0,2})\d*/ ,"$1.$2")
-                        var val = parseFloat(tmp)
+                        var tmp = text.replace(/,/g, ".");
                         var tmpPos = cursorPosition;
-                        var oldText = text
-                        var beforeFirstDigit = text.search(/[1-9]?/)
-                        var beforeFirstSeparatorPos = text.search(/[\.,]/)
-                        var beforeLastSeparatorPos = text.length - text.split('').reverse().join('').search(/[\.,]/) -1
+
+
+                        if ((tmp.indexOf(".") != -1) && (tmp.match(/[\.]/g).length > 1) && (tmp.charAt(cursorPosition-1).indexOf(".") >= 0)) {
+                            var first = tmp.substring(0, tmpPos-1).replace(/[\.]/g, "");
+                            var second = tmp.substring(tmpPos).replace(/[\.]/g, "");
+                            tmp = first + "." + second;
+                            tmpPos = first.length+1;
+                        }
+
+                        var val = parseFloat(tmp)
+                        var beforeFirstDigit = tmp.search(/[1-9]/);
                         money = -1
                         if (!isNaN(val)) {
                             money = val
-                            var afterSeparatorPos = text.search(/[\.,]/)
-
-                            if (beforeFirstSeparatorPos == -1) {
-                                cursorPosition = tmpPos - beforeFirstDigit
-                            } else {
-                                cursorPosition = afterSeparatorPos +
-                                        (tmpPos - (tmpPos <= beforeLastSeparatorPos ? beforeFirstSeparatorPos : beforeLastSeparatorPos))
-                            }
+                            cursorPosition = tmpPos - beforeFirstDigit
                         } else {
                             money = 0.0
                             cursorPosition = 0
