@@ -55,6 +55,7 @@ Page {
     property var availableTags: []
     property bool globalTags: true
     property bool localTags: true
+    property bool qrEn: true
 
     onMain_categoryChanged: {
         tags = [];
@@ -67,6 +68,8 @@ Page {
         var tmp_categories = []
         var settings = db.getSettings();
         globalTags = settings.globalTags;
+        localTags = settings.localTags;
+        qrEn = settings.enableQR
         tags = []
         mainCombo.currentIndex = 0;
         allTags = db.getTagsWithUsage()
@@ -93,6 +96,8 @@ Page {
         }
         var settings = db.getSettings();
         globalTags = settings.globalTags;
+        localTags = settings.localTags;
+        qrEn = settings.enableQR
 
         var tmpTags = []
         allTags = db.getTagsWithUsage()
@@ -242,7 +247,6 @@ Page {
                 anchors.bottomMargin: 20
                 anchors.left: parent.left
                 anchors.right: parent.right
-                //implicitHeight: dial.implicitHeight
 
                 Dial {
                     id: dial
@@ -269,7 +273,7 @@ Page {
                     flat: true
                     width: moneyInput.width
                     height: width
-                    visible: Qt.platform.os === "android"
+                    visible: (Qt.platform.os === "android") && qrEn
 
                     text: icon.icons["qrcode"]
                     font.family: icon.family

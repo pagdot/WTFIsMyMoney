@@ -50,6 +50,7 @@ var defaultCategories = [
 var defaultSettings = {
     localTags: true,
     globalTags: true,
+    enableQR: true,
 }
 
 function getDB() {
@@ -439,6 +440,7 @@ function getSettings() {
     }
     if (data.globalTags) data.globalTags = data.globalTags === "1";
     if (data.localTags) data.localTags = data.localTags === "1";
+    if (data.enableQR) data.enableQR = data.enableQR === "1";
     return data;
 }
 

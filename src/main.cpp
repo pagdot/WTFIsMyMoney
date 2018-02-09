@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_ANDROID
     qmlRegisterType<AndroidFile, 1>("AndroidFile", 1, 0, "AndroidFile");
+    qmlRegisterType<AndroidFile, 1>("AndroidAPIWrapper", 1, 0, "AndroidAPIWrapper");
     QZXing::registerQMLTypes();
 #endif
 
