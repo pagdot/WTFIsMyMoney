@@ -64,6 +64,10 @@ Page {
         }
     }
 
+    onMoneyChanged: {
+        moneyFieldUpdate();
+    }
+
     function reset() {
         var tmp_categories = []
         var settings = db.getSettings();
@@ -166,6 +170,12 @@ Page {
             }
         }
         return newTags;
+    }
+
+    function moneyFieldUpdate() {
+        var tmpCursor = moneyInput.cursorPosition;
+        moneyInput.text = focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €";
+        moneyInput.cursorPosition = money == 0.0 ? 1 : tmpCursor;
     }
 
     Icon {
@@ -336,6 +346,20 @@ Page {
                     width: 60
                     text: focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €"
                     validator: RegExpValidator{ regExp: /[\d\.,]*/}
+
+                    onFocusChanged: {
+                        moneyFieldUpdate();
+                    }
+
+                    function moneyFieldUpdate() {
+                        var tmpCursor = cursorPosition;
+                        moneyInput.text = focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €";
+                        cursorPosition = money == 0.0 ? 1 : tmpCursor;
+                    }
+
+
+                    onCursorPositionChanged: console.log("cursorPosition: " + cursorPosition)
+
                     onTextEdited: {
                         var tmp = text.replace(/,/g, ".");
                         var tmpPos = cursorPosition;
@@ -348,12 +372,22 @@ Page {
                             tmpPos = first.length > 0 ? first.length+1 : 3;
                         }
 
-                        var val = parseFloat(tmp)
+                        var val = parseFloat(parseFloat(tmp).toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]);
                         var beforeFirstDigit = tmp.search(/[1-9]/);
+                        var beforeDot = tmp.search(/[\.]/);
+                        console.log("digit: " + beforeFirstDigit + " dot: " + beforeDot + " pos: " + tmpPos)
+                        if ((beforeDot < beforeFirstDigit) && (beforeDot  != -1)) {
+                            beforeFirstDigit = tmpPos < beforeDot ? 1 : 0;
+                        }
+
                         money = -1
-                        if (!isNaN(val)) {
-                            money = val
-                            cursorPosition = tmpPos - beforeFirstDigit
+                        if (val === 0.0) {
+                            money = 0.0;
+                            cursorPosition = tmpPos == 0 ? 1 : tmpPos;
+                        } else if (!isNaN(val)) {
+                            money = val;
+                            console.log("CursorPos: old: " + cursorPosition + " tmp: " + tmpPos + " offset: " + beforeFirstDigit)
+                            cursorPosition = beforeDot == 0 ? 1 : tmpPos - beforeFirstDigit
                         } else {
                             money = 0.0
                             cursorPosition = 0
