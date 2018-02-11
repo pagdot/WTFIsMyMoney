@@ -230,13 +230,13 @@ function getEntries(count) {
         rows = sql( "SELECT E.nr, C.name AS category, E.datestamp, E.money, E.notes, C.icon\n" +
                     "FROM entries E, categories C\n" +
                     "WHERE (E.category = C.name)\n" +
-                    "ORDER BY E.datestamp DESC\n" +
+                    "ORDER BY nr DESC, E.datestamp DESC\n" +
                     "LIMIT ?", [count]);
     } else {
         rows = sql( "SELECT E.nr, C.name AS category, E.datestamp, E.money, E.notes, C.icon\n" +
                     "FROM entries E, categories C\n" +
                     "WHERE (E.category = C.name)\n" +
-                    "ORDER BY E.datestamp DESC");
+                    "ORDER BY nr DESC, E.datestamp DESC");
     }
     for (var i in rows) {
         rows[i].tags = sql("SELECT T.name, T.category\n" +
