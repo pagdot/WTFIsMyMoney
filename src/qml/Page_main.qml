@@ -51,7 +51,7 @@ Page {
             month.text = Qt.locale().monthName(date.getMonth(), Locale.LongFormat) + ":  "
             week.text = qsTr("Woche") + " " + getWeek(date) + ":  "
             var start = new Date(date);
-            start.setDate(start.getDate() - start.getDay() + 1)
+            start.setDate(start.getDate() - (start.getDay() + 6)%7)
             var end = new Date(start)
             end.setDate(end.getDate() + 6)
             week.text += db.getSum(start, end).toString().replace('.', Qt.locale().decimalPoint) + " €"
