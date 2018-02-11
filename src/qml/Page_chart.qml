@@ -86,7 +86,7 @@ Page {
         leastExpensiveMonthName.text = Qt.locale().monthName(min.month.getMonth(), Locale.LongFormat)
         leastExpensiveMonthMoney.text = String(min.money).replace(".", Qt.locale().decimalPoint) + " €"
         averageMonth.text = String(avg.toFixed(2)).replace(".", Qt.locale().decimalPoint) + " €"
-        list.model = monthMoney
+        list.model = monthMoney.reverse();
     }
 
     Icon {
