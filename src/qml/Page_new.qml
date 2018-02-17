@@ -357,9 +357,6 @@ Page {
                         cursorPosition = money == 0.0 ? 1 : tmpCursor;
                     }
 
-
-                    onCursorPositionChanged: console.log("cursorPosition: " + cursorPosition)
-
                     onTextEdited: {
                         var tmp = text.replace(/,/g, ".");
                         var tmpPos = cursorPosition;
@@ -375,7 +372,6 @@ Page {
                         var val = parseFloat(parseFloat(tmp).toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]);
                         var beforeFirstDigit = tmp.search(/[1-9]/);
                         var beforeDot = tmp.search(/[\.]/);
-                        console.log("digit: " + beforeFirstDigit + " dot: " + beforeDot + " pos: " + tmpPos)
                         if ((beforeDot < beforeFirstDigit) && (beforeDot  != -1)) {
                             beforeFirstDigit = tmpPos < beforeDot ? 1 : 0;
                         }
@@ -386,7 +382,6 @@ Page {
                             cursorPosition = tmpPos == 0 ? 1 : tmpPos;
                         } else if (!isNaN(val)) {
                             money = val;
-                            console.log("CursorPos: old: " + cursorPosition + " tmp: " + tmpPos + " offset: " + beforeFirstDigit)
                             cursorPosition = beforeDot == 0 ? 1 : tmpPos - beforeFirstDigit
                         } else {
                             money = 0.0
@@ -460,26 +455,34 @@ Page {
 
                 delegate: ItemDelegate {
                     id: control
+                    Icon {
+                        id: cIcon
+                    }
                     Label {
-                        id: iconLabel
+                        id: cIconLabel
                         anchors.left: parent.left
                         anchors.leftMargin: 16
                         anchors.verticalCenter: parent.verticalCenter
                         font.pointSize: parent.font.pointSize
-                        font.family: icon.family
+                        font.family: cIcon.family
                         color: "white"
-                        text: icon.icons[modelData.icon]
+                        text: cIcon.icons[modelData.icon]
                         background: Rectangle{height: parent.height + 5; width: height; radius: height/2; color: Material.accent; anchors.centerIn: parent}
                     }
 
+                    Label {
 
-                    leftPadding: 16 + iconLabel.width + 8
-                    rightPadding: 16
-                    width: parent.width
-                    text: qsTranslate("TranslationContext", modelData.name)
-                    font.weight: mainCombo.currentIndex === index ? Font.DemiBold : Font.Normal
+                        anchors.fill: parent
+                        anchors.leftMargin: 16 + cIconLabel.width + 8
+                        anchors.rightMargin: 16
+                        text: qsTranslate("TranslationContext", modelData.name)
+                        font.weight: mainCombo.currentIndex === index ? Font.DemiBold : Font.Normal
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
                     highlighted: mainCombo.highlightedIndex === index
                     hoverEnabled: mainCombo.hoverEnabled
+                    width: parent.width
                 }
             }
 
@@ -555,6 +558,10 @@ Page {
                                 implicitHeight: 24
                                 implicitWidth: 24
 
+                                Icon {
+                                    id: cIcon
+                                }
+
                                 onClicked: {
                                     var chosen = tags
                                     var available = availableTags
@@ -570,9 +577,9 @@ Page {
                                 }
 
                                 contentItem: Text {
-                                    font.family: icon.family
+                                    font.family: cIcon.family
                                     fontSizeMode: Text.VerticalFit
-                                    text: icon.icons["close_circle"]
+                                    text: cIcon.icons["close_circle"]
                                     verticalAlignment: Text.AlignVCenter
                                     font.pointSize: 100
                                     opacity: 0.54
