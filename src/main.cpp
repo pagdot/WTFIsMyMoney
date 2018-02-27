@@ -28,13 +28,11 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 
-#ifdef Q_OS_WIN
-#include "fileio.h"
-#endif
-
 #ifdef Q_OS_ANDROID
-#include <QZXing>
-#include "androidfile.h"
+    #include <QZXing>
+    #include "androidfile.h"
+#else
+    #include "fileio.h"
 #endif
 
 int main(int argc, char *argv[])
@@ -46,14 +44,12 @@ int main(int argc, char *argv[])
     myappTranslator.load(":/wtfismymoney_" + QLocale::system().name().left(2));
     app.installTranslator(&myappTranslator);
 
-#ifdef Q_OS_WIN
-    qmlRegisterType<FileIO, 1>("FileIO", 1, 0, "FileIO");
-#endif
-
 #ifdef Q_OS_ANDROID
     qmlRegisterType<AndroidFile, 1>("AndroidFile", 1, 0, "AndroidFile");
     qmlRegisterType<AndroidFile, 1>("AndroidAPIWrapper", 1, 0, "AndroidAPIWrapper");
     QZXing::registerQMLTypes();
+#else
+    qmlRegisterType<FileIO, 1>("FileIO", 1, 0, "FileIO");
 #endif
 
     QQmlApplicationEngine engine;
