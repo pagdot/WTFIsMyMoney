@@ -44,6 +44,7 @@ QString FileIO::read(QUrl const &fName)
     if ( file.open(QIODevice::ReadOnly) ) {
         QString line;
         QTextStream t( &file );
+        t.setCodec("UTF-8");
         do {
             line = t.readLine();
             fileContent += line + "\n";
@@ -67,6 +68,7 @@ bool FileIO::write(QUrl const &fName, const QString& data)
         return false;
 
     QTextStream out(&file);
+    out.setCodec("UTF-8");
     out << data;
 
     file.close();

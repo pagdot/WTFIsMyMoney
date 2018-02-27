@@ -24,7 +24,7 @@
 
 var localStorage;
 
-var defaultCategories = [
+var defaultRootTags = [
     {
         name: "food_drinks",
         icon: "silverware"
@@ -48,8 +48,7 @@ var defaultCategories = [
 ]
 
 var defaultSettings = {
-    localTags: true,
-    globalTags: true,
+    enableQR: true,
 }
 
 function getDB() {
@@ -71,17 +70,17 @@ function init(_localStorage, version) {
 
     try {
         db.transaction(function(tx) {
-            tx.executeSql('SELECT * FROM categories');
-        })
-    } catch(err) {
-        createCategories();
-    }
-    try {
-        db.transaction(function(tx) {
             tx.executeSql('SELECT * FROM tags');
         })
     } catch(err) {
         createTagTable();
+    }
+    try {
+        db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM tagTree');
+        })
+    } catch(err) {
+        createTagTreeTable();
     }
     try {
         db.transaction(function(tx) {
@@ -150,17 +149,24 @@ function isInit() {
 }
 
 function clearDb() {
-    sql("DELETE FROM categories")
     sql("DELETE FROM tags")
+    sql("DELETE FROM tagTree")
     sql("DELETE FROM entryTags")
     sql("DELETE FROM entries")
 
-    createCategories()
     createTagTable()
+    createTagTreeTable();
     createEntryTagTable()
     createEntryTable()
 }
 
+function createTagTreeTable() {
+    sql("CREATE TABLE IF NOT EXISTS tagTree (\n" +
+        "   id INTEGER PRIMARY KEY AUTOINCREMENT, parentId INT, childId INT NOT NULL\n" +
+        ");");
+}
+
+//todo
 function importEntries(entries) {
     for (var i in entries) {
         var tags = [];
@@ -172,38 +178,58 @@ function importEntries(entries) {
     }
 }
 
-function getCategories() {
-    var categories = []
-    var rows = sql("SELECT * FROM categories");
-    for (var i in rows) {
-        categories.push(rows[i])
+function createTag(name, icon) {
+    if (!icon) {
+        icon = ""
     }
-    return categories;
+
+    sql("INSERT INTO tags (name, icon) VALUES (?, ?)", [name, icon])
 }
 
-function createTag(name, category) {
-    if (!category) {
-        category = ""
+function linkTags(childId, parentId) {
+    var links = sql("SELECT * FROM tagTree");
+    for (var i in links) {
+        if ((links[i].parentId === parentId) && (links[i].childId === childId)) {
+            return;
+        }
     }
-
-    sql("INSERT INTO tags (name, category) VALUES (?, ?)", [name, category])
+    sql("INSERT INTO tagTree (parentId, childId) VALUES (?, ?)", [parentId, childId]);
 }
 
 function getTags() {
-    var rows = sql("SELECT * FROM tags");
-    for (var i in rows) {
-        if (rows[i].category === null) {
-            rows[i].category = "";
-        }
+    var tags = sql("SELECT * FROM tags");
+    for (var i in tags) {
+        tags[i].childs = getTagChilds(tags[i].id)
+        if (tags[i].icon === null) tags[i].icon = "";
     }
 
-    return rows;
+    return tags;
+}
+
+function getTags(entryId) {
+    var tags = sql("SELECT T.name, T.icon\n" +
+                   "FROM tags T, entryTags ET\n" +
+                   "WHERE (ET.entryID = ?) AND (T.id = ET.tagID)",
+                   entryId);
+    for (var i in tags) {
+        if (tags[i].icon === null) tags[i].icon = "";
+    }
+
+    return tags;
+}
+
+function getTagChilds(tagId) {
+    var childs = sql("SELECT childId AS id FROM tagTree WHERE (parentId = ?)", tags[i].id);
+    for (var i in rows) {
+        childs[i] = childs[i].id;
+    }
+    return childs;
 }
 
 function getTagsWithUsage() {
     var tags = getTags();
     for (var i in tags) {
-        tags[i].usage = getTagUsage(tags[i].nr)
+        tags[i].usage = getTagUsage(tags[i].id)
     }
     return tags;
 }
@@ -212,9 +238,20 @@ function createTagEntryLink(entryId, tagId) {
     sql("INSERT INTO entryTags (entryId, tagId) VALUES (?, ?)", [entryId, tagId]);
 }
 
-function deleteEntryTagLink(entryId, tagId) {
+function deleteEntryTagLink(entryId, tagId, depth) {
+    if (!depth) {
+        depth = 0;
+    } else if (depth > 100) {
+        console.log("deleteEntryTagLink: Recursion depth limit reached");
+        return;
+    }
+
     sql("DELETE FROM entryTags\n" +
-        "WHERE (entryID = ?) AND (tagID = ?)", [entryId, tagId])
+        "WHERE (entryID = ?) AND (tagID = ?)", [entryId, tagId]);
+    var childs = getTagChilds(tagId);
+    for (var i in childs) {
+        deleteEntryTagLink(entryId, childs[i], depth+1);
+    }
 }
 
 function getTagUsage(tagId) {
@@ -226,26 +263,20 @@ function getTagUsage(tagId) {
 function getEntries(count) {
     var rows;
     if (count) {
-        rows = sql( "SELECT E.nr, C.name AS category, E.datestamp, E.money, E.notes, C.icon\n" +
+        rows = sql( "SELECT E.id, C.name AS category, E.datestamp, E.money, E.notes, C.icon\n" +
                     "FROM entries E, categories C\n" +
                     "WHERE (E.category = C.name)\n" +
-                    "ORDER BY E.datestamp DESC\n" +
+                    "ORDER BY E.datestamp DESC,id DESC\n" +
                     "LIMIT ?", [count]);
     } else {
-        rows = sql( "SELECT E.nr, C.name AS category, E.datestamp, E.money, E.notes, C.icon\n" +
+        rows = sql( "SELECT E.id, C.name AS category, E.datestamp, E.money, E.notes, C.icon\n" +
                     "FROM entries E, categories C\n" +
                     "WHERE (E.category = C.name)\n" +
-                    "ORDER BY E.datestamp DESC");
+                    "ORDER BY E.datestamp DESC,id DESC");
     }
     for (var i in rows) {
-        rows[i].tags = sql("SELECT T.name, T.category\n" +
-                           "FROM tags T, entryTags ET\n" +
-                           "WHERE (ET.entryID = ?) AND (T.nr = ET.tagID)",
-                           [rows[i].nr]);
+        rows[i].tags = getTags(rows[i].id)
 
-        for (var j in rows[i].tags) {
-            if (rows[i].tags[j].category === null) rows[i].tags[j].category = "";
-        }
 
         if (rows[i].notes === null) {
             rows[i].notes = "";
@@ -257,6 +288,7 @@ function getEntries(count) {
     return rows;
 }
 
+/** Needs to be ported to tags
 function getMoneyPerCategory(start, end) {
     var rows = sql("SELECT C.icon, C.name, SUM(money) AS money\n" +
                    "FROM entries E, categories C\n" +
@@ -268,7 +300,7 @@ function getMoneyPerCategory(start, end) {
         rows[i].money = rows[i].money / 100
     }
     return rows
-}
+}*/
 
 function getMoneyPerMonth(start, end) {
     var tmpStart = new Date(start)
@@ -300,23 +332,13 @@ function getEntryCount() {
     return rows[0].cnt
 }
 
-function storeEntry(main, date, money, note, tags) {
-    var cats = getCategories()
-    var found = false;
-    for (var i in cats) {
-        if (cats[i].name === main) {
-            found = true
-        }
-    }
-    if (!found) {
-        console.log("Unknown category \"" +  main + "\"")
-        return false
-    }
+//todo
+function storeEntry(date, money, note, tags) {
 
-    var ret = sql("INSERT INTO entries (category, datestamp, money, notes)\n" +
-                  "SELECT ?, ?, ?, ?",
-                  [main, dateToISOString(date),  parseInt((money * 100).toFixed(0)), note]);
-    var entryId = sql("SELECT nr FROM entries ORDER BY nr DESC LIMIT 1")[0].nr
+    var ret = sql("INSERT INTO entries (datestamp, money, notes)\n" +
+                  "SELECT ?, ?, ?",
+                  [dateToISOString(date),  parseInt((money * 100).toFixed(0)), note]);
+    var entryId = sql("SELECT id FROM entries ORDER BY id DESC LIMIT 1")[0].id
 
     var _tags=getTags();
 
@@ -325,12 +347,12 @@ function storeEntry(main, date, money, note, tags) {
         for (var _tag in _tags) {
             if ((_tags[_tag].name === tags[tag].name) && (_tags[_tag].category === tags[tag].category)) {
                 found = true;
-                createTagEntryLink(entryId, _tags[_tag].nr)
+                createTagEntryLink(entryId, _tags[_tag].id)
             }
         }
         if (found == false) {
             createTag(tags[tag].name, tags[tag].category);
-            var tagId = sql("SELECT nr FROM tags ORDER BY nr DESC LIMIT 1")[0].nr;
+            var tagId = sql("SELECT id FROM tags ORDER BY id DESC LIMIT 1")[0].id;
             createTagEntryLink(entryId, tagId);
         }
     }
@@ -338,19 +360,11 @@ function storeEntry(main, date, money, note, tags) {
     return true;
 }
 
-function createCategories() {
-    sql("CREATE TABLE IF NOT EXISTS categories (\n" +
-        "   name TEXT PRIMARY KEY, icon TEXT NOT NULL\n" +
-        ");");
-    for (var c in defaultCategories) {
-        sql("INSERT INTO categories (name, icon) VALUES (?, ?)", [defaultCategories[c].name, defaultCategories[c].icon])
-    }
-}
-
 function createTagTable() {
     sql("CREATE TABLE IF NOT EXISTS tags (\n" +
-        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, category TEXT\n" +
+        "   id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, icon TEXT\n" +
         ");");
+    sql("INSERT INTO tags (name) VALUES (root)");
 }
 
 function createEntryTagTable() {
@@ -361,7 +375,7 @@ function createEntryTagTable() {
 
 function createEntryTable() {
     sql("CREATE TABLE IF NOT EXISTS entries (\n" +
-        "   nr INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, \n" +
+        "   id INTEGER PRIMARY KEY AUTOINCREMENT, category INT NOT NULL, \n" +
         "   datestamp DATE NOT NULL, money INT, notes TEXT, extra TEXT\n" +
         "   lastChanged TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n" +
         ");");
@@ -371,7 +385,7 @@ function reset() {
     var db = getDB()
     try {
         db.transaction(function(tx) {
-            tx.executeSql("DROP TABLE categories;");
+            tx.executeSql("DROP TABLE tagTree;");
             tx.executeSql("DROP TABLE tags;");
             tx.executeSql("DROP TABLE entryTags;");
             tx.executeSql("DROP TABLE entries;");
@@ -382,14 +396,15 @@ function reset() {
     init(localStorage)
 }
 
-function deleteEntry(nr) {
+function deleteEntry(id) {
     sql("DELETE FROM entryTags\n" +
-        "WHERE (entryID = ?)", [nr]);
+        "WHERE (entryID = ?)", [id]);
     sql("DELETE FROM entries\n" +
-        "WHERE (nr = ?)", [nr]);
+        "WHERE (id = ?)", [id]);
 }
 
-function updateEntry(nr, main, date, money, note, tags) {
+//TODO
+function updateEntry(id, main, date, money, note, tags) {
     var cats = getCategories()
     var found = false;
     for (var i in cats) {
@@ -404,12 +419,12 @@ function updateEntry(nr, main, date, money, note, tags) {
 
     var _tags = sql("SELECT T.* FROM tags T\n" +
                     "INNER JOIN entryTags ET ON\n" +
-                    "   (T.nr = ET.tagID) AND (ET.entryID = ?)", [nr]);
+                    "   (T.id = ET.tagID) AND (ET.entryID = ?)", [id]);
 
     for (var i in tags) {
         var found = false;
         for (var j in _tags) {
-            if (tags[i].nr === _tags[j].nr) {
+            if (tags[i].id === _tags[j].id) {
                 found = true;
                 _tags.splice(j, 1);
                 break;
@@ -417,18 +432,18 @@ function updateEntry(nr, main, date, money, note, tags) {
         }
         if (!found) {
             createTag(tags[i].name, tags[i].category);
-            var tagId = sql("SELECT nr FROM tags ORDER BY nr DESC LIMIT 1")[0].nr;
-            createTagEntryLink(nr, tagId);
+            var tagId = sql("SELECT id FROM tags ORDER BY id DESC LIMIT 1")[0].id;
+            createTagEntryLink(id, tagId);
         }
     }
 
     for (var i in _tags) {
-        deleteEntryTagLink(nr, _tags[i].nr)
+        deleteEntryTagLink(id, _tags[i].id)
     }
 
-    sql("REPLACE INTO entries (nr, category, datestamp, money, notes)\n" +
+    sql("REPLACE INTO entries (id, category, datestamp, money, notes)\n" +
         "SELECT ?, ?, ?, ?, ?",
-        [nr, main, dateToISOString(date), parseInt((money * 100).toFixed(0)), note]);
+        [id, main, dateToISOString(date), parseInt((money * 100).toFixed(0)), note]);
 }
 
 function getSettings() {
@@ -437,8 +452,7 @@ function getSettings() {
     for (var i in lines) {
         data[lines[i].key] = lines[i].value;
     }
-    if (data.globalTags) data.globalTags = data.globalTags === "1";
-    if (data.localTags) data.localTags = data.localTags === "1";
+    if (data.enableQR) data.enableQR = data.enableQR === "1";
     return data;
 }
 

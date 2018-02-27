@@ -133,6 +133,7 @@ Page {
         settings = db.getSettings();
         cb_enGlobal.checked = settings.globalTags;
         cb_enLocal.checked = settings.localTags;
+        cb_enQR.checked = settings.enableQR;
     }
 
     function updateSetting(key, value) {
@@ -189,6 +190,22 @@ Page {
         anchors.top: bar.bottom
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
+
+        ColumnLayout {
+            Label {
+                text: qsTr("Allgemein") + ":"
+            }
+
+            CheckBox {
+                id: cb_enQR
+                visible: Qt.platform.os === "android"
+                text: "Aktiviere QR-Code"
+                onCheckedChanged: {
+                    updateSetting("enableQR", checked);
+                }
+            }
+
+        }
 
         ColumnLayout {
             Label {

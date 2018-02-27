@@ -13,6 +13,10 @@ RESOURCES += src/qml/qml.qrc \
 
 VERSION = 1.1
 
+
+HEADERS += \
+    inc/translations.h \
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
@@ -40,8 +44,10 @@ TRANSLATIONS = translations/wtfismymoney_en.ts\
 
 android: {
     QT += androidextras
-    SOURCES += src/androidfile.cpp
-    HEADERS += inc/androidfile.h
+    SOURCES += src/androidfile.cpp \
+        src/androidapiwrapper.cpp
+    HEADERS += inc/androidfile.h \
+        inc/androidapiwrapper.h
 
     CONFIG += qzxing_qml
     CONFIG += qzxing_multimedia
@@ -70,6 +76,3 @@ windows: {
     HEADERS += inc/fileio.h
     SOURCES += src/fileio.cpp
 }
-
-HEADERS += \
-    inc/translations.h

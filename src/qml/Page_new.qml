@@ -55,6 +55,7 @@ Page {
     property var availableTags: []
     property bool globalTags: true
     property bool localTags: true
+    property bool qrEn: true
 
     onMain_categoryChanged: {
         tags = [];
@@ -63,10 +64,16 @@ Page {
         }
     }
 
+    onMoneyChanged: {
+        moneyFieldUpdate();
+    }
+
     function reset() {
         var tmp_categories = []
         var settings = db.getSettings();
         globalTags = settings.globalTags;
+        localTags = settings.localTags;
+        qrEn = settings.enableQR
         tags = []
         mainCombo.currentIndex = 0;
         allTags = db.getTagsWithUsage()
@@ -93,6 +100,8 @@ Page {
         }
         var settings = db.getSettings();
         globalTags = settings.globalTags;
+        localTags = settings.localTags;
+        qrEn = settings.enableQR
 
         var tmpTags = []
         allTags = db.getTagsWithUsage()
@@ -161,6 +170,12 @@ Page {
             }
         }
         return newTags;
+    }
+
+    function moneyFieldUpdate() {
+        var tmpCursor = moneyInput.cursorPosition;
+        moneyInput.text = focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €";
+        moneyInput.cursorPosition = money == 0.0 ? 1 : tmpCursor;
     }
 
     Icon {
@@ -242,7 +257,6 @@ Page {
                 anchors.bottomMargin: 20
                 anchors.left: parent.left
                 anchors.right: parent.right
-                //implicitHeight: dial.implicitHeight
 
                 Dial {
                     id: dial
@@ -269,7 +283,7 @@ Page {
                     flat: true
                     width: moneyInput.width
                     height: width
-                    visible: Qt.platform.os === "android"
+                    visible: (Qt.platform.os === "android") && qrEn
 
                     text: icon.icons["qrcode"]
                     font.family: icon.family
@@ -333,8 +347,14 @@ Page {
                     text: focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €"
                     validator: RegExpValidator{ regExp: /[\d\.,]*/}
 
-                    onFocusChanged: if (focus) {
-                        cursorPosition = 0;
+                    onFocusChanged: {
+                        moneyFieldUpdate();
+                    }
+
+                    function moneyFieldUpdate() {
+                        var tmpCursor = cursorPosition;
+                        moneyInput.text = focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €";
+                        cursorPosition = money == 0.0 ? 1 : tmpCursor;
                     }
 
                     onTextEdited: {
@@ -346,15 +366,23 @@ Page {
                             var first = tmp.substring(0, tmpPos-1).replace(/[\.]/g, "");
                             var second = tmp.substring(tmpPos).replace(/[\.]/g, "");
                             tmp = first + "." + second;
-                            tmpPos = first.length+1;
+                            tmpPos = first.length > 0 ? first.length+1 : 3;
                         }
 
-                        var val = parseFloat(tmp)
+                        var val = parseFloat(parseFloat(tmp).toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]);
                         var beforeFirstDigit = tmp.search(/[1-9]/);
+                        var beforeDot = tmp.search(/[\.]/);
+                        if ((beforeDot < beforeFirstDigit) && (beforeDot  != -1)) {
+                            beforeFirstDigit = tmpPos < beforeDot ? 1 : 0;
+                        }
+
                         money = -1
-                        if (!isNaN(val)) {
-                            money = val
-                            cursorPosition = tmpPos - beforeFirstDigit
+                        if (val === 0.0) {
+                            money = 0.0;
+                            cursorPosition = tmpPos == 0 ? 1 : tmpPos;
+                        } else if (!isNaN(val)) {
+                            money = val;
+                            cursorPosition = beforeDot == 0 ? 1 : tmpPos - beforeFirstDigit
                         } else {
                             money = 0.0
                             cursorPosition = 0
@@ -427,26 +455,34 @@ Page {
 
                 delegate: ItemDelegate {
                     id: control
+                    Icon {
+                        id: cIcon
+                    }
                     Label {
-                        id: iconLabel
+                        id: cIconLabel
                         anchors.left: parent.left
                         anchors.leftMargin: 16
                         anchors.verticalCenter: parent.verticalCenter
                         font.pointSize: parent.font.pointSize
-                        font.family: icon.family
+                        font.family: cIcon.family
                         color: "white"
-                        text: icon.icons[modelData.icon]
+                        text: cIcon.icons[modelData.icon]
                         background: Rectangle{height: parent.height + 5; width: height; radius: height/2; color: Material.accent; anchors.centerIn: parent}
                     }
 
+                    Label {
 
-                    leftPadding: 16 + iconLabel.width + 8
-                    rightPadding: 16
-                    width: parent.width
-                    text: qsTranslate("TranslationContext", modelData.name)
-                    font.weight: mainCombo.currentIndex === index ? Font.DemiBold : Font.Normal
+                        anchors.fill: parent
+                        anchors.leftMargin: 16 + cIconLabel.width + 8
+                        anchors.rightMargin: 16
+                        text: qsTranslate("TranslationContext", modelData.name)
+                        font.weight: mainCombo.currentIndex === index ? Font.DemiBold : Font.Normal
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
                     highlighted: mainCombo.highlightedIndex === index
                     hoverEnabled: mainCombo.hoverEnabled
+                    width: parent.width
                 }
             }
 
@@ -522,6 +558,10 @@ Page {
                                 implicitHeight: 24
                                 implicitWidth: 24
 
+                                Icon {
+                                    id: cIcon
+                                }
+
                                 onClicked: {
                                     var chosen = tags
                                     var available = availableTags
@@ -537,9 +577,9 @@ Page {
                                 }
 
                                 contentItem: Text {
-                                    font.family: icon.family
+                                    font.family: cIcon.family
                                     fontSizeMode: Text.VerticalFit
-                                    text: icon.icons["close_circle"]
+                                    text: cIcon.icons["close_circle"]
                                     verticalAlignment: Text.AlignVCenter
                                     font.pointSize: 100
                                     opacity: 0.54
