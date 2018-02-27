@@ -332,6 +332,11 @@ Page {
                     width: 60
                     text: focus ? money.toFixed(2).replace('.', Qt.locale().decimalPoint) : money.toFixed(2).replace('.', Qt.locale().decimalPoint) + " €"
                     validator: RegExpValidator{ regExp: /[\d\.,]*/}
+
+                    onFocusChanged: if (focus) {
+                        cursorPosition = 0;
+                    }
+
                     onTextEdited: {
                         var tmp = text.replace(/,/g, ".");
                         var tmpPos = cursorPosition;
