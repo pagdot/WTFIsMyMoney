@@ -782,7 +782,7 @@ Page {
                         height: parent.height
                         width: height
                         radius: height/2
-                        anchors.verticalCenter: parent.verticalCenter
+                        Layout.alignment: Qt.AlignVCenter
                         color: Material.accent
 
                         Text {
@@ -798,7 +798,7 @@ Page {
                         padding: 8
                         rightPadding: 12
                         font.pointSize: 13
-                        anchors.verticalCenter: parent.verticalCenter
+                        Layout.alignment: Qt.AlignVCenter
 
                         text: Qt.locale().monthName(datum.getMonth(), Locale.ShortFormat) + " " + datum.getDate() + ", " + datum.getFullYear()
                     }
