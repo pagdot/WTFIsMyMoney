@@ -154,7 +154,7 @@ Page {
         RowLayout {
             id: dateRow
             implicitHeight: 100
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             Button {
                 id: bt_startDate
                 text: Qt.locale().monthName(start.getMonth(), Locale.ShortFormat) + ", " + start.getFullYear()
@@ -212,8 +212,11 @@ Page {
             id: grid
             columns: 3
             columnSpacing: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: 5
+            Layout.alignment: Qt.AlignHCenter
+            Layout.leftMargin: 5
+            Layout.rightMargin: 5
+            Layout.topMargin: 5
+            Layout.bottomMargin: 5
 
             Label {
                 id: mostExpensiveMonthLabel;
@@ -254,8 +257,7 @@ Page {
 
         ListView {
             id: list
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             Layout.fillHeight: true
             anchors.margins: 8
             spacing: 8
