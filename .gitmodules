@@ -1,0 +1,3 @@
+[submodule "lib/mcharts"]
+	path = lib/mcharts
+	url = https://github.com/milosolutions/mcharts

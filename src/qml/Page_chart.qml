@@ -26,10 +26,11 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.0
-import QtCharts 2.0
 import QtQml 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Controls.Material.impl 2.2
+
+import "qrc:Chart.js" as Charts
 
 Page {
     id: page
@@ -309,6 +310,8 @@ Page {
 
                         property date start;
                         property date end;
+                        property var shades: [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
+
 
                         function openDialog(month) {
                             start = new Date(month)
@@ -319,14 +322,22 @@ Page {
                         }
 
                         function updateChart() {
+
                             var values = db.getMoneyPerCategory(start, end)
 
-                            pieSeries.clear()
+                            var vals = [];
+                            var labels = [];
+                            var colors = [];
 
                             for (var i in values) {
-                                pieSeries.append(values[i].name, values[i].money)
+                                vals.push(values[i].money);
+                                labels.push(values[i].name);
+                                colors.push(Material.color(Material.Green, dialog.shades[parseInt(i)%shades.length]).toString(16));
                             }
-                            repeater.model = values
+                            repeater.model = values;
+                            chart.labels = labels;
+                            chart.values = vals;
+                            chart.colors = colors;
                         }
 
                         title: Qt.locale().monthName(modelData.month.getMonth(), Locale.LongFormat)
@@ -350,7 +361,7 @@ Page {
                                         anchors.verticalCenter: parent.verticalCenter
                                         width: 16
                                         height: 16
-                                        color: Material.color(Material.Green, chart.shades[index])
+                                        color: Material.color(Material.Green, dialog.shades[index])
                                     }
 
                                     Text {
@@ -369,27 +380,26 @@ Page {
                             }
                         }
 
-                        ChartView {
+                        MChart {
                             id: chart
 
                             property string category;
                             property string type;
 
-                            property var shades: [Material.Shade50, Material.Shade100, Material.Shade200, Material.Shade300, Material.Shade400, Material.Shade500, Material.Shade600, Material.Shade700, Material.Shade800, Material.Shade900]
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
                             height: width
+                            anchors.top: legendBox.bottom
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
-                            antialiasing: true
-                            legend.visible: false
 
-                            PieSeries {
-                                id: pieSeries
-                                onSliceAdded: {
-                                    slice.color = Material.color(Material.Green, chart.shades[count - 1])
-                                }
-                                size: 1
-                            }
+                            chartType: Charts.ChartType.PIE
+
+                            labels: []
+                            values: []
+                            colors: []
                         }
 
                         standardButtons: Dialog.Ok

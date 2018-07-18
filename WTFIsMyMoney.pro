@@ -13,6 +13,7 @@ RESOURCES += src/qml/qml.qrc \
 
 VERSION = 1.1
 
+include(lib/mcharts/mcharts.pri)
 
 HEADERS += \
     inc/translations.h \
